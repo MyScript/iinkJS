@@ -1,6 +1,6 @@
 import { modelLogger as logger } from '../configuration/LoggerConfig';
 import * as StrokeComponent from './StrokeComponent';
-import { getSymbolsBounds, getDefaultSymbols } from './Symbol';
+import { getSymbolsBounds } from './Symbol';
 
 /**
  * Recognition positions
@@ -57,7 +57,7 @@ export function createModel(configuration) {
       lastReceivedPosition: -1,
       lastRenderedPosition: -1
     },
-    defaultSymbols: configuration ? getDefaultSymbols(configuration) : [],
+    defaultSymbols: [],
     recognizedSymbols: undefined,
     exports: undefined,
     rawResults: {

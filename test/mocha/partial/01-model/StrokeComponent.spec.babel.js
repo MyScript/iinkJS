@@ -31,7 +31,7 @@ describe('Check StrokeComponent', () => {
     });
 
     it('Check toJSON function', () => {
-      assert.deepEqual({ type: 'stroke', x: obj.x, y: obj.y, t: obj.t }, StrokeComponent.toJSON(stroke));
+      assert.deepEqual({ x: obj.x, y: obj.y, t: obj.t }, StrokeComponent.toJSON(stroke));
     });
   });
 

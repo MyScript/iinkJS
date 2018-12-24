@@ -205,41 +205,6 @@ const inks = [{
 
 const configurations = [{
   type: 'MATH',
-  protocol: 'REST',
-  apiVersion: 'V3',
-  examples: ['/examples/v3/rest_math.html'],
-}, {
-  type: 'TEXT',
-  protocol: 'REST',
-  apiVersion: 'V3',
-  examples: ['/examples/v3/rest_text.html'],
-}, {
-  type: 'SHAPE',
-  protocol: 'REST',
-  apiVersion: 'V3',
-  examples: ['/examples/experimental/rest_shape.html'],
-}, {
-  type: 'MUSIC',
-  protocol: 'REST',
-  apiVersion: 'V3',
-  examples: ['/examples/experimental/rest_music_cdk32.html'],
-}, {
-  type: 'ANALYZER',
-  protocol: 'REST',
-  apiVersion: 'V3',
-  examples: ['/examples/experimental/rest_analyzer_cdk32.html'],
-}, {
-  type: 'MATH',
-  protocol: 'WEBSOCKET',
-  apiVersion: 'V3',
-  examples: ['/examples/v3/websocket_math.html'],
-}, {
-  type: 'TEXT',
-  protocol: 'WEBSOCKET',
-  apiVersion: 'V3',
-  examples: ['/examples/v3/websocket_text.html'],
-}, {
-  type: 'MATH',
   protocol: 'WEBSOCKET',
   apiVersion: 'V4',
   examples: ['/examples/v4/websocket_math_iink.html'],

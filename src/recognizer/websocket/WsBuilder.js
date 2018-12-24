@@ -1,7 +1,7 @@
-import { recognizerLogger as logger } from '../../../configuration/LoggerConfig';
-import * as CryptoHelper from '../../CryptoHelper';
-import * as NetworkWSInterface from '../networkWSInterface';
-import * as RecognizerContext from '../../../model/RecognizerContext';
+import { recognizerLogger as logger } from '../../configuration/LoggerConfig';
+import * as CryptoHelper from '../CryptoHelper';
+import * as NetworkWSInterface from './networkWSInterface';
+import * as RecognizerContext from '../../model/RecognizerContext';
 
 import {
   buildNewContentPackageInput,
@@ -12,10 +12,10 @@ import {
   buildSetTheme,
   buildSetPenStyle,
   buildSetPenStyleClasses
-} from './Cdkv4WSIInkRecognizer';
+} from './IInkWsRecognizer';
 
 /**
- * A CDK v4 websocket dialog have this sequence :
+ * A websocket dialog have this sequence :
  * ---------- Client ------------------------------------- Server ----------------------------------
  * init (send the new content package) ================>
  *                                       <=========== hmacChallenge

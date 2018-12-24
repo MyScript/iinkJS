@@ -1,14 +1,14 @@
 /* eslint-disable no-underscore-dangle */
-import * as NetworkInterface from '../networkInterface';
-import * as RecognizerContext from '../../../model/RecognizerContext';
-import { recognizerLogger as logger } from '../../../configuration/LoggerConfig';
-import Constants from '../../../configuration/Constants';
-import * as InkModel from '../../../model/InkModel';
-import * as StrokeComponent from '../../../model/StrokeComponent';
-import * as DefaultTheme from '../../../configuration/DefaultTheme';
-import * as DefaultPenStyle from '../../../configuration/DefaultPenStyle';
+import * as NetworkInterface from './networkInterface';
+import * as RecognizerContext from '../../model/RecognizerContext';
+import { recognizerLogger as logger } from '../../configuration/LoggerConfig';
+import Constants from '../../configuration/Constants';
+import * as InkModel from '../../model/InkModel';
+import * as StrokeComponent from '../../model/StrokeComponent';
+import * as DefaultTheme from '../../configuration/DefaultTheme';
+import * as DefaultPenStyle from '../../configuration/DefaultPenStyle';
 
-export { init, close, clear, reset } from '../../DefaultRecognizer';
+export { init, close, clear, reset } from '../DefaultRecognizer';
 
 /**
  * Recognizer configuration
@@ -17,7 +17,6 @@ export { init, close, clear, reset } from '../../DefaultRecognizer';
 export const iinkRestConfiguration = {
   types: [Constants.RecognitionType.TEXT, Constants.RecognitionType.DIAGRAM, Constants.RecognitionType.MATH, Constants.RecognitionType.RAWCONTENT],
   protocol: Constants.Protocol.REST,
-  apiVersion: 'V4',
   availableTriggers: {
     exportContent: [
       Constants.Trigger.QUIET_PERIOD,
@@ -61,35 +60,35 @@ export function postMessage(suffixUrl, recognizerContext, model, buildMessage, c
 
 function buildTextConf(configuration) {
   return {
-    text: configuration.recognitionParams.v4.text,
-    lang: configuration.recognitionParams.v4.lang,
-    export: configuration.recognitionParams.v4.export
+    text: configuration.recognitionParams.iink.text,
+    lang: configuration.recognitionParams.iink.lang,
+    export: configuration.recognitionParams.iink.export
   };
 }
 
 function buildMathConf(configuration) {
   return {
-    math: configuration.recognitionParams.v4.math,
-    lang: configuration.recognitionParams.v4.lang,
-    export: configuration.recognitionParams.v4.export
+    math: configuration.recognitionParams.iink.math,
+    lang: configuration.recognitionParams.iink.lang,
+    export: configuration.recognitionParams.iink.export
   };
 }
 
 function buildDiagramConf(configuration) {
   return {
-    diagram: configuration.recognitionParams.v4.diagram,
-    lang: configuration.recognitionParams.v4.lang,
-    export: configuration.recognitionParams.v4.export
+    diagram: configuration.recognitionParams.iink.diagram,
+    lang: configuration.recognitionParams.iink.lang,
+    export: configuration.recognitionParams.iink.export
   };
 }
 
 function buildRawContentConf(configuration) {
   return {
     'raw-content': {
-      recognition: configuration.recognitionParams.v4['raw-content'].recognition
+      recognition: configuration.recognitionParams.iink['raw-content'].recognition
     },
-    lang: configuration.recognitionParams.v4.lang,
-    export: configuration.recognitionParams.v4.export
+    lang: configuration.recognitionParams.iink.lang,
+    export: configuration.recognitionParams.iink.export
   };
 }
 
@@ -112,7 +111,7 @@ function buildData(recognizerContext, model, conversionState) {
     const newPenStyle = JSON.stringify(group.penStyle) === '{}' ? null : DefaultPenStyle.toCSS(group.penStyle);
     const newGroup = {
       penStyle: newPenStyle,
-      strokes: group.strokes.map(stroke => StrokeComponent.toJSONV4(stroke))
+      strokes: group.strokes.map(stroke => StrokeComponent.toJSON(stroke))
     };
     newStrokes.push(newGroup);
   });
@@ -187,19 +186,19 @@ export function export_(recognizerContext, model, callback, requestedMimeTypes) 
       callPostMessage(mimeType);
     });
   } else if (configuration.recognitionParams.type === 'TEXT') {
-    configuration.recognitionParams.v4.text.mimeTypes.forEach((mimeType) => {
+    configuration.recognitionParams.iink.text.mimeTypes.forEach((mimeType) => {
       callPostMessage(mimeType);
     });
   } else if (configuration.recognitionParams.type === 'DIAGRAM') {
-    configuration.recognitionParams.v4.diagram.mimeTypes.forEach((mimeType) => {
+    configuration.recognitionParams.iink.diagram.mimeTypes.forEach((mimeType) => {
       callPostMessage(mimeType);
     });
   } else if (configuration.recognitionParams.type === 'MATH') {
-    configuration.recognitionParams.v4.math.mimeTypes.forEach((mimeType) => {
+    configuration.recognitionParams.iink.math.mimeTypes.forEach((mimeType) => {
       callPostMessage(mimeType);
     });
   } else if (configuration.recognitionParams.type === 'Raw Content') {
-    configuration.recognitionParams.v4['raw-content'].mimeTypes.forEach((mimeType) => {
+    configuration.recognitionParams.iink['raw-content'].mimeTypes.forEach((mimeType) => {
       callPostMessage(mimeType);
     });
   }

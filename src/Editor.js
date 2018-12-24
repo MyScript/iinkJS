@@ -7,7 +7,6 @@ import * as DefaultTheme from './configuration/DefaultTheme';
 import * as InkModel from './model/InkModel';
 import * as UndoRedoContext from './model/UndoRedoContext';
 import * as UndoRedoManager from './model/UndoRedoManager';
-import * as ModelStats from './util/ModelStats';
 import * as ImageRenderer from './renderer/canvas/ImageRenderer';
 import * as RecognizerContext from './model/RecognizerContext';
 import * as SmartGuide from './smartguide/SmartGuide';
@@ -143,10 +142,9 @@ function manageRecognizedModel(editor, model, ...types) {
   }
 
   if (editor.configuration.recognitionParams.type === 'TEXT'
-    && editor.configuration.recognitionParams.apiVersion === 'V4'
     && editor.configuration.recognitionParams.protocol !== 'REST'
-    && editor.configuration.recognitionParams.v4.text.mimeTypes.includes(Constants.Exports.JIIX)
-    && editor.configuration.recognitionParams.v4.text.smartGuide) {
+    && editor.configuration.recognitionParams.iink.text.mimeTypes.includes(Constants.Exports.JIIX)
+    && editor.configuration.recognitionParams.iink.text.smartGuide) {
     // eslint-disable-next-line no-use-before-define
     launchSmartGuide(editorRef, modelRef.exports);
   }
@@ -186,7 +184,7 @@ function recognizerCallback(editor, error, model, ...events) {
         // IInk error managment after refactor
         (err.code && err.code === 'access.not.granted')) {
         editorRef.error.innerText = Constants.Error.WRONG_CREDENTIALS;
-      } else if (err.message === 'Session is too old. Max Session Duration Reached' ||
+      } else if (err.message === 'Session is too old. Max Session Duration Reached.' ||
         (err.code && err.code === 'session.too.old')) {
         editorRef.error.innerText = Constants.Error.TOO_OLD;
       } else if ((err.code === 1006 || err.code === 1000) && editorRef.error.style.display === 'none') {
@@ -510,7 +508,7 @@ export class Editor {
      * @type {Configuration}
      */
     this.innerConfiguration = DefaultConfiguration.overrideDefaultConfiguration(configuration);
-    this.setThemeForFont(this.innerConfiguration.recognitionParams.v4.lang);
+    this.setThemeForFont(this.innerConfiguration.recognitionParams.iink.lang);
     this.behavior = this.behaviors.getBehaviorFromConfiguration(this.behaviors, this.innerConfiguration);
   }
 
@@ -757,14 +755,6 @@ export class Editor {
   }
 
   /**
-   * Get statistics to monitor what ink size is send to the server.
-   * @return {Stats}
-   */
-  getStats() {
-    return ModelStats.computeStats(this.model);
-  }
-
-  /**
    * True if initialized, false otherwise
    * @return {Boolean}
    */
@@ -959,7 +949,7 @@ export class Editor {
    * @param {Boolean} [enable]
    */
   setGuides(enable = true) {
-    this.configuration.recognitionParams.v4.text.guides.enable = enable;
+    this.configuration.recognitionParams.iink.text.guides.enable = enable;
     launchConfig(this, this.model);
   }
 

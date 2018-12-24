@@ -11,7 +11,6 @@ const defaultConfiguration = {
   recognitionParams: {
     type: 'TEXT',
     protocol: 'WEBSOCKET',
-    apiVersion: 'V4',
     server: {
       scheme: 'https',
       host: 'cloud.myscript.com',
@@ -27,7 +26,7 @@ const defaultConfiguration = {
         fileChunkSize: 300000
       }
     },
-    v4: {
+    iink: {
       alwaysConnected: true,
       lang: 'en_US',
       export: {
@@ -93,65 +92,6 @@ const defaultConfiguration = {
           text: false,
           shape: false
         }
-      }
-    },
-    v3: {
-      mathParameter: {
-        resultTypes: ['LATEX', 'MATHML'],
-        columnarOperation: false,
-        userResources: [],
-        scratchOutDetectionSensitivity: 1,
-      },
-      textParameter: {
-        language: 'en_US',
-        textInputMode: 'CURSIVE',
-        resultDetail: 'TEXT',
-        contentTypes: [],
-        subsetKnowledges: [],
-        userLkWords: [],
-        userResources: [],
-        textProperties: {
-          textCandidateListSize: 1,
-          wordCandidateListSize: undefined,
-          wordPredictionListSize: 0,
-          wordCompletionListSize: 0,
-          characterCandidateListSize: undefined,
-          enableOutOfLexicon: false,
-          discardCaseVariations: false,
-          discardAccentuationVariations: false,
-          glyphDistortion: undefined,
-          enableTagger: false,
-          spellingDistortion: undefined
-        }
-      },
-      shapeParameter: {
-        userResources: undefined,
-        rejectDetectionSensitivity: 1,
-        doBeautification: true
-      },
-      musicParameter: {
-        divisions: 480,
-        resultTypes: ['MUSICXML', 'SCORETREE'],
-        userResources: [],
-        staff: {
-          top: 100,
-          count: 5,
-          gap: 20
-        },
-        clef: {
-          symbol: 'G',
-          octave: 0,
-          line: 2
-        },
-        scratchOutDetectionSensitivity: 1
-      },
-      analyzerParameter: {
-        textParameter: {
-          textProperties: {},
-          language: 'en_US',
-          textInputMode: 'CURSIVE'
-        },
-        coordinateResolution: undefined
       }
     }
   },

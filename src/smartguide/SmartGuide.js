@@ -310,8 +310,8 @@ export function createSmartGuide(editor) {
   };
   addListeners(editor, smartGuide);
 
-  if (editor.configuration.recognitionParams.v4.text.smartGuideFadeOut.enable) {
-    callFadeOutObserver(editor.configuration.recognitionParams.v4.text.smartGuideFadeOut.duration, smartGuide);
+  if (editor.configuration.recognitionParams.iink.text.smartGuideFadeOut.enable) {
+    callFadeOutObserver(editor.configuration.recognitionParams.iink.text.smartGuideFadeOut.duration, smartGuide);
   }
 
   return smartGuide;
@@ -322,7 +322,7 @@ export function resize(smartGuide) {
   const elementsRef = smartGuide.elements;
 
   const mmToPixels = 3.779527559;
-  let left = smartGuideRef.editor.configuration.recognitionParams.v4.text.margin.left * mmToPixels;
+  let left = smartGuideRef.editor.configuration.recognitionParams.iink.text.margin.left * mmToPixels;
 
   const maxWidthTextContainer = smartGuideRef.editor.domElement.clientWidth - left - elementsRef.tagElement.offsetWidth - 35 - left;
 
@@ -377,8 +377,8 @@ export function insertSmartGuide(smartGuide) {
 
   const mmToPixels = 3.779527559;
 
-  const marginTop = smartGuideRef.editor.configuration.recognitionParams.v4.text.margin.top * mmToPixels;
-  const marginLeft = smartGuideRef.editor.configuration.recognitionParams.v4.text.margin.left * mmToPixels;
+  const marginTop = smartGuideRef.editor.configuration.recognitionParams.iink.text.margin.top * mmToPixels;
+  const marginLeft = smartGuideRef.editor.configuration.recognitionParams.iink.text.margin.left * mmToPixels;
 
   // 12 is the space between line in mm
   const top = marginTop - (12 * mmToPixels);

@@ -236,7 +236,7 @@
   }
 
   editorElement.addEventListener('loaded', function (evt) {
-    var currentLanguage = evt.target.editor.configuration.recognitionParams.v4.lang;
+    var currentLanguage = evt.target.editor.configuration.recognitionParams.iink.lang;
     var res = MyScript.getAvailableLanguageList();
 
     if (languageElement.options.length === 0) {
@@ -266,7 +266,7 @@
 
     var configuration = editorElement.editor.configuration;
     //The path to the language depend of the version of API you are using.
-    configuration.recognitionParams.v4.lang = e.target.value;
+    configuration.recognitionParams.iink.lang = e.target.value;
     editorElement.editor.configuration = configuration;
   });
 
@@ -344,7 +344,6 @@
       recognitionParams: {
         type: 'TEXT',
         protocol: 'WEBSOCKET',
-        apiVersion: 'V4',
         server: {
           scheme: 'https',
           host: 'webdemoapi.myscript.com',

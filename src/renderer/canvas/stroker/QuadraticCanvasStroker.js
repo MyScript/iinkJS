@@ -23,8 +23,7 @@ import { computeLinksPoints, computeMiddlePoint, computeAxeAngle } from '../../Q
 export function getInfo() {
   return {
     type: 'canvas',
-    name: 'quadratic',
-    apiVersion: 'V3'
+    name: 'quadratic'
   };
 }
 

@@ -81,18 +81,9 @@ export function createStrokeComponent(properties) {
 /**
  * Get a JSON copy of a stroke by filtering its properties
  * @param {Stroke} stroke Current stroke
- * @return {{type: String, x: Array<Number>, y: Array<Number>, t: Array<Number>}} Simplified stroke object
- */
-export function toJSON(stroke) {
-  return { type: stroke.type, x: stroke.x, y: stroke.y, t: stroke.t };
-}
-
-/**
- * Get a JSON copy of a stroke by filtering its properties
- * @param {Stroke} stroke Current stroke
  * @return {{x: Array<Number>, y: Array<Number>, t: Array<Number>}} Simplified stroke object
  */
-export function toJSONV4(stroke) {
+export function toJSON(stroke) {
   return { x: stroke.x, y: stroke.y, t: stroke.t };
 }
 

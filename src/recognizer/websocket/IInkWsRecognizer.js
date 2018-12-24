@@ -1,15 +1,15 @@
 import uuid from 'uuid-js';
-import { recognizerLogger as logger } from '../../../configuration/LoggerConfig';
-import Constants from '../../../configuration/Constants';
-import * as DefaultTheme from '../../../configuration/DefaultTheme';
-import * as DefaultPenStyle from '../../../configuration/DefaultPenStyle';
-import * as InkModel from '../../../model/InkModel';
-import * as RecognizerContext from '../../../model/RecognizerContext';
-import * as DefaultRecognizer from '../../DefaultRecognizer';
-import * as Cdkv4WSWebsocketBuilder from './Cdkv4WSBuilder';
-import * as CdkWSRecognizerUtil from '../CdkWSRecognizerUtil';
+import { recognizerLogger as logger } from '../../configuration/LoggerConfig';
+import Constants from '../../configuration/Constants';
+import * as DefaultTheme from '../../configuration/DefaultTheme';
+import * as DefaultPenStyle from '../../configuration/DefaultPenStyle';
+import * as InkModel from '../../model/InkModel';
+import * as RecognizerContext from '../../model/RecognizerContext';
+import * as DefaultRecognizer from '../DefaultRecognizer';
+import * as WsBuilder from './WsBuilder';
+import * as WsRecognizerUtil from './WsRecognizerUtil';
 
-export { close } from '../CdkWSRecognizerUtil';
+export { close } from './WsRecognizerUtil';
 
 function readBlob(blob) {
   const fileReader = new FileReader();
@@ -36,10 +36,9 @@ function getDPI(element) {
  * Recognizer configuration
  * @type {RecognizerInfo}
  */
-export const IInkWebSocketV4Configuration = {
+export const IinkWsConfiguration = {
   types: [Constants.RecognitionType.MATH, Constants.RecognitionType.TEXT, Constants.RecognitionType.DIAGRAM, Constants.RecognitionType.NEBO],
   protocol: Constants.Protocol.WEBSOCKET,
-  apiVersion: 'V4',
   availableTriggers: {
     exportContent: [Constants.Trigger.POINTER_UP, Constants.Trigger.DEMAND],
     addStrokes: [Constants.Trigger.POINTER_UP]
@@ -51,7 +50,7 @@ export const IInkWebSocketV4Configuration = {
  * @return {RecognizerInfo}
  */
 export function getInfo() {
-  return IInkWebSocketV4Configuration;
+  return IinkWsConfiguration;
 }
 
 export function buildNewContentPackageInput(configuration, element) {
@@ -82,7 +81,7 @@ export function buildNewContentPart(configuration) {
     type: 'newContentPart',
     contentType: configuration.recognitionParams.type,
     mimeTypes: (configuration.triggers.exportContent !== Constants.Trigger.DEMAND) ?
-      configuration.recognitionParams.v4[`${configuration.recognitionParams.type.toLowerCase()}`].mimeTypes : undefined
+      configuration.recognitionParams.iink[`${configuration.recognitionParams.type.toLowerCase()}`].mimeTypes : undefined
   };
 }
 
@@ -91,12 +90,12 @@ export function buildOpenContentPart(configuration, partId) {
     type: 'openContentPart',
     id: partId,
     mimeTypes: (configuration.triggers.exportContent !== Constants.Trigger.DEMAND) ?
-      configuration.recognitionParams.v4[`${configuration.recognitionParams.type.toLowerCase()}`].mimeTypes : undefined
+      configuration.recognitionParams.iink[`${configuration.recognitionParams.type.toLowerCase()}`].mimeTypes : undefined
   };
 }
 
 export function buildConfiguration(configuration) {
-  return Object.assign({ type: 'configuration' }, configuration.recognitionParams.v4);
+  return Object.assign({ type: 'configuration' }, configuration.recognitionParams.iink);
 }
 
 function buildAddStrokes(recognizerContext, model) {
@@ -164,7 +163,7 @@ function buildExport(configuration, partId, requestedMimeType) {
   if (requestedMimeType && Object.keys(requestedMimeType).length !== 0) {
     usedMimeType = requestedMimeType;
   } else {
-    usedMimeType = configuration.recognitionParams.v4[`${configuration.recognitionParams.type.toLowerCase()}`].mimeTypes;
+    usedMimeType = configuration.recognitionParams.iink[`${configuration.recognitionParams.type.toLowerCase()}`].mimeTypes;
   }
 
   return {
@@ -279,7 +278,7 @@ export function init(recognizerContext, model, callback) {
     model: InkModel.updateModelSentPosition(model, model.lastPositions.lastReceivedPosition),
     callback: (err, res) => iinkCallback(model, err, res, callback)
   });
-  CdkWSRecognizerUtil.init('/api/v4.0/iink/document', recognizerContextRef, Cdkv4WSWebsocketBuilder.buildWebSocketCallback, init)
+  WsRecognizerUtil.init('/api/v4.0/iink/document', recognizerContextRef, WsBuilder.buildWebSocketCallback, init)
     .catch((err) => {
       if (RecognizerContext.shouldAttemptImmediateReconnect(recognizerContext) && recognizerContext.reconnect) {
         logger.info('Attempting a reconnect', recognizerContext.currentReconnectionCount);
@@ -302,8 +301,8 @@ export function newContentPart(recognizerContext, model, callback) {
     model,
     callback: (err, res) => iinkCallback(model, err, res, callback)
   });
-  CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildNewContentPart, recognizerContext.editor.configuration)
-    .catch(exception => CdkWSRecognizerUtil.retry(newContentPart, recognizerContext, model, callback));
+  WsRecognizerUtil.sendMessage(recognizerContextRef, buildNewContentPart, recognizerContext.editor.configuration)
+    .catch(exception => WsRecognizerUtil.retry(newContentPart, recognizerContext, model, callback));
 }
 
 /**
@@ -317,8 +316,8 @@ export function openContentPart(recognizerContext, model, callback) {
     model,
     callback: (err, res) => iinkCallback(model, err, res, callback)
   });
-  CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildOpenContentPart, recognizerContext.editor.configuration, recognizerContext.currentPartId)
-    .catch(exception => CdkWSRecognizerUtil.retry(openContentPart, recognizerContext, model, callback));
+  WsRecognizerUtil.sendMessage(recognizerContextRef, buildOpenContentPart, recognizerContext.editor.configuration, recognizerContext.currentPartId)
+    .catch(exception => WsRecognizerUtil.retry(openContentPart, recognizerContext, model, callback));
 }
 
 export function sendConfiguration(recognizerContext, model, callback) {
@@ -326,8 +325,8 @@ export function sendConfiguration(recognizerContext, model, callback) {
     model,
     callback: (err, res) => iinkCallback(model, err, res, callback)
   });
-  CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildConfiguration, recognizerContext.editor.configuration)
-    .catch(exception => CdkWSRecognizerUtil.retry(sendConfiguration, recognizerContext, model, callback));
+  WsRecognizerUtil.sendMessage(recognizerContextRef, buildConfiguration, recognizerContext.editor.configuration)
+    .catch(exception => WsRecognizerUtil.retry(sendConfiguration, recognizerContext, model, callback));
 }
 
 /**
@@ -342,8 +341,8 @@ export function pointerEvents(recognizerContext, model, events, callback) {
     model,
     callback: (err, res) => iinkCallback(model, err, res, callback)
   });
-  CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildPointerEvents, events)
-    .catch(exception => CdkWSRecognizerUtil.retry(pointerEvents, recognizerContext, model, events, callback));
+  WsRecognizerUtil.sendMessage(recognizerContextRef, buildPointerEvents, events)
+    .catch(exception => WsRecognizerUtil.retry(pointerEvents, recognizerContext, model, events, callback));
 }
 
 /**
@@ -357,8 +356,8 @@ export function addStrokes(recognizerContext, model, callback) {
     model,
     callback: (err, res) => iinkCallback(model, err, res, callback)
   });
-  CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildAddStrokes, recognizerContext, model)
-    .catch(exception => CdkWSRecognizerUtil.retry(addStrokes, recognizerContext, model, callback));
+  WsRecognizerUtil.sendMessage(recognizerContextRef, buildAddStrokes, recognizerContext, model)
+    .catch(exception => WsRecognizerUtil.retry(addStrokes, recognizerContext, model, callback));
 }
 
 /**
@@ -372,8 +371,8 @@ export function undo(recognizerContext, model, callback) {
     model,
     callback: (err, res) => iinkCallback(model, err, res, callback)
   });
-  CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildUndo)
-    .catch(exception => CdkWSRecognizerUtil.retry(undo, recognizerContext, model, callback));
+  WsRecognizerUtil.sendMessage(recognizerContextRef, buildUndo)
+    .catch(exception => WsRecognizerUtil.retry(undo, recognizerContext, model, callback));
 }
 
 /**
@@ -387,8 +386,8 @@ export function redo(recognizerContext, model, callback) {
     model,
     callback: (err, res) => iinkCallback(model, err, res, callback)
   });
-  CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildRedo)
-    .catch(exception => CdkWSRecognizerUtil.retry(redo, recognizerContext, model, callback));
+  WsRecognizerUtil.sendMessage(recognizerContextRef, buildRedo)
+    .catch(exception => WsRecognizerUtil.retry(redo, recognizerContext, model, callback));
 }
 
 /**
@@ -407,8 +406,8 @@ export function clear(recognizerContext, model, callback) {
       });
     }
   });
-  CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildClear)
-    .catch(exception => CdkWSRecognizerUtil.retry(clear, recognizerContext, model, callback));
+  WsRecognizerUtil.sendMessage(recognizerContextRef, buildClear)
+    .catch(exception => WsRecognizerUtil.retry(clear, recognizerContext, model, callback));
 }
 
 /**
@@ -423,8 +422,8 @@ export function convert(recognizerContext, model, callback, conversionState) {
     model,
     callback: (err, res) => iinkCallback(model, err, res, callback)
   });
-  CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildConvert, conversionState)
-    .catch(exception => CdkWSRecognizerUtil.retry(convert, recognizerContext, model, callback, conversionState));
+  WsRecognizerUtil.sendMessage(recognizerContextRef, buildConvert, conversionState)
+    .catch(exception => WsRecognizerUtil.retry(convert, recognizerContext, model, callback, conversionState));
 }
 
 /**
@@ -440,8 +439,8 @@ export function export_(recognizerContext, model, callback, requestedMimeTypes) 
     model,
     callback: (err, res) => iinkCallback(model, err, res, callback)
   });
-  CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildExport, recognizerContext.editor.configuration, recognizerContext.currentPartId, requestedMimeTypes)
-    .catch(exception => CdkWSRecognizerUtil.retry(export_, recognizerContext, model, callback, requestedMimeTypes));
+  WsRecognizerUtil.sendMessage(recognizerContextRef, buildExport, recognizerContext.editor.configuration, recognizerContext.currentPartId, requestedMimeTypes)
+    .catch(exception => WsRecognizerUtil.retry(export_, recognizerContext, model, callback, requestedMimeTypes));
 }
 
 /**
@@ -464,13 +463,13 @@ export function import_(recognizerContext, model, data, callback) {
 
   for (let i = 0; i < data.size; i += chunkSize) {
     if (i === 0) {
-      CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildImportFile, recognitionContext.importFileId, data.type)
-        .catch(exception => CdkWSRecognizerUtil.retry(import_, recognizerContext, model, data, callback));
+      WsRecognizerUtil.sendMessage(recognizerContextRef, buildImportFile, recognitionContext.importFileId, data.type)
+        .catch(exception => WsRecognizerUtil.retry(import_, recognizerContext, model, data, callback));
     }
     const blobPart = data.slice(i, chunkSize, data.type);
     readBlob(blobPart).then((res) => {
-      CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildImportChunk, recognitionContext.importFileId, res, i + chunkSize > data.size)
-        .catch(exception => CdkWSRecognizerUtil.retry(import_, recognizerContext, model, data, callback));
+      WsRecognizerUtil.sendMessage(recognizerContextRef, buildImportChunk, recognitionContext.importFileId, res, i + chunkSize > data.size)
+        .catch(exception => WsRecognizerUtil.retry(import_, recognizerContext, model, data, callback));
     });
   }
 }
@@ -480,8 +479,8 @@ export function getSupportedImportMimeTypes(recognizerContext, model, callback) 
     model,
     callback: (err, res) => iinkCallback(model, err, res, callback)
   });
-  CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildGetSupportedImportMimeTypes)
-    .catch(exception => CdkWSRecognizerUtil.retry(getSupportedImportMimeTypes, recognizerContext, model, callback));
+  WsRecognizerUtil.sendMessage(recognizerContextRef, buildGetSupportedImportMimeTypes)
+    .catch(exception => WsRecognizerUtil.retry(getSupportedImportMimeTypes, recognizerContext, model, callback));
 }
 
 /**
@@ -495,8 +494,8 @@ export function waitForIdle(recognizerContext, model, callback) {
     model,
     callback: (err, res) => iinkCallback(model, err, res, callback)
   });
-  CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildWaitForIdle)
-    .catch(exception => CdkWSRecognizerUtil.retry(waitForIdle, recognizerContext, model, callback));
+  WsRecognizerUtil.sendMessage(recognizerContextRef, buildWaitForIdle)
+    .catch(exception => WsRecognizerUtil.retry(waitForIdle, recognizerContext, model, callback));
 }
 
 /**
@@ -511,8 +510,8 @@ export function resize(recognizerContext, model, callback, element) {
     model,
     callback: (err, res) => iinkCallback(model, err, res, callback)
   });
-  CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildResize, element, recognizerContext.editor.configuration.renderingParams.minHeight, recognizerContext.editor.configuration.renderingParams.minWidth)
-    .catch(exception => CdkWSRecognizerUtil.retry(resize, recognizerContext, model, callback, element));
+  WsRecognizerUtil.sendMessage(recognizerContextRef, buildResize, element, recognizerContext.editor.configuration.renderingParams.minHeight, recognizerContext.editor.configuration.renderingParams.minWidth)
+    .catch(exception => WsRecognizerUtil.retry(resize, recognizerContext, model, callback, element));
 }
 
 /**
@@ -527,8 +526,8 @@ export function zoom(recognizerContext, model, value = 10, callback) {
     model,
     callback: (err, res) => iinkCallback(model, err, res, callback)
   });
-  CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildZoom, value)
-    .catch(exception => CdkWSRecognizerUtil.retry(zoom, recognizerContext, model, callback));
+  WsRecognizerUtil.sendMessage(recognizerContextRef, buildZoom, value)
+    .catch(exception => WsRecognizerUtil.retry(zoom, recognizerContext, model, callback));
 }
 
 /**
@@ -543,8 +542,8 @@ export function setPenStyle(recognizerContext, model, penStyle, callback) {
     model,
     callback: (err, res) => iinkCallback(model, err, res, callback)
   });
-  CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildSetPenStyle, penStyle)
-    .catch(exception => CdkWSRecognizerUtil.retry(setPenStyle, recognizerContext, model, callback));
+  WsRecognizerUtil.sendMessage(recognizerContextRef, buildSetPenStyle, penStyle)
+    .catch(exception => WsRecognizerUtil.retry(setPenStyle, recognizerContext, model, callback));
 }
 
 /**
@@ -559,8 +558,8 @@ export function setPenStyleClasses(recognizerContext, model, penStyleClasses, ca
     model,
     callback: (err, res) => iinkCallback(model, err, res, callback)
   });
-  CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildSetPenStyleClasses, penStyleClasses)
-    .catch(exception => CdkWSRecognizerUtil.retry(setPenStyleClasses, recognizerContext, model, callback));
+  WsRecognizerUtil.sendMessage(recognizerContextRef, buildSetPenStyleClasses, penStyleClasses)
+    .catch(exception => WsRecognizerUtil.retry(setPenStyleClasses, recognizerContext, model, callback));
 }
 
 /**
@@ -575,6 +574,6 @@ export function setTheme(recognizerContext, model, theme, callback) {
     model,
     callback: (err, res) => iinkCallback(model, err, res, callback)
   });
-  CdkWSRecognizerUtil.sendMessage(recognizerContextRef, buildSetTheme, theme)
-    .catch(exception => CdkWSRecognizerUtil.retry(setTheme, recognizerContext, model, callback));
+  WsRecognizerUtil.sendMessage(recognizerContextRef, buildSetTheme, theme)
+    .catch(exception => WsRecognizerUtil.retry(setTheme, recognizerContext, model, callback));
 }
