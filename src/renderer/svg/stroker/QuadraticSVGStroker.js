@@ -8,8 +8,7 @@ import { computeLinksPoints, computeMiddlePoint, computeAxeAngle } from '../../Q
 export function getInfo() {
   return {
     type: 'svg',
-    name: 'quadratic',
-    apiVersion: 'V4'
+    name: 'quadratic'
   };
 }
 

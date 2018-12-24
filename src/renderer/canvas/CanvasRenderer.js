@@ -2,11 +2,6 @@ import { rendererLogger as logger } from '../../configuration/LoggerConfig';
 import { drawStroke } from './symbols/StrokeSymbolCanvasRenderer';
 import { drawTextSymbol, TextSymbols } from './symbols/TextSymbolCanvasRenderer';
 import { drawShapeSymbol, ShapeSymbols } from './symbols/ShapeSymbolCanvasRenderer';
-import {
-  drawMusicSymbol,
-  getMusicClefElements,
-  MusicSymbols
-} from './symbols/MusicSymbolCanvasRenderer';
 import * as InkModel from '../../model/InkModel';
 
 /**
@@ -33,8 +28,7 @@ import * as InkModel from '../../model/InkModel';
  */
 export function getInfo() {
   return {
-    type: 'canvas',
-    apiVersion: 'V3'
+    type: 'canvas'
   };
 }
 
@@ -102,8 +96,6 @@ function resizeContent(context) {
 export function attach(element, minHeight = 0, minWidth = 0) {
   logger.debug('attach renderer', element);
   const pixelRatio = detectPixelRatio(element);
-  const resources = getMusicClefElements();
-  resources.forEach(clef => element.appendChild(clef));
 
   const renderingCanvas = createCanvas(element, 'ms-rendering-canvas');
   const capturingCanvas = createCanvas(element, 'ms-capture-canvas');
@@ -115,8 +107,7 @@ export function attach(element, minHeight = 0, minWidth = 0) {
     renderingCanvas,
     renderingCanvasContext: renderingCanvas.getContext('2d'),
     capturingCanvas,
-    capturingCanvasContext: capturingCanvas.getContext('2d'),
-    resources
+    capturingCanvasContext: capturingCanvas.getContext('2d')
   };
 
   return resizeContent(context);
@@ -154,8 +145,6 @@ function drawSymbol(context, symbol, stroker) {
     drawTextSymbol(context, symbol);
   } else if (ShapeSymbols[type]) {
     drawShapeSymbol(context, symbol);
-  } else if (MusicSymbols[type]) {
-    drawMusicSymbol(context, symbol);
   } else {
     logger.warn(`impossible to draw ${type} symbol`);
   }

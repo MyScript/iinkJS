@@ -10,8 +10,7 @@ import * as InkModel from '../../model/InkModel';
  */
 export function getInfo() {
   return {
-    type: 'svg',
-    apiVersion: 'V4'
+    type: 'svg'
   };
 }
 

@@ -1,7 +1,6 @@
 import { describe, it } from 'mocha';
 import { assert } from 'chai';
 import { configurations } from '../../../lib/configuration';
-import { testLogger as logger } from '../../../../src/configuration/LoggerConfig';
 import * as DefaultConfiguration from '../../../../src/configuration/DefaultConfiguration';
 import * as DefaultBehaviors from '../../../../src/configuration/DefaultBehaviors';
 
@@ -19,23 +18,13 @@ configurations.forEach((configuration) => {
 
     it('stroker', () => {
       assert.isDefined(behavior.stroker, 'stroker should be defined');
-      let strokerType;
-      if (currentConfiguration.recognitionParams.apiVersion === 'V3') {
-        strokerType = 'canvas';
-      } else if (currentConfiguration.recognitionParams.apiVersion === 'V4') {
-        strokerType = currentConfiguration.recognitionParams.protocol === 'WEBSOCKET' ? 'svg' : 'canvas';
-      }
+      const strokerType = currentConfiguration.recognitionParams.protocol === 'WEBSOCKET' ? 'svg' : 'canvas';
       assert.strictEqual(behavior.stroker.getInfo().type, strokerType);
     });
 
     it('renderer', () => {
       assert.isDefined(behavior.renderer, 'renderer should be defined');
-      let rendererType;
-      if (currentConfiguration.recognitionParams.apiVersion === 'V3') {
-        rendererType = 'canvas';
-      } else if (currentConfiguration.recognitionParams.apiVersion === 'V4') {
-        rendererType = currentConfiguration.recognitionParams.protocol === 'WEBSOCKET' ? 'svg' : 'canvas';
-      }
+      const rendererType = currentConfiguration.recognitionParams.protocol === 'WEBSOCKET' ? 'svg' : 'canvas';
       assert.strictEqual(behavior.renderer.getInfo().type, rendererType);
     });
 
@@ -43,7 +32,6 @@ configurations.forEach((configuration) => {
       assert.isDefined(behavior.recognizer, 'recognizer should be defined');
       assert.include(behavior.recognizer.getInfo().types, currentConfiguration.recognitionParams.type);
       assert.strictEqual(behavior.recognizer.getInfo().protocol, currentConfiguration.recognitionParams.protocol);
-      assert.strictEqual(behavior.recognizer.getInfo().apiVersion, currentConfiguration.recognitionParams.apiVersion);
       // assert.strictEqual(defaultBehaviors.optimizedParameters.exportContentTriggerOn, trigger, `${trigger} should be the default value for ${behavior} exportContentTriggerOn`);
     });
 

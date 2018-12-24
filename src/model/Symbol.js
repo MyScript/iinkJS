@@ -1,6 +1,3 @@
-import { MusicClefs } from '../renderer/canvas/symbols/MusicSymbolCanvasRenderer';
-import Constants from '../configuration/Constants';
-
 function mergeBounds(boundsA, boundsB) {
   return {
     minX: Math.min(boundsA.minX, boundsB.minX),
@@ -111,30 +108,4 @@ export function getSymbolsBounds(symbols, bounds = { minX: Number.MAX_VALUE, max
     .map(getTextLineBounds)
     .reduce(mergeBounds, boundsRef);
   return boundsRef;
-}
-
-function getDefaultMusicSymbols(configuration) {
-  const defaultStaff = Object.assign({}, { type: 'staff' }, configuration.recognitionParams.v3.musicParameter.staff);
-  const defaultClef = {
-    type: 'clef',
-    value: Object.assign({}, configuration.recognitionParams.v3.musicParameter.clef)
-  };
-  defaultClef.value.yAnchor = defaultStaff.top + (defaultStaff.gap * (defaultStaff.count - defaultClef.value.line));
-  delete defaultClef.value.line;
-  defaultClef.boundingBox = MusicClefs[defaultClef.value.symbol].getBoundingBox(defaultStaff.gap, 0, defaultClef.value.yAnchor);
-  return [defaultStaff, defaultClef];
-}
-
-/**
- * Get the default symbols for the current recognition type
- * @param {Configuration} configuration Current recognition parameters from which extract default symbols
- * @return {Array} Symbols matching configuration
- */
-export function getDefaultSymbols(configuration) {
-  switch (configuration.recognitionParams.type) {
-    case Constants.RecognitionType.MUSIC:
-      return getDefaultMusicSymbols(configuration);
-    default:
-      return [];
-  }
 }

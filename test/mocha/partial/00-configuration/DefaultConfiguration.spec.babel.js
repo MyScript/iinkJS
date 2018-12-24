@@ -1,7 +1,6 @@
 import { describe, it } from 'mocha';
 import { assert } from 'chai';
 import { configurations } from '../../../lib/configuration';
-import { testLogger as logger } from '../../../../src/configuration/LoggerConfig';
 import * as DefaultConfiguration from '../../../../src/configuration/DefaultConfiguration';
 
 configurations.forEach((configuration) => {

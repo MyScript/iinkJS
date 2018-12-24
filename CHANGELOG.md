@@ -1,3 +1,10 @@
+# [v5.0.0](https://github.com/MyScript/MyScriptJS/tree/v5.0.0)
+
+## Breaking changes
+
+- V3 API is not accessible anymore
+- Remove stats from editor
+
 # [v4.3.0](https://github.com/MyScript/MyScriptJS/tree/v4.3.0)
 
 ## Features

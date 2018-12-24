@@ -4,15 +4,8 @@ import * as CanvasRenderer from '../renderer/canvas/CanvasRenderer';
 import * as QuadraticCanvasStroker from '../renderer/canvas/stroker/QuadraticCanvasStroker';
 import * as SVGRenderer from '../renderer/svg/SVGRenderer';
 import * as QuadraticSVGStroker from '../renderer/svg/stroker/QuadraticSVGStroker';
-import * as Cdkv3RestTextRecognizer from '../recognizer/rest/v3/Cdkv3RestTextRecognizer';
-import * as Cdkv3RestMathRecognizer from '../recognizer/rest/v3/Cdkv3RestMathRecognizer';
-import * as Cdkv3RestAnalyzerRecognizer from '../recognizer/rest/v3/Cdkv3RestAnalyzerRecognizer';
-import * as Cdkv3RestShapeRecognizer from '../recognizer/rest/v3/Cdkv3RestShapeRecognizer';
-import * as Cdkv3RestMusicRecognizer from '../recognizer/rest/v3/Cdkv3RestMusicRecognizer';
-import * as iinkRestRecognizer from '../recognizer/rest/v4/iinkRestRecognizer';
-import * as Cdkv3WSMathRecognizer from '../recognizer/websocket/v3/Cdkv3WSMathRecognizer';
-import * as Cdkv3WSTextRecognizer from '../recognizer/websocket/v3/Cdkv3WSTextRecognizer';
-import * as Cdkv4WSInteractiveRecognizer from '../recognizer/websocket/v4/Cdkv4WSIInkRecognizer';
+import * as iinkRestRecognizer from '../recognizer/rest/iinkRestRecognizer';
+import * as iinkWsRecognizer from '../recognizer/websocket/IInkWsRecognizer';
 import eventCallback from '../callback/EventCallback';
 
 /**
@@ -44,30 +37,21 @@ export const defaultBehaviors = {
   grabber: PointerEventGrabber,
   strokerList: [QuadraticCanvasStroker, QuadraticSVGStroker],
   rendererList: [CanvasRenderer, SVGRenderer],
-  recognizerList: [Cdkv3RestTextRecognizer, Cdkv3RestMathRecognizer, Cdkv3RestAnalyzerRecognizer, Cdkv3RestShapeRecognizer, Cdkv3RestMusicRecognizer, iinkRestRecognizer, Cdkv3WSTextRecognizer, Cdkv3WSMathRecognizer, Cdkv4WSInteractiveRecognizer],
+  recognizerList: [iinkRestRecognizer, iinkWsRecognizer],
   callbacks: [eventCallback],
   getBehaviorFromConfiguration: (behaviors, configuration) => {
     const behavior = {};
     behavior.grabber = behaviors.grabber;
     if (configuration) {
-      if (configuration.recognitionParams.apiVersion === 'V4' && configuration.recognitionParams.protocol === 'REST') {
+      if (configuration.recognitionParams.protocol === 'REST') {
         behavior.stroker = QuadraticCanvasStroker;
-      } else {
-        behavior.stroker = behaviors.strokerList.find(item =>
-          (item.getInfo().apiVersion === configuration.recognitionParams.apiVersion) &&
-          (item.getInfo().name === configuration.renderingParams.stroker));
-      }
-      if (configuration.recognitionParams.apiVersion === 'V4' && configuration.recognitionParams.protocol === 'REST') {
         behavior.renderer = CanvasRenderer;
+        behavior.recognizer = iinkRestRecognizer;
       } else {
-        behavior.renderer = behaviors.rendererList.find(item => item.getInfo().apiVersion === configuration.recognitionParams.apiVersion);
+        behavior.stroker = QuadraticSVGStroker;
+        behavior.renderer = SVGRenderer;
+        behavior.recognizer = iinkWsRecognizer;
       }
-      behavior.recognizer = behaviors.recognizerList.find(item =>
-        (item.getInfo()
-          .types
-          .includes(configuration.recognitionParams.type)) &&
-        (item.getInfo().protocol === configuration.recognitionParams.protocol) &&
-        (item.getInfo().apiVersion === configuration.recognitionParams.apiVersion));
     }
     behavior.callbacks = behaviors.callbacks;
     return behavior;

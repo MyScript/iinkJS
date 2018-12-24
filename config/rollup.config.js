@@ -20,7 +20,7 @@ const plugins = [
       ['env', { modules: false }]
     ],
     plugins: [
-      'external-helpers'
+      'external-helpers',
     ]
   })
 ];
@@ -49,4 +49,3 @@ export default [{
   ],
   plugins: plugins
 }];
-

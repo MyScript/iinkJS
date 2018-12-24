@@ -115,7 +115,7 @@
       // Creating a recognizer
       const iinkRecognizer = MyScript.DefaultBehaviors.recognizerList.find(x => {
         const infos = x.getInfo();
-        return infos.apiVersion === 'V4' && infos.protocol === 'REST';
+        return infos.protocol === 'REST';
       });
 
       // Creating a empty model
@@ -130,7 +130,7 @@
       //const mimeType = 'application/vnd.myscript.jiix';
       const requestedMimeType = ['text/plain', 'image/png'];
       recognizerContext.editor.configuration.recognitionParams.protocol = 'REST';
-      recognizerContext.editor.configuration.recognitionParams.v4.text.mimeTypes = requestedMimeType;
+      recognizerContext.editor.configuration.recognitionParams.iink.text.mimeTypes = requestedMimeType;
       recognizerContext.editor.configuration.recognitionParams.server = {
         scheme: 'https',
         host: 'webdemoapi.myscript.com',

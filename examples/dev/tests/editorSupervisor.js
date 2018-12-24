@@ -218,7 +218,7 @@
     editorSupervisor.dataset.canredo = changedEvt.canRedo;
     editorSupervisor.dataset.canclear = changedEvt.canClear;
 
-    editorSupervisor.nbstrokes = evt.target.editor.getStats().strokesCount;
+    editorSupervisor.nbstrokes = evt.target.editor.model.rawStrokes.length;
     editorSupervisor.unloaded = !changedEvt.initialized;
   });
 

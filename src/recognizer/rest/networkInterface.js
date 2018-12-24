@@ -52,30 +52,26 @@ function xhr(type, url, data, recognizerContext = {}, apiVersion, mimeType) {
     const request = new XMLHttpRequest();
     request.open(type, url, true);
     request.withCredentials = true;
-    if (apiVersion === 'V3') {
-      request.setRequestHeader('Accept', 'application/json');
-      request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=UTF-8');
-    } else if (apiVersion === 'V4') {
-      switch (configuration.recognitionParams.type) {
-        case 'TEXT':
-          request.setRequestHeader('Accept', 'application/json,' + mimeType);
-          break;
-        case 'MATH':
-          request.setRequestHeader('Accept', 'application/json,' + mimeType);
-          break;
-        case 'DIAGRAM':
-          request.setRequestHeader('Accept', 'application/json,' + mimeType);
-          break;
-        case 'Raw Content':
-          request.setRequestHeader('Accept', 'application/json,' + mimeType);
-          break;
-        default:
-          break;
-      }
-      request.setRequestHeader('applicationKey', configuration.recognitionParams.server.applicationKey);
-      request.setRequestHeader('hmac', CryptoHelper.computeHmac(JSON.stringify(data), configuration.recognitionParams.server.applicationKey, configuration.recognitionParams.server.hmacKey));
-      request.setRequestHeader('Content-Type', 'application/json');
+
+    switch (configuration.recognitionParams.type) {
+      case 'TEXT':
+        request.setRequestHeader('Accept', 'application/json,' + mimeType);
+        break;
+      case 'MATH':
+        request.setRequestHeader('Accept', 'application/json,' + mimeType);
+        break;
+      case 'DIAGRAM':
+        request.setRequestHeader('Accept', 'application/json,' + mimeType);
+        break;
+      case 'Raw Content':
+        request.setRequestHeader('Accept', 'application/json,' + mimeType);
+        break;
+      default:
+        break;
     }
+    request.setRequestHeader('applicationKey', configuration.recognitionParams.server.applicationKey);
+    request.setRequestHeader('hmac', CryptoHelper.computeHmac(JSON.stringify(data), configuration.recognitionParams.server.applicationKey, configuration.recognitionParams.server.hmacKey));
+    request.setRequestHeader('Content-Type', 'application/json');
 
     const isBlobType = mimeType && (mimeType === pptxMimeType || mimeType.startsWith('image/png') || mimeType.startsWith('image/jpeg'));
     if (isBlobType) {
@@ -105,11 +101,8 @@ function xhr(type, url, data, recognizerContext = {}, apiVersion, mimeType) {
     if (recognizerContextRef) {
       recognizerContextRef.idle = false;
     }
-    if (apiVersion === 'V4') {
-      request.send(JSON.stringify(data));
-    } else {
-      request.send(data ? transformRequest(data) : undefined);
-    }
+
+    request.send(JSON.stringify(data));
   }).then((res) => {
     if (recognizerContextRef) {
       recognizerContextRef.idle = true;
