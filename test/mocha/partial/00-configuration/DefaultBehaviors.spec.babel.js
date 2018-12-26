@@ -35,8 +35,8 @@ configurations.forEach((configuration) => {
       // assert.strictEqual(defaultBehaviors.optimizedParameters.exportContentTriggerOn, trigger, `${trigger} should be the default value for ${behavior} exportContentTriggerOn`);
     });
 
-    it('callbacks', () => {
-      assert.isDefined(behavior.callbacks, 'callbacks should be defined');
+    it('events', () => {
+      assert.isDefined(behavior.events, 'events should be defined');
     });
   });
 });

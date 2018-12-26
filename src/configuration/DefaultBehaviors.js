@@ -6,7 +6,7 @@ import * as SVGRenderer from '../renderer/svg/SVGRenderer';
 import * as QuadraticSVGStroker from '../renderer/svg/stroker/QuadraticSVGStroker';
 import * as iinkRestRecognizer from '../recognizer/rest/iinkRestRecognizer';
 import * as iinkWsRecognizer from '../recognizer/websocket/IInkWsRecognizer';
-import eventCallback from '../callback/EventCallback';
+import emit from '../event/Event';
 
 /**
  * Current behavior
@@ -38,7 +38,7 @@ export const defaultBehaviors = {
   strokerList: [QuadraticCanvasStroker, QuadraticSVGStroker],
   rendererList: [CanvasRenderer, SVGRenderer],
   recognizerList: [iinkRestRecognizer, iinkWsRecognizer],
-  callbacks: [eventCallback],
+  events: emit,
   getBehaviorFromConfiguration: (behaviors, configuration) => {
     const behavior = {};
     behavior.grabber = behaviors.grabber;
@@ -53,7 +53,7 @@ export const defaultBehaviors = {
         behavior.recognizer = iinkWsRecognizer;
       }
     }
-    behavior.callbacks = behaviors.callbacks;
+    behavior.events = behaviors.events;
     return behavior;
   }
 };
@@ -70,7 +70,7 @@ export function overrideDefaultBehaviors(behaviors) {
       rendererList: behaviors.rendererList || defaultBehaviors.rendererList,
       strokerList: behaviors.strokerList || defaultBehaviors.strokerList,
       recognizerList: behaviors.recognizerList || defaultBehaviors.recognizerList,
-      callbacks: behaviors.callbacks || defaultBehaviors.callbacks,
+      events: behaviors.events || defaultBehaviors.events,
       getBehaviorFromConfiguration: behaviors.getBehaviorFromConfiguration || defaultBehaviors.getBehaviorFromConfiguration
     };
     logger.debug('Override default behaviors', currentBehaviors);

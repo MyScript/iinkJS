@@ -6,7 +6,7 @@ import { callbackLogger as logger } from '../configuration/LoggerConfig';
  * @param {Object} data
  * @emits {Event}
  */
-export default function eventCallback(type, data) {
+export default function emit(type, data) {
   logger.info(`emitting ${type} event`, data);
   // We are making usage of a browser provided class
   // eslint-disable-next-line no-undef

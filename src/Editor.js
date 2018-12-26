@@ -15,13 +15,13 @@ import * as eastereggs from './eastereggs/InkImporter';
 
 
 /**
- * Trigger callbacks
+ * Emit events
  * @param {Editor} editor
  * @param {Object} data
  * @param {...String} types
  * @return {Model}
  */
-function triggerCallbacks(editor, data, ...types) {
+function emitEvents(editor, data, ...types) {
   const editorRef = editor;
   types.forEach((type) => {
     switch (type) {
@@ -32,11 +32,11 @@ function triggerCallbacks(editor, data, ...types) {
       case Constants.EventType.CLEAR:
       case Constants.EventType.CONVERT:
       case Constants.EventType.EXPORT:
-        editor.callbacks.forEach(callback => callback.call(editor.domElement, type));
+        editor.emit.call(editor.domElement, type);
         break;
       case Constants.EventType.LOADED:
       case Constants.EventType.CHANGED:
-        editor.callbacks.forEach(callback => callback.call(editor.domElement, type, {
+        editor.emit.call(editor.domElement, type, {
           initialized: editor.initialized,
           canUndo: editor.canUndo,
           canRedo: editor.canRedo,
@@ -46,28 +46,28 @@ function triggerCallbacks(editor, data, ...types) {
           undoStackIndex: editor.undoStackIndex,
           canConvert: editor.canConvert,
           canExport: editor.canExport
-        }));
+        });
         break;
       case Constants.EventType.EXPORTED:
         window.clearTimeout(editorRef.notifyTimer);
         editorRef.notifyTimer = window.setTimeout(() => {
-          editor.callbacks.forEach(callback => callback.call(editor.domElement, type, {
+          editor.emit.call(editor.domElement, type, {
             exports: editor.exports
-          }));
+          });
         }, editorRef.configuration.processDelay);
         break;
       case Constants.EventType.SUPPORTED_IMPORT_MIMETYPES:
-        editor.callbacks.forEach(callback => callback.call(editor.domElement, type, {
+        editor.emit.call(editor.domElement, type, {
           mimeTypes: editor.supportedImportMimeTypes
-        }));
+        });
         break;
       case Constants.EventType.ERROR:
-        editor.callbacks.forEach(callback => callback.call(editor.domElement, type, data));
+        editor.emit.call(editor.domElement, type, data);
         break;
       case Constants.EventType.IDLE:
-        editor.callbacks.forEach(callback => callback.call(editor.domElement, type, {
+        editor.emit.call(editor.domElement, type, {
           idle: editor.idle
-        }));
+        });
         break;
       default:
         logger.debug(`No valid trigger configured for ${type}`);
@@ -139,7 +139,7 @@ function manageRecognizedModel(editor, model, ...types) {
       editorRef.model = modelRef;
       editor.renderer.drawModel(editor.rendererContext, editorRef.model, editor.stroker);
     }
-    triggerCallbacks(editor, undefined, ...types);
+    emitEvents(editor, undefined, ...types);
   }
 
   if (editor.configuration.recognitionParams.type === 'TEXT'
@@ -196,7 +196,7 @@ function recognizerCallback(editor, error, model, ...events) {
         editorRef.error.style.display = 'none';
       } else {
         editorRef.error.style.display = 'initial';
-        triggerCallbacks(editor, err, Constants.EventType.ERROR, ...types);
+        emitEvents(editor, err, Constants.EventType.ERROR, ...types);
       }
     } else {
       if (editorRef.error.style.display === 'initial') {
@@ -740,11 +740,11 @@ export class Editor {
   }
 
   /**
-   * Get current callbacks
+   * Get current events
    * @return {Array}
    */
-  get callbacks() {
-    return this.behavior ? this.behavior.callbacks : undefined;
+  get emit() {
+    return this.behavior ? this.behavior.events : undefined;
   }
 
   /**
@@ -856,7 +856,7 @@ export class Editor {
    * Wait for idle state.
    */
   waitForIdle() {
-    triggerCallbacks(this, undefined, Constants.EventType.IDLE);
+    emitEvents(this, undefined, Constants.EventType.IDLE);
     launchWaitForIdle(this, this.model);
   }
 
@@ -873,7 +873,7 @@ export class Editor {
    */
   undo() {
     logger.debug('Undo current model', this.model);
-    triggerCallbacks(this, undefined, Constants.EventType.UNDO);
+    emitEvents(this, undefined, Constants.EventType.UNDO);
     this.undoRedoManager.undo(this.undoRedoContext, this.model, (err, res, ...types) => {
       manageRecognizedModel(this, res, ...types);
     });
@@ -892,7 +892,7 @@ export class Editor {
    */
   redo() {
     logger.debug('Redo current model', this.model);
-    triggerCallbacks(this, undefined, Constants.EventType.REDO);
+    emitEvents(this, undefined, Constants.EventType.REDO);
     this.undoRedoManager.redo(this.undoRedoContext, this.model, (err, res, ...types) => {
       manageRecognizedModel(this, res, ...types);
     });
@@ -920,7 +920,7 @@ export class Editor {
   clear() {
     if (this.canClear) {
       logger.debug('Clear current model', this.model);
-      triggerCallbacks(this, undefined, Constants.EventType.CLEAR);
+      emitEvents(this, undefined, Constants.EventType.CLEAR);
       this.recognizer.clear(this.recognizerContext, this.model, (err, res, ...types) => {
         recognizerCallback(this, err, res, ...types);
       });
@@ -940,7 +940,7 @@ export class Editor {
    */
   convert(conversionState = 'DIGITAL_EDIT') {
     if (this.canConvert) {
-      triggerCallbacks(this, undefined, Constants.EventType.CONVERT);
+      emitEvents(this, undefined, Constants.EventType.CONVERT);
       launchConvert(this, this.model, conversionState);
     }
   }
@@ -984,7 +984,7 @@ export class Editor {
    */
   export_(requestedMimeTypes) {
     if (this.canExport) {
-      triggerCallbacks(this, undefined, Constants.EventType.EXPORT);
+      emitEvents(this, undefined, Constants.EventType.EXPORT);
       launchExport(this, this.model, requestedMimeTypes, Constants.Trigger.DEMAND);
     }
   }
@@ -995,7 +995,7 @@ export class Editor {
    * @param {String} [mimetype] Mimetype of the data, needed if data is not a Blob
    */
   import_(data, mimetype) {
-    triggerCallbacks(this, undefined, Constants.EventType.IMPORT);
+    emitEvents(this, undefined, Constants.EventType.IMPORT);
     launchImport(this, this.model, !(data instanceof Blob) ? new Blob([data], { type: mimetype }) : data);
   }
 
@@ -1068,7 +1068,7 @@ export class Editor {
    * Trigger the change callbacks (and by default send a change event).
    */
   forceChange() {
-    triggerCallbacks(this, undefined, Constants.EventType.CHANGED);
+    emitEvents(this, undefined, Constants.EventType.CHANGED);
   }
 
   /* eslint-disable class-methods-use-this */
