@@ -86,7 +86,7 @@ export function buildWebSocketCallback(destructuredPromise, recognizerContext) {
             NetworkWSInterface.send(recognizerContext, buildSetTheme(recognizerContext.editor.theme));
             NetworkWSInterface.send(recognizerContext, buildSetPenStyle(recognizerContext.editor.penStyle));
             NetworkWSInterface.send(recognizerContext, buildSetPenStyleClasses(recognizerContext.editor.penStyleClasses));
-            recognitionContext.callback(undefined, message.data);
+            recognitionContext.response(undefined, message.data);
             destructuredPromise.resolve(recognitionContext);
             break;
           case 'contentChanged':
@@ -105,29 +105,29 @@ export function buildWebSocketCallback(destructuredPromise, recognizerContext) {
             if (message.data.undoStackIndex !== undefined) {
               recognizerContextRef.undoStackIndex = message.data.undoStackIndex;
             }
-            recognitionContext.callback(undefined, message.data);
+            recognitionContext.response(undefined, message.data);
             break;
           case 'exported':
-            recognitionContext.callback(undefined, message.data);
+            recognitionContext.response(undefined, message.data);
             break;
           case 'svgPatch':
-            recognitionContext.callback(undefined, message.data);
+            recognitionContext.response(undefined, message.data);
             break;
           case 'supportedImportMimeTypes':
             recognizerContextRef.supportedImportMimeTypes = message.data.mimeTypes;
-            recognitionContext.callback(undefined, message.data);
+            recognitionContext.response(undefined, message.data);
             break;
           case 'fileChunkAck':
-            recognitionContext.callback(undefined, message.data);
+            recognitionContext.response(undefined, message.data);
             break;
           case 'idle':
             recognizerContextRef.idle = true;
-            recognitionContext.callback(undefined, message.data);
+            recognitionContext.response(undefined, message.data);
             break;
           case 'error':
             logger.debug('Error detected stopping all recognition', message);
             if (recognitionContext) {
-              recognitionContext.callback(message.data);
+              recognitionContext.response(message.data);
             } else {
               destructuredPromise.reject(Object.assign({}, message.data, { recoverable: false }));
             }
@@ -139,7 +139,7 @@ export function buildWebSocketCallback(destructuredPromise, recognizerContext) {
       case 'error':
         logger.debug('Error detected stopping all recognition', message);
         if (recognitionContext) {
-          recognitionContext.callback(Object.assign({}, message, { recoverable: false }));
+          recognitionContext.response(Object.assign({}, message, { recoverable: false }));
         } else {
           destructuredPromise.reject(Object.assign({}, message, { recoverable: false }));
         }
@@ -150,7 +150,7 @@ export function buildWebSocketCallback(destructuredPromise, recognizerContext) {
         recognizerContextRef.canRedo = false;
         recognizerContextRef.canUndo = false;
         if (recognitionContext) {
-          recognitionContext.callback(message);
+          recognitionContext.response(message);
         } else {
           destructuredPromise.reject(message);
         }
