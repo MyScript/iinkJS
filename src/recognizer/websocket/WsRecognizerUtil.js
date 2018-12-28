@@ -10,13 +10,6 @@ function buildUrl(configuration, suffixUrl) {
   return `${scheme}://${configuration.recognitionParams.server.host}${suffixUrl}`;
 }
 
-const commonCallback = (model, err, res, callback) => {
-  if (res && res.type === 'close') {
-    return callback(err, model, Constants.EventType.CHANGED);
-  }
-  return callback(err, model);
-};
-
 /**
  * Build websocket function
  * @typedef {function} BuildWebSocketFunction
@@ -34,22 +27,18 @@ const commonCallback = (model, err, res, callback) => {
  * @param {function(recognizerContext: RecognizerContext, model: Model, callback: RecognizerCallback)} reconnect
  * @return {Promise} Fulfilled when the init phase is over.
  */
-export function init(suffixUrl, recognizerContext, buildWebSocketCallback, reconnect) {
+export async function init(suffixUrl, recognizerContext, buildWebSocketCallback, reconnect) {
   const recognitionContext = recognizerContext.recognitionContexts[0];
   const recognizerContextReference = RecognizerContext.updateRecognitionPositions(recognizerContext, recognitionContext.model.lastPositions);
   recognizerContextReference.url = buildUrl(recognizerContext.editor.configuration, suffixUrl);
   recognizerContextReference.reconnect = reconnect;
 
-  const destructuredInitPromise = PromiseHelper.destructurePromise();
-  recognizerContextReference.initPromise = destructuredInitPromise.promise;
+  recognizerContextReference.initPromise = recognitionContext.initPromise.promise;
 
   logger.debug('Opening the websocket for context ', recognizerContext);
-  recognizerContextReference.websocketCallback = buildWebSocketCallback(destructuredInitPromise, recognizerContextReference);
+  recognizerContextReference.websocketCallback = buildWebSocketCallback(recognizerContextReference);
   recognizerContextReference.websocket = NetworkWSInterface.openWebSocket(recognizerContextReference);
-  return recognizerContextReference.initPromise.then((res) => {
-    logger.debug('Init over', res);
-    return res;
-  });
+  return recognizerContextReference.initPromise;
 }
 
 export function retry(func, recognizerContext, model, callback, ...params) {
@@ -119,19 +108,22 @@ export function clear(recognizerContext, model, callback) {
  * Close and free all resources that will no longer be used by the recognizer.
  * @param {RecognizerContext} recognizerContext
  * @param {Model} model
- * @param {RecognizerCallback} callback
  */
-export function close(recognizerContext, model, callback) {
+export async function close(recognizerContext, model) {
+  const initPromise = PromiseHelper.destructurePromise();
   const recognitionContext = {
     model,
-    callback: (err, res) => commonCallback(model, err, res, callback)
+    initPromise
   };
   const recognizerContextRef = recognizerContext;
 
-  recognizerContext.initPromise
+  return recognizerContext.initPromise
     .then(() => {
       recognizerContextRef.recognitionContexts[0] = recognitionContext;
       return recognizerContextRef;
     })
-    .then(context => NetworkWSInterface.close(context, 1000, RecognizerContext.CLOSE_RECOGNIZER_MESSAGE));
+    .then((context) => {
+      NetworkWSInterface.close(context, 1000, RecognizerContext.CLOSE_RECOGNIZER_MESSAGE);
+      return recognitionContext.model;
+    });
 }

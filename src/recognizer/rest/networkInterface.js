@@ -42,7 +42,7 @@ function transformRequest(obj) {
  * @param {String} mimeType MimeType to be used
  * @return {Promise}
  */
-function xhr(type, url, data, recognizerContext = {}, apiVersion, mimeType) {
+async function xhr(type, url, data, recognizerContext = {}, apiVersion, mimeType) {
   const pptxMimeType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
   const configuration = recognizerContext.editor.configuration;
   const recognizerContextRef = recognizerContext;
@@ -118,7 +118,7 @@ function xhr(type, url, data, recognizerContext = {}, apiVersion, mimeType) {
  * @param {Object} params Query properties
  * @return {Promise}
  */
-export function get(recognizerContext, url, params) {
+export async function get(recognizerContext, url, params) {
   let queryUrl = url;
   if (params) {
     queryUrl += `?${transformRequest(params)}`;
@@ -135,6 +135,6 @@ export function get(recognizerContext, url, params) {
  * @param {String} mimeType MimeType to be used
  * @return {Promise}
  */
-export function post(recognizerContext, url, data, apiVersion, mimeType) {
+export async function post(recognizerContext, url, data, apiVersion, mimeType) {
   return xhr('POST', url, data, recognizerContext, apiVersion, mimeType);
 }
