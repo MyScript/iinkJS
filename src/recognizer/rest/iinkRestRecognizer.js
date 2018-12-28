@@ -7,6 +7,7 @@ import * as InkModel from '../../model/InkModel';
 import * as StrokeComponent from '../../model/StrokeComponent';
 import * as DefaultTheme from '../../configuration/DefaultTheme';
 import * as DefaultPenStyle from '../../configuration/DefaultPenStyle';
+import { recognizerCallback } from '../RecognizerService';
 
 export { init, close, clear, reset } from '../DefaultRecognizer';
 
@@ -43,7 +44,7 @@ export function getInfo() {
  * @param {String} mimeType
  * @return {Promise.<Model>} Promise that return an updated model as a result
  */
-export function postMessage(suffixUrl, recognizerContext, model, buildMessage, conversionState = '', mimeType) {
+export async function postMessage(suffixUrl, recognizerContext, model, buildMessage, conversionState = '', mimeType) {
   const configuration = recognizerContext.editor.configuration;
   return NetworkInterface.post(recognizerContext, `${configuration.recognitionParams.server.scheme}://${configuration.recognitionParams.server.host}${suffixUrl}`, buildMessage(recognizerContext, model, conversionState), 'V4', mimeType)
     .then((response) => {
@@ -148,7 +149,7 @@ function extractExports(configuration, mimeType, res) {
   return exports;
 }
 
-function resultCallback(model, configuration, res, mimeType, callback) {
+function resultCallback(recognizerContext, model, configuration, res, mimeType) {
   logger.debug('iinkRestRecognizer result callback', model);
   const modelReference = InkModel.updateModelReceivedPosition(model);
   modelReference.rawResults.exports = res;
@@ -158,61 +159,55 @@ function resultCallback(model, configuration, res, mimeType, callback) {
     modelReference.exports = extractExports(configuration, mimeType, res);
   }
   logger.debug('iinkRestRecognizer model updated', modelReference);
-  callback(undefined, modelReference, Constants.EventType.EXPORTED, Constants.EventType.IDLE);
+
+  if (recognizerContext.editor.undoRedoManager) {
+    recognizerCallback(recognizerContext.editor, undefined, modelReference, Constants.EventType.EXPORTED, Constants.EventType.IDLE);
+  }
 }
 
 /**
  * Export content
  * @param {RecognizerContext} recognizerContext Current recognizer context
  * @param {Model} model Current model
- * @param {RecognizerCallback} callback
  * @param {Array[String]} requestedMimeTypes
  */
-export function export_(recognizerContext, model, callback, requestedMimeTypes) {
+export async function export_(recognizerContext, model, requestedMimeTypes) {
   const configuration = recognizerContext.editor.configuration;
 
-  function callPostMessage(mimeType) {
-    postMessage('/api/v4.0/iink/batch', recognizerContext, model, buildData, configuration.restConversionState, mimeType)
+  async function callPostMessage(mimeType) {
+    return postMessage('/api/v4.0/iink/batch', recognizerContext, model, buildData, configuration.restConversionState, mimeType)
       .then((res) => {
-        resultCallback(model, configuration, res, mimeType, callback);
+        resultCallback(recognizerContext, model, configuration, res, mimeType);
+        return model;
       })
       .catch((err) => {
-        callback(err, model);
+        recognizerCallback(recognizerContext.editor, err, model);
+        return err;
       });
   }
 
   if (requestedMimeTypes) {
-    requestedMimeTypes.forEach((mimeType) => {
-      callPostMessage(mimeType);
-    });
+    return Promise.all(requestedMimeTypes.map(mimeType => callPostMessage(mimeType)));
   } else if (configuration.recognitionParams.type === 'TEXT') {
-    configuration.recognitionParams.iink.text.mimeTypes.forEach((mimeType) => {
-      callPostMessage(mimeType);
-    });
+    return Promise.all(configuration.recognitionParams.iink.text.mimeTypes.map(mimeType => callPostMessage(mimeType)));
   } else if (configuration.recognitionParams.type === 'DIAGRAM') {
-    configuration.recognitionParams.iink.diagram.mimeTypes.forEach((mimeType) => {
-      callPostMessage(mimeType);
-    });
+    return Promise.all(configuration.recognitionParams.iink.diagram.mimeTypes.map(mimeType => callPostMessage(mimeType)));
   } else if (configuration.recognitionParams.type === 'MATH') {
-    configuration.recognitionParams.iink.math.mimeTypes.forEach((mimeType) => {
-      callPostMessage(mimeType);
-    });
+    return Promise.all(configuration.recognitionParams.iink.math.mimeTypes.map(mimeType => callPostMessage(mimeType)));
   } else if (configuration.recognitionParams.type === 'Raw Content') {
-    configuration.recognitionParams.iink['raw-content'].mimeTypes.forEach((mimeType) => {
-      callPostMessage(mimeType);
-    });
+    return Promise.all(configuration.recognitionParams.iink['raw-content'].mimeTypes.map(mimeType => callPostMessage(mimeType)));
   }
+  return Promise.reject();
 }
 
 /**
  * Ask for conversion using DIGITAL_EDIT
  * @param {RecognizerContext} recognizerContext Current recognizer context
  * @param {Model} model Current model
- * @param {RecognizerCallback} callback
  */
-export function convert(recognizerContext, model, callback) {
+export function convert(recognizerContext, model) {
   const configuration = recognizerContext.editor.configuration;
   postMessage('/api/v4.0/iink/batch', recognizerContext, model, buildData, 'DIGITAL_EDIT')
-    .then(res => resultCallback(model, configuration, res, callback))
-    .catch(err => callback(err, model));
+    .then(res => resultCallback(model, configuration, res))
+    .catch(err => recognizerCallback(recognizerContext.editor, err, model));
 }

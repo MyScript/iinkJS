@@ -39,7 +39,7 @@ function buildHmacMessage(configuration, message) {
  * @param {RecognizerContext} recognizerContext Current recognizer context
  * @return {function} Callback to handle WebSocket results
  */
-export function buildWebSocketCallback(destructuredPromise, recognizerContext) {
+export function buildWebSocketCallback(recognizerContext) {
   return (message) => {
     const recognizerContextRef = recognizerContext;
     // Handle websocket messages
@@ -86,8 +86,7 @@ export function buildWebSocketCallback(destructuredPromise, recognizerContext) {
             NetworkWSInterface.send(recognizerContext, buildSetTheme(recognizerContext.editor.theme));
             NetworkWSInterface.send(recognizerContext, buildSetPenStyle(recognizerContext.editor.penStyle));
             NetworkWSInterface.send(recognizerContext, buildSetPenStyleClasses(recognizerContext.editor.penStyleClasses));
-            recognitionContext.response(undefined, message.data);
-            destructuredPromise.resolve(recognitionContext);
+            recognitionContext.partChange.resolve([undefined, message.data]);
             break;
           case 'contentChanged':
             if (message.data.canUndo !== undefined) {
@@ -105,31 +104,31 @@ export function buildWebSocketCallback(destructuredPromise, recognizerContext) {
             if (message.data.undoStackIndex !== undefined) {
               recognizerContextRef.undoStackIndex = message.data.undoStackIndex;
             }
-            recognitionContext.response(undefined, message.data);
+            recognitionContext.contentChange.resolve([undefined, message.data]);
             break;
           case 'exported':
-            recognitionContext.response(undefined, message.data);
+            recognitionContext.response.resolve([undefined, message.data]);
             break;
           case 'svgPatch':
-            recognitionContext.response(undefined, message.data);
+            recognitionContext.patch(undefined, message.data);
             break;
           case 'supportedImportMimeTypes':
             recognizerContextRef.supportedImportMimeTypes = message.data.mimeTypes;
-            recognitionContext.response(undefined, message.data);
+            recognitionContext.response.resolve([undefined, message.data]);
             break;
           case 'fileChunkAck':
-            recognitionContext.response(undefined, message.data);
+            recognitionContext.response.resolve([undefined, message.data]);
             break;
           case 'idle':
             recognizerContextRef.idle = true;
-            recognitionContext.response(undefined, message.data);
+            recognitionContext.response.resolve([undefined, message.data]);
             break;
           case 'error':
             logger.debug('Error detected stopping all recognition', message);
             if (recognitionContext) {
-              recognitionContext.response(message.data);
+              recognitionContext.patch(message.data);
             } else {
-              destructuredPromise.reject(Object.assign({}, message.data, { recoverable: false }));
+              recognitionContext.initPromise.reject(Object.assign({}, message.data, { recoverable: false }));
             }
             break;
           default :
@@ -139,9 +138,9 @@ export function buildWebSocketCallback(destructuredPromise, recognizerContext) {
       case 'error':
         logger.debug('Error detected stopping all recognition', message);
         if (recognitionContext) {
-          recognitionContext.response(Object.assign({}, message, { recoverable: false }));
+          recognitionContext.initPromise.resolve(Object.assign({}, message, { recoverable: false }));
         } else {
-          destructuredPromise.reject(Object.assign({}, message, { recoverable: false }));
+          recognitionContext.initPromise.reject(Object.assign({}, message, { recoverable: false }));
         }
         break;
       case 'close':
@@ -150,9 +149,9 @@ export function buildWebSocketCallback(destructuredPromise, recognizerContext) {
         recognizerContextRef.canRedo = false;
         recognizerContextRef.canUndo = false;
         if (recognitionContext) {
-          recognitionContext.response(message);
+          recognitionContext.initPromise.resolve(message);
         } else {
-          destructuredPromise.reject(message);
+          recognitionContext.initPromise.reject(message);
         }
         break;
       default :

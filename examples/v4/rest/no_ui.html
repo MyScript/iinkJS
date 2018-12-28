@@ -163,7 +163,13 @@
       };
 
       // Triggering the recognition
-      iinkRecognizer.export_(recognizerContext, model, recognitionCallback);
+      iinkRecognizer.export_(recognizerContext, model)
+        .then((values) => {
+          values.forEach((value) => {
+            recognitionCallback(undefined, value);
+          });
+        })
+        .catch(err => recognitionCallback(err, undefined));
 
     });
 

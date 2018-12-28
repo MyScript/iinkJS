@@ -12,69 +12,12 @@ import * as RecognizerContext from './model/RecognizerContext';
 import * as SmartGuide from './smartguide/SmartGuide';
 import Constants from './configuration/Constants';
 import * as eastereggs from './eastereggs/InkImporter';
+import {
+  recognizerCallback,
+  emitEvents,
+  manageRecognizedModel
+} from './recognizer/RecognizerService';
 
-
-/**
- * Emit events
- * @param {Editor} editor
- * @param {Object} data
- * @param {...String} types
- * @return {Model}
- */
-function emitEvents(editor, data, ...types) {
-  const editorRef = editor;
-  types.forEach((type) => {
-    switch (type) {
-      case Constants.EventType.RENDERED:
-        break; // Internal use only
-      case Constants.EventType.UNDO:
-      case Constants.EventType.REDO:
-      case Constants.EventType.CLEAR:
-      case Constants.EventType.CONVERT:
-      case Constants.EventType.EXPORT:
-        editor.emit.call(editor.domElement, type);
-        break;
-      case Constants.EventType.LOADED:
-      case Constants.EventType.CHANGED:
-        editor.emit.call(editor.domElement, type, {
-          initialized: editor.initialized,
-          canUndo: editor.canUndo,
-          canRedo: editor.canRedo,
-          canClear: editor.canClear,
-          isEmpty: editor.isEmpty,
-          possibleUndoCount: editor.possibleUndoCount,
-          undoStackIndex: editor.undoStackIndex,
-          canConvert: editor.canConvert,
-          canExport: editor.canExport
-        });
-        break;
-      case Constants.EventType.EXPORTED:
-        window.clearTimeout(editorRef.notifyTimer);
-        editorRef.notifyTimer = window.setTimeout(() => {
-          editor.emit.call(editor.domElement, type, {
-            exports: editor.exports
-          });
-        }, editorRef.configuration.processDelay);
-        break;
-      case Constants.EventType.SUPPORTED_IMPORT_MIMETYPES:
-        editor.emit.call(editor.domElement, type, {
-          mimeTypes: editor.supportedImportMimeTypes
-        });
-        break;
-      case Constants.EventType.ERROR:
-        editor.emit.call(editor.domElement, type, data);
-        break;
-      case Constants.EventType.IDLE:
-        editor.emit.call(editor.domElement, type, {
-          idle: editor.idle
-        });
-        break;
-      default:
-        logger.debug(`No valid trigger configured for ${type}`);
-        break;
-    }
-  });
-}
 
 /**
  * Check if a clear is required, and does it if it is
@@ -82,22 +25,19 @@ function emitEvents(editor, data, ...types) {
  * @param {function} func
  * @param {RecognizerContext} recognizerContext Current recognizer context
  * @param {Model} model Current model
- * @param {RecognizerCallback} callback
- * @param params extra params
  */
-function manageResetState(resetFunc, func, recognizerContext, model, callback, ...params) {
+function manageResetState(resetFunc, func, recognizerContext, model, ...params) {
   // If strokes moved in the undo redo stack then a clear is mandatory before sending strokes.
   if (resetFunc && RecognizerContext.isResetRequired(recognizerContext, model)) {
-    logger.debug('Reset is needed');
     resetFunc(recognizerContext, model, (err, resetedModel, ...types) => {
       if (err) {
-        callback(err, resetedModel, ...types);
+        recognizerCallback(recognizerContext.editor, err, resetedModel, ...types);
       } else {
-        func(recognizerContext, resetedModel, callback, ...params);
+        func(recognizerContext, resetedModel, ...params);
       }
     });
   } else {
-    func(recognizerContext, model, callback, ...params);
+    func(recognizerContext, model, ...params);
   }
 }
 
@@ -118,103 +58,6 @@ function isTriggerValid(editor, type, trigger = editor.configuration.triggers[ty
 }
 
 /**
- * Manage recognized model
- * @param {Editor} editor
- * @param {Model} model
- * @param {...String} types
- */
-function manageRecognizedModel(editor, model, ...types) {
-  const editorRef = editor;
-  const modelRef = model;
-  logger.debug(`model changed callback on ${types} event(s)`, model);
-  if (modelRef.creationTime === editor.model.creationTime) {
-    // Merge recognized model if relevant and return current editor model
-    if ((modelRef.rawStrokes.length === editor.model.rawStrokes.length) &&
-      (modelRef.lastPositions.lastSentPosition >= editor.model.lastPositions.lastReceivedPosition)) {
-      editorRef.model = InkModel.mergeModels(editorRef.model, modelRef);
-      if (InkModel.needRedraw(editorRef.model) || types.includes(Constants.EventType.RENDERED)) {
-        editor.renderer.drawModel(editor.rendererContext, editorRef.model, editor.stroker);
-      }
-    } else {
-      editorRef.model = modelRef;
-      editor.renderer.drawModel(editor.rendererContext, editorRef.model, editor.stroker);
-    }
-    emitEvents(editor, undefined, ...types);
-  }
-
-  if (editor.configuration.recognitionParams.type === 'TEXT'
-    && editor.configuration.recognitionParams.protocol !== 'REST'
-    && editor.configuration.recognitionParams.iink.text.mimeTypes.includes(Constants.Exports.JIIX)
-    && editor.configuration.recognitionParams.iink.text.smartGuide) {
-    // eslint-disable-next-line no-use-before-define
-    launchSmartGuide(editorRef, modelRef.exports);
-  }
-
-  if ((InkModel.extractPendingStrokes(model).length > 0) &&
-    (!editor.recognizer.addStrokes) && // FIXME: Ugly hack to avoid double export (addStrokes + export)
-    (editor.configuration.triggers.exportContent !== Constants.Trigger.DEMAND)) {
-    /* eslint-disable no-use-before-define */
-    launchExport(editor, model);
-    /* eslint-enable no-use-before-define */
-  }
-}
-
-/**
- * Recognizer callback
- * @param {Editor} editor
- * @param {Object} error
- * @param {Model} model
- * @param {...String} events
- */
-function recognizerCallback(editor, error, model, ...events) {
-  const editorRef = editor;
-
-  const handleResult = (err, res, ...types) => {
-    if (err) {
-      if (err.type !== 'close') {
-        logger.error('Error while firing the recognition', err.stack || err); // Handle any error from all above steps
-      }
-      if (
-        // IInk error managment before refactor
-        (err.message === 'Invalid application key.') || (err.message === 'Invalid HMAC') ||
-        // CDK error managment
-        (err.error &&
-          err.error.result &&
-          err.error.result.error &&
-          (err.error.result.error === 'InvalidApplicationKeyException' || err.error.result.error === 'InvalidHMACSignatureException')) ||
-        // IInk error managment after refactor
-        (err.code && err.code === 'access.not.granted')) {
-        editorRef.error.innerText = Constants.Error.WRONG_CREDENTIALS;
-      } else if (err.message === 'Session is too old. Max Session Duration Reached.' ||
-        (err.code && err.code === 'session.too.old')) {
-        editorRef.error.innerText = Constants.Error.TOO_OLD;
-      } else if ((err.code === 1006 || err.code === 1000) && editorRef.error.style.display === 'none') {
-        editorRef.error.innerText = Constants.Error.NOT_REACHABLE;
-      }
-      if ((editorRef.error.innerText === Constants.Error.TOO_OLD || err.reason === 'CLOSE_RECOGNIZER') && RecognizerContext.canReconnect(editor.recognizerContext)) {
-        logger.info('Reconnection is available', err.stack || err);
-        editorRef.error.style.display = 'none';
-      } else {
-        editorRef.error.style.display = 'initial';
-        emitEvents(editor, err, Constants.EventType.ERROR, ...types);
-      }
-    } else {
-      if (editorRef.error.style.display === 'initial') {
-        editorRef.error.style.display = 'none';
-      }
-      manageRecognizedModel(editorRef, res, ...[...events, ...types].filter((el, i, a) => i === a.indexOf(el))); // Remove duplicate events
-    }
-  };
-
-  logger.debug('recognition callback');
-  if (editor.undoRedoManager.updateModel && !error) {
-    editor.undoRedoManager.updateModel(editor.undoRedoContext, model, handleResult);
-  } else {
-    handleResult(error, model, ...events);
-  }
-}
-
-/**
  * Launch the recognition with all editor relative configuration and state.
  * @param {Editor} editor
  * @param {Model} model
@@ -226,22 +69,10 @@ function addStrokes(editor, model, trigger = editor.configuration.triggers.addSt
       .then(() => {
         // Firing addStrokes only if recognizer is configure to do it
         if (isTriggerValid(editor, 'addStrokes', trigger)) {
-          manageResetState(editor.recognizer.reset, editor.recognizer.addStrokes, editor.recognizerContext, model, (err, res, ...types) => {
-            recognizerCallback(editor, err, res, ...types);
-          });
+          manageResetState(editor.recognizer.reset, editor.recognizer.addStrokes, editor.recognizerContext, model);
         }
       });
   }
-}
-
-/**
- * Launch smartguide.
- * @param {Editor} editor
- * @param {Object} exports
- */
-function launchSmartGuide(editor, exports) {
-  const editorRef = editor;
-  editorRef.smartGuide = SmartGuide.launchSmartGuide(editor.smartGuide, exports);
 }
 
 /**
@@ -254,9 +85,7 @@ function launchPointerEvents(editor, model, events) {
   if (editor.recognizer && editor.recognizer.pointerEvents) {
     editor.recognizerContext.initPromise
       .then(() => {
-        editor.recognizer.pointerEvents(editor.recognizerContext, model, events, (err, res, ...types) => {
-          recognizerCallback(editor, err, res, ...types);
-        });
+        editor.recognizer.pointerEvents(editor.recognizerContext, model, events);
       });
   }
 }
@@ -268,7 +97,7 @@ function launchPointerEvents(editor, model, events) {
  * @param {String} [requestedMimeTypes]
  * @param {String} [trigger]
  */
-function launchExport(editor, model, requestedMimeTypes, trigger = editor.configuration.triggers.exportContent) {
+export function launchExport(editor, model, requestedMimeTypes, trigger = editor.configuration.triggers.exportContent) {
   if (editor.recognizer && editor.recognizer.export_) {
     editor.recognizerContext.initPromise
       .then(() => {
@@ -277,9 +106,7 @@ function launchExport(editor, model, requestedMimeTypes, trigger = editor.config
           const editorRef = editor;
           window.clearTimeout(editor.exportTimer);
           editorRef.exportTimer = window.setTimeout(() => {
-            manageResetState(editor.recognizer.reset, editor.recognizer.export_, editor.recognizerContext, model, (err, res, ...types) => {
-              recognizerCallback(editor, err, res, ...types);
-            }, requestedMimeTypes);
+            manageResetState(editor.recognizer.reset, editor.recognizer.export_, editor.recognizerContext, model, requestedMimeTypes);
           }, trigger === Constants.Trigger.QUIET_PERIOD ? editor.configuration.triggerDelay : 0);
         }
       });
@@ -296,9 +123,7 @@ function launchImport(editor, model, data) {
   if (editor.recognizer && editor.recognizer.import_) {
     editor.recognizerContext.initPromise
       .then(() => {
-        editor.recognizer.import_(editor.recognizerContext, model, data, (err, res, ...types) => {
-          recognizerCallback(editor, err, res, ...types);
-        });
+        editor.recognizer.import_(editor.recognizerContext, model, data);
       });
   }
 }
@@ -307,9 +132,7 @@ function launchGetSupportedImportMimeTypes(editor, model) {
   if (editor.recognizer && editor.recognizer.getSupportedImportMimeTypes) {
     editor.recognizerContext.initPromise
       .then(() => {
-        editor.recognizer.getSupportedImportMimeTypes(editor.recognizerContext, model, (err, res, ...types) => {
-          recognizerCallback(editor, err, res, ...types);
-        });
+        editor.recognizer.getSupportedImportMimeTypes(editor.recognizerContext, model);
       });
   }
 }
@@ -324,9 +147,7 @@ function launchConvert(editor, model, conversionState) {
   if (editor.recognizer && editor.recognizer.convert) {
     editor.recognizerContext.initPromise
       .then(() => {
-        editor.recognizer.convert(editor.recognizerContext, model, (err, res, ...types) => {
-          recognizerCallback(editor, err, res, ...types);
-        }, conversionState);
+        editor.recognizer.convert(editor.recognizerContext, model, conversionState);
       });
   }
 }
@@ -335,9 +156,7 @@ function launchConfig(editor, model) {
   if (editor.recognizer && editor.recognizer.sendConfiguration) {
     editor.recognizerContext.initPromise
       .then(() => {
-        editor.recognizer.sendConfiguration(editor.recognizerContext, model, (err, res, ...types) => {
-          recognizerCallback(editor, err, res, ...types);
-        });
+        editor.recognizer.sendConfiguration(editor.recognizerContext, model);
       });
   }
 }
@@ -354,9 +173,7 @@ function launchResize(editor, model) {
         const editorRef = editor;
         window.clearTimeout(editor.resizeTimer);
         editorRef.resizeTimer = window.setTimeout(() => {
-          editor.recognizer.resize(editor.recognizerContext, model, (err, res, ...types) => {
-            recognizerCallback(editor, err, res, ...types);
-          }, editor.domElement);
+          editor.recognizer.resize(editor.recognizerContext, model, editor.domElement);
         }, editor.configuration.resizeTriggerDelay);
       });
     SmartGuide.resize(editor.smartGuide);
@@ -372,9 +189,7 @@ function launchWaitForIdle(editor, model) {
   if (editor.recognizer && editor.recognizer.waitForIdle) {
     editor.recognizerContext.initPromise
       .then(() => {
-        editor.recognizer.waitForIdle(editor.recognizerContext, model, (err, res, ...types) => {
-          recognizerCallback(editor, err, res, ...types);
-        });
+        editor.recognizer.waitForIdle(editor.recognizerContext, model);
       });
   }
 }
@@ -388,9 +203,7 @@ function setPenStyle(editor, model) {
   if (editor.recognizer && editor.recognizer.setPenStyle) {
     editor.recognizerContext.initPromise
       .then(() => {
-        editor.recognizer.setPenStyle(editor.recognizerContext, model, editor.penStyle, (err, res, ...types) => {
-          recognizerCallback(editor, err, res, ...types);
-        });
+        editor.recognizer.setPenStyle(editor.recognizerContext, model, editor.penStyle);
       });
   }
 }
@@ -404,9 +217,7 @@ function setPenStyleClasses(editor, model) {
   if (editor.recognizer && editor.recognizer.setPenStyleClasses) {
     editor.recognizerContext.initPromise
       .then(() => {
-        editor.recognizer.setPenStyleClasses(editor.recognizerContext, model, editor.penStyleClasses, (err, res, ...types) => {
-          recognizerCallback(editor, err, res, ...types);
-        });
+        editor.recognizer.setPenStyleClasses(editor.recognizerContext, model, editor.penStyleClasses);
       });
   }
 }
@@ -420,9 +231,7 @@ function setTheme(editor, model) {
   if (editor.recognizer && editor.recognizer.setTheme) {
     editor.recognizerContext.initPromise
       .then(() => {
-        editor.recognizer.setTheme(editor.recognizerContext, model, editor.theme, (err, res, ...types) => {
-          recognizerCallback(editor, err, res, ...types);
-        });
+        editor.recognizer.setTheme(editor.recognizerContext, model, editor.theme);
       });
   }
 }
@@ -653,21 +462,24 @@ export class Editor {
           this.undoRedoManager = this.innerRecognizer;
         }
 
-        this.innerRecognizer.init(this.recognizerContext, model, (err, res, ...types) => {
-          logger.debug('Recognizer initialized', res);
-          this.loader.style.display = 'none';
-          recognizerCallback(this, err, res, ...types);
-        });
+        this.innerRecognizer.init(this.recognizerContext, model)
+          .then((values) => {
+            logger.info('Recognizer initialized !');
+            this.loader.style.display = 'none';
+          })
+          .catch(err => logger.error(err));
       }
     };
 
     if (recognizer) {
       if (this.innerRecognizer) {
-        this.innerRecognizer.close(this.recognizerContext, this.model, (err, res, ...types) => {
-          logger.info('Recognizer closed');
-          recognizerCallback(this, err, res, ...types);
-          initialize(InkModel.clearModel(res));
-        });
+        this.innerRecognizer.close(this.recognizerContext, this.model)
+          .then((model) => {
+            logger.info('Recognizer closed');
+            recognizerCallback(this, undefined, model);
+            initialize(InkModel.clearModel(model));
+          })
+          .catch(err => logger.error(err));
       } else {
         /**
          * Current model
@@ -921,9 +733,11 @@ export class Editor {
     if (this.canClear) {
       logger.debug('Clear current model', this.model);
       emitEvents(this, undefined, Constants.EventType.CLEAR);
-      this.recognizer.clear(this.recognizerContext, this.model, (err, res, ...types) => {
-        recognizerCallback(this, err, res, ...types);
-      });
+      this.recognizer.clear(this.recognizerContext, this.model)
+        .then(({ err, res, events }) => {
+          recognizerCallback(this, err, res, ...events);
+        })
+        .catch(error => logger.error(error));
     }
   }
 
