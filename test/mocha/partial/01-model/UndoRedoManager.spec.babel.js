@@ -19,34 +19,37 @@ describe('Check undo/redo manager', () => {
   const count = maxSize;
   it(`Should add ${count} models in stack`, (done) => {
     for (let i = 0; i < count; i++) {
-      UndoRedoManager.updateModel(undoRedoContext, InkModel.createModel(configuration), (err, model) => {});
+      UndoRedoManager.updateModel(undoRedoContext, InkModel.createModel(configuration));
     }
     assert.lengthOf(undoRedoContext.stack, maxSize);
     assert.equal(undoRedoContext.currentPosition, maxSize - 1);
-    UndoRedoManager.getModel(undoRedoContext, (err, model) => {
-      assert.isTrue(undoRedoContext.canUndo, 'Wrong canUndo state');
-      assert.isFalse(undoRedoContext.canRedo, 'Wrong canRedo state');
-      done(err);
-    });
+    UndoRedoManager.getModel(undoRedoContext)
+      .then(({ res, types }) => {
+        assert.isTrue(undoRedoContext.canUndo, 'Wrong canUndo state');
+        assert.isFalse(undoRedoContext.canRedo, 'Wrong canRedo state');
+        done();
+      });
   });
 
   it(`Should undo and update current index to ${maxSize - 2}`, (done) => {
-    UndoRedoManager.undo(undoRedoContext, undefined, (err, model) => {
-      assert.lengthOf(undoRedoContext.stack, maxSize);
-      assert.equal(undoRedoContext.currentPosition, maxSize - 2);
-      assert.isTrue(undoRedoContext.canUndo, 'Wrong canUndo state');
-      assert.isTrue(undoRedoContext.canRedo, 'Wrong canRedo state');
-      done(err);
-    });
+    UndoRedoManager.undo(undoRedoContext, undefined)
+      .then(({ res, types }) => {
+        assert.lengthOf(undoRedoContext.stack, maxSize);
+        assert.equal(undoRedoContext.currentPosition, maxSize - 2);
+        assert.isTrue(undoRedoContext.canUndo, 'Wrong canUndo state');
+        assert.isTrue(undoRedoContext.canRedo, 'Wrong canRedo state');
+        done();
+      });
   });
 
   it(`Should redo and update current index to ${maxSize - 1}`, (done) => {
-    UndoRedoManager.redo(undoRedoContext, undefined, (err, model) => {
-      assert.lengthOf(undoRedoContext.stack, maxSize);
-      assert.equal(undoRedoContext.currentPosition, maxSize - 1);
-      assert.isTrue(undoRedoContext.canUndo, 'Wrong canUndo state');
-      assert.isFalse(undoRedoContext.canRedo, 'Wrong canRedo state');
-      done(err);
-    });
+    UndoRedoManager.redo(undoRedoContext, undefined)
+      .then(({ res, types }) => {
+        assert.lengthOf(undoRedoContext.stack, maxSize);
+        assert.equal(undoRedoContext.currentPosition, maxSize - 1);
+        assert.isTrue(undoRedoContext.canUndo, 'Wrong canUndo state');
+        assert.isFalse(undoRedoContext.canRedo, 'Wrong canRedo state');
+        done();
+      });
   });
 });

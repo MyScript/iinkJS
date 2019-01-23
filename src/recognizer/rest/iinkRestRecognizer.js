@@ -7,7 +7,7 @@ import * as InkModel from '../../model/InkModel';
 import * as StrokeComponent from '../../model/StrokeComponent';
 import * as DefaultTheme from '../../configuration/DefaultTheme';
 import * as DefaultPenStyle from '../../configuration/DefaultPenStyle';
-import { recognizerCallback } from '../RecognizerService';
+import { handleError, handleSuccess } from '../RecognizerService';
 
 export { init, close, clear, reset } from '../DefaultRecognizer';
 
@@ -161,7 +161,7 @@ function resultCallback(recognizerContext, model, configuration, res, mimeType) 
   logger.debug('iinkRestRecognizer model updated', modelReference);
 
   if (recognizerContext.editor.undoRedoManager) {
-    recognizerCallback(recognizerContext.editor, undefined, modelReference, Constants.EventType.EXPORTED, Constants.EventType.IDLE);
+    handleSuccess(recognizerContext.editor, modelReference, Constants.EventType.EXPORTED, Constants.EventType.IDLE);
   }
 }
 
@@ -181,7 +181,7 @@ export async function export_(recognizerContext, model, requestedMimeTypes) {
         return model;
       })
       .catch((err) => {
-        recognizerCallback(recognizerContext.editor, err, model);
+        handleError(recognizerContext.editor, err);
         return err;
       });
   }
@@ -209,5 +209,5 @@ export function convert(recognizerContext, model) {
   const configuration = recognizerContext.editor.configuration;
   postMessage('/api/v4.0/iink/batch', recognizerContext, model, buildData, 'DIGITAL_EDIT')
     .then(res => resultCallback(model, configuration, res))
-    .catch(err => recognizerCallback(recognizerContext.editor, err, model));
+    .catch(err => handleError(recognizerContext.editor, err));
 }

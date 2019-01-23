@@ -108,57 +108,62 @@ export function manageRecognizedModel(editor, model, ...types) {
 }
 
 /**
- * Recognizer callback
+ * Method called when server respond with an error
+ * Use in catch on Promises
  * @param {Editor} editor
- * @param {Object} error
- * @param {Model} model
+ * @param {Object} err
  * @param {...String} events
  */
-export function recognizerCallback(editor, error, model, ...events) {
+export function handleError(editor, err, ...events) {
   const editorRef = editor;
-
-  const handleResult = (err, res, ...types) => {
-    if (err) {
-      if (err.type !== 'close') {
-        logger.error('Error while firing the recognition', err.stack || err); // Handle any error from all above steps
-      }
-      if (
-        // IInk error managment before refactor
-        (err.message === 'Invalid application key.') || (err.message === 'Invalid HMAC') ||
-        // CDK error managment
-        (err.error &&
-          err.error.result &&
-          err.error.result.error &&
-          (err.error.result.error === 'InvalidApplicationKeyException' || err.error.result.error === 'InvalidHMACSignatureException')) ||
-        // IInk error managment after refactor
-        (err.code && err.code === 'access.not.granted')) {
-        editorRef.error.innerText = Constants.Error.WRONG_CREDENTIALS;
-      } else if (err.message === 'Session is too old. Max Session Duration Reached.' ||
-        (err.code && err.code === 'session.too.old')) {
-        editorRef.error.innerText = Constants.Error.TOO_OLD;
-      } else if ((err.code === 1006 || err.code === 1000) && editorRef.error.style.display === 'none') {
-        editorRef.error.innerText = Constants.Error.NOT_REACHABLE;
-      }
-      if ((editorRef.error.innerText === Constants.Error.TOO_OLD || err.reason === 'CLOSE_RECOGNIZER') && RecognizerContext.canReconnect(editor.recognizerContext)) {
-        logger.info('Reconnection is available', err.stack || err);
-        editorRef.error.style.display = 'none';
-      } else {
-        editorRef.loader.style.display = 'none';
-        editorRef.error.style.display = 'initial';
-        emitEvents(editor, err, Constants.EventType.ERROR, ...types);
-      }
-    } else {
-      if (editorRef.error.style.display === 'initial') {
-        editorRef.error.style.display = 'none';
-      }
-      manageRecognizedModel(editorRef, res, ...[...events, ...types].filter((el, i, a) => i === a.indexOf(el))); // Remove duplicate events
-    }
-  };
-
-  logger.debug('recognition callback');
-  if (editor.undoRedoManager.updateModel && !error) {
-    editor.undoRedoManager.updateModel(editor.undoRedoContext, model, handleResult);
+  if (err.type !== 'close') {
+    logger.error('Error while firing the recognition', err.stack || err); // Handle any error from all above steps
+  }
+  if (
+    // IInk error managment before refactor
+    (err.message === 'Invalid application key.') || (err.message === 'Invalid HMAC') ||
+    // CDK error managment
+    (err.error &&
+      err.error.result &&
+      err.error.result.error &&
+      (err.error.result.error === 'InvalidApplicationKeyException' || err.error.result.error === 'InvalidHMACSignatureException')) ||
+    // IInk error managment after refactor
+    (err.code && err.code === 'access.not.granted')) {
+    editorRef.error.innerText = Constants.Error.WRONG_CREDENTIALS;
+  } else if (err.message === 'Session is too old. Max Session Duration Reached.' ||
+    (err.code && err.code === 'session.too.old')) {
+    editorRef.error.innerText = Constants.Error.TOO_OLD;
+  } else if ((err.code === 1006 || err.code === 1000) && editorRef.error.style.display === 'none') {
+    editorRef.error.innerText = Constants.Error.NOT_REACHABLE;
+  }
+  if ((editorRef.error.innerText === Constants.Error.TOO_OLD || err.reason === 'CLOSE_RECOGNIZER') && RecognizerContext.canReconnect(editor.recognizerContext)) {
+    logger.info('Reconnection is available', err.stack || err);
+    editorRef.error.style.display = 'none';
   } else {
-    handleResult(error, model, ...events);
+    editorRef.loader.style.display = 'none';
+    editorRef.error.style.display = 'initial';
+    emitEvents(editor, err, Constants.EventType.ERROR, ...events);
+  }
+}
+
+/**
+ * Method called when server respond correctly to request or WS
+ * Use in then on Promises
+ * @param {Editor} editor
+ * @param {Object} model
+ * @param {...String} events
+ */
+export function handleSuccess(editor, model, ...events) {
+  const editorRef = editor;
+  if (editor.undoRedoManager.updateModel) {
+    editor.undoRedoManager.updateModel(editor.undoRedoContext, model)
+      .then(({ res, types }) => {
+        manageRecognizedModel(editorRef, res, ...[...events, ...types].filter((el, i, a) => i === a.indexOf(el)));
+      });
+  } else {
+    if (editorRef.error.style.display === 'initial') {
+      editorRef.error.style.display = 'none';
+    }
+    manageRecognizedModel(editorRef, model, ...events);
   }
 }

@@ -13,7 +13,8 @@ import * as SmartGuide from './smartguide/SmartGuide';
 import Constants from './configuration/Constants';
 import * as eastereggs from './eastereggs/InkImporter';
 import {
-  recognizerCallback,
+  handleError,
+  handleSuccess,
   emitEvents,
   manageRecognizedModel
 } from './recognizer/RecognizerService';
@@ -31,7 +32,7 @@ function manageResetState(resetFunc, func, recognizerContext, model, ...params) 
   if (resetFunc && RecognizerContext.isResetRequired(recognizerContext, model)) {
     resetFunc(recognizerContext, model, (err, resetedModel, ...types) => {
       if (err) {
-        recognizerCallback(recognizerContext.editor, err, resetedModel, ...types);
+        handleError(recognizerContext.editor, err, ...types);
       } else {
         func(recognizerContext, resetedModel, ...params);
       }
@@ -467,7 +468,7 @@ export class Editor {
             logger.info('Recognizer initialized !');
             this.loader.style.display = 'none';
           })
-          .catch(err => logger.error(err));
+          .catch(err => handleError(this, err));
       }
     };
 
@@ -476,10 +477,10 @@ export class Editor {
         this.innerRecognizer.close(this.recognizerContext, this.model)
           .then((model) => {
             logger.info('Recognizer closed');
-            recognizerCallback(this, undefined, model);
+            handleSuccess(this, model);
             initialize(InkModel.clearModel(model));
           })
-          .catch(err => logger.error(err));
+          .catch(err => handleError(this, err));
       } else {
         /**
          * Current model
@@ -614,7 +615,7 @@ export class Editor {
       addStrokes(this, this.model);
     } else {
       // Push model in undo redo manager
-      recognizerCallback(this, undefined, this.model);
+      handleSuccess(this, this.model);
     }
   }
 
@@ -632,7 +633,7 @@ export class Editor {
       this.model.rawStrokes.splice(strokeIndex, 1);
     }
     this.renderer.drawModel(this.rendererContext, this.model, this.stroker);
-    recognizerCallback(this, undefined, this.model);
+    handleSuccess(this, this.model);
     if (!(this.configuration.triggers.exportContent === 'DEMAND')) {
       launchExport(this, this.model);
     }
@@ -653,7 +654,7 @@ export class Editor {
       });
     });
     this.renderer.drawModel(this.rendererContext, this.model, this.stroker);
-    recognizerCallback(this, undefined, this.model);
+    handleSuccess(this, this.model);
   }
 
   /**
@@ -686,9 +687,11 @@ export class Editor {
   undo() {
     logger.debug('Undo current model', this.model);
     emitEvents(this, undefined, Constants.EventType.UNDO);
-    this.undoRedoManager.undo(this.undoRedoContext, this.model, (err, res, ...types) => {
-      manageRecognizedModel(this, res, ...types);
-    });
+    this.undoRedoManager.undo(this.undoRedoContext, this.model)
+      .then(({ res, types }) => {
+        manageRecognizedModel(this, res, ...types);
+      })
+      .catch(err => handleError(this, err));
   }
 
   /**
@@ -705,9 +708,11 @@ export class Editor {
   redo() {
     logger.debug('Redo current model', this.model);
     emitEvents(this, undefined, Constants.EventType.REDO);
-    this.undoRedoManager.redo(this.undoRedoContext, this.model, (err, res, ...types) => {
-      manageRecognizedModel(this, res, ...types);
-    });
+    this.undoRedoManager.redo(this.undoRedoContext, this.model)
+      .then(({ res, types }) => {
+        manageRecognizedModel(this, res, ...types);
+      })
+      .catch(err => handleError(this, err));
   }
 
   /**
@@ -735,9 +740,9 @@ export class Editor {
       emitEvents(this, undefined, Constants.EventType.CLEAR);
       this.recognizer.clear(this.recognizerContext, this.model)
         .then(({ err, res, events }) => {
-          recognizerCallback(this, err, res, ...events);
+          handleSuccess(this, res, ...events);
         })
-        .catch(error => logger.error(error));
+        .catch(error => handleError(this, error));
     }
   }
 

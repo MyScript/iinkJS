@@ -15,22 +15,24 @@ import Constants from '../configuration/Constants';
 /**
  * Get current model in stack
  * @param {UndoRedoContext} undoRedoContext Current undo/redo context
- * @param {function(err: Object, res: Model, types: ...String)} callback
  * @param {Boolean} [clone=true] Whether or not to clone the model
  * @param {...String} types
  */
-export function getModel(undoRedoContext, callback, clone = true, ...types) {
+export async function getModel(undoRedoContext, clone = true, ...types) {
   const model = undoRedoContext.stack[undoRedoContext.currentPosition];
-  callback(undefined, clone ? InkModel.cloneModel(model) : model, ...types);
+  const val = {
+    res: clone ? InkModel.cloneModel(model) : model,
+    types
+  };
+  return Promise.resolve(val);
 }
 
 /**
  * Mutate the undoRedo stack by adding a new model to it.
  * @param {UndoRedoContext} undoRedoContext Current undo/redo context.
  * @param {Model} model Current model.
- * @param {function(err: Object, res: Model, types: ...String)} callback
  */
-export function updateModel(undoRedoContext, model, callback) {
+export async function updateModel(undoRedoContext, model) {
   // Used to update the model with the recognition result if relevant
   const modelIndex = undoRedoContext.stack.findIndex(item => (item.modificationTime === model.modificationTime) && (item.rawStrokes.length === model.rawStrokes.length));
 
@@ -55,37 +57,35 @@ export function updateModel(undoRedoContext, model, callback) {
   }
   UndoRedoContext.updateUndoRedoState(undoRedoContext);
   logger.debug('undo/redo stack updated', undoRedoContext);
-  getModel(undoRedoContext, callback, false, ...types);
+  return getModel(undoRedoContext, false, ...types);
 }
 
 /**
  * Undo
  * @param {UndoRedoContext} undoRedoContext Current undo/redo context.
  * @param {Model} model Current model.
- * @param {function(err: Object, res: Model, types: ...String)} callback
  */
-export function undo(undoRedoContext, model, callback) {
+export async function undo(undoRedoContext, model) {
   const undoRedoContextReference = undoRedoContext;
   if (undoRedoContextReference.currentPosition > 0) {
     undoRedoContextReference.currentPosition -= 1;
     UndoRedoContext.updateUndoRedoState(undoRedoContext);
     logger.debug('undo index', undoRedoContextReference.currentPosition);
   }
-  getModel(undoRedoContext, callback, true, Constants.EventType.CHANGED, Constants.EventType.EXPORTED);
+  return getModel(undoRedoContext, true, Constants.EventType.CHANGED, Constants.EventType.EXPORTED);
 }
 
 /**
  * Redo
  * @param {UndoRedoContext} undoRedoContext Current undo/redo context.
  * @param {Model} model Current model.
- * @param {function(err: Object, res: Model, types: ...String)} callback
  */
-export function redo(undoRedoContext, model, callback) {
+export async function redo(undoRedoContext, model) {
   const undoRedoContextReference = undoRedoContext;
   if (undoRedoContextReference.currentPosition < undoRedoContextReference.stack.length - 1) {
     undoRedoContextReference.currentPosition += 1;
     UndoRedoContext.updateUndoRedoState(undoRedoContext);
     logger.debug('redo index', undoRedoContextReference.currentPosition);
   }
-  getModel(undoRedoContext, callback, true, Constants.EventType.CHANGED, Constants.EventType.EXPORTED);
+  return getModel(undoRedoContext, true, Constants.EventType.CHANGED, Constants.EventType.EXPORTED);
 }
