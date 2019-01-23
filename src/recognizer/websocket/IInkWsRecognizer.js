@@ -9,7 +9,7 @@ import * as DefaultRecognizer from '../DefaultRecognizer';
 import * as WsBuilder from './WsBuilder';
 import * as WsRecognizerUtil from './WsRecognizerUtil';
 import * as PromiseHelper from '../../util/PromiseHelper';
-import { recognizerCallback } from '../RecognizerService';
+import { handleError, handleSuccess } from '../RecognizerService';
 
 export { close } from './WsRecognizerUtil';
 
@@ -266,9 +266,9 @@ const responseCallback = (model, err, res, recognizerContext) => {
     if (res.type === 'close') {
       event = Constants.EventType.CHANGED;
     }
-    return recognizerCallback(recognizerContext.editor, err, model, event);
+    return handleSuccess(recognizerContext.editor, model, event);
   }
-  return recognizerCallback(recognizerContext.editor, err, modelReference);
+  return handleError(recognizerContext.editor, err);
 };
 
 /**
@@ -371,7 +371,10 @@ async function _prepareMessage(recognizerContext, model, buildFunction, ...param
   return contentChanged
     .then(([err, res]) => {
       responseCallback(model, err, res, recognizerContextRef);
-      return res;
+      return {
+        res: model,
+        types: []
+      };
     });
 }
 
@@ -470,8 +473,8 @@ export async function clear(recognizerContext, model) {
     });
 
   return contentChanged
-    .then((values) => {
-      console.log(values);
+    .then(([err, res]) => {
+      responseCallback(model, err, res, recognizerContextRef);
       return {
         err: undefined,
         res: recognizerContextRef.recognitionContexts[0].model,

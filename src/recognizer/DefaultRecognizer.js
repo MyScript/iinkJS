@@ -2,7 +2,7 @@ import { recognizerLogger as logger } from '../configuration/LoggerConfig';
 import * as InkModel from '../model/InkModel';
 import * as RecognizerContext from '../model/RecognizerContext';
 import Constants from '../configuration/Constants';
-import { recognizerCallback } from './RecognizerService';
+import { handleSuccess } from './RecognizerService';
 
 /**
  * Triggers
@@ -70,7 +70,7 @@ export async function init(recognizerContext, model) {
     .then((res) => {
       recognizerContextRef.initialized = true;
       logger.debug('Updated recognizer context', recognizerContextRef);
-      recognizerCallback(recognizerContextRef.editor, undefined, res, Constants.EventType.LOADED);
+      handleSuccess(recognizerContextRef.editor, res, Constants.EventType.LOADED);
       return res;
     });
 }
@@ -87,7 +87,7 @@ export function reset(recognizerContext, model, callback) {
   const recognizerContextRef = RecognizerContext.updateRecognitionPositions(recognizerContext, modelRef.lastPositions);
   delete recognizerContextRef.instanceId;
   logger.debug('Updated recognizer context', recognizerContextRef);
-  recognizerCallback(recognizerContext.editor, undefined, modelRef);
+  handleSuccess(recognizerContext.editor, modelRef);
 }
 
 /**
@@ -117,5 +117,5 @@ export function close(recognizerContext, model) {
   const recognizerContextRef = recognizerContext;
   recognizerContextRef.initialized = false;
   delete recognizerContextRef.instanceId;
-  recognizerCallback(recognizerContext.editor, undefined, model);
+  handleSuccess(recognizerContext.editor, model);
 }
