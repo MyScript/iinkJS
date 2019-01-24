@@ -18,3 +18,20 @@ export function destructurePromise() {
     });
   return { promise: initPromise, resolve, reject };
 }
+
+
+/**
+ * @param time
+ * @return {{timer: *, promise: Promise}}
+ */
+export function delay(time) {
+  let timer = null;
+  const promise = new Promise((resolve) => {
+    timer = setTimeout(resolve, time);
+  });
+  return {
+    promise,
+    timer,
+  };
+}
+
