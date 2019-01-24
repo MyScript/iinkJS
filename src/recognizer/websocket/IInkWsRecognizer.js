@@ -307,7 +307,6 @@ export async function init(recognizerContext, model) {
     contentChanged = recognizerContextRef.recognitionContexts[0].contentChange.promise;
   }
 
-  const partChanged = recognizerContextRef.recognitionContexts[0].partChange.promise;
   WsRecognizerUtil.init('/api/v4.0/iink/document', recognizerContextRef, WsBuilder.buildWebSocketCallback, init)
     .catch((err) => {
       if (RecognizerContext.shouldAttemptImmediateReconnect(recognizerContext) && recognizerContext.reconnect) {
@@ -319,20 +318,19 @@ export async function init(recognizerContext, model) {
       }
     });
 
-  return partChanged
-    .then(([err, res]) => {
-      responseCallback(model, err, res, recognizerContext);
-      recognizerContextRef.recognitionContexts[0].initPromise.resolve();
-      if (contentChanged !== null) {
-        contentChanged
-          .then(([error, result]) => {
-            responseCallback(model, error, result, recognizerContext);
-            return recognizerContextRef.recognitionContexts[0].initPromise;
-          });
+  const [errPartChanged, resPartChanged] = await recognizerContextRef.recognitionContexts[0].partChange.promise;
+  if (resPartChanged) {
+    responseCallback(model, errPartChanged, resPartChanged, recognizerContext);
+    if (contentChanged !== null) {
+      const [errContentChanged, resContentChanged] = await contentChanged;
+      if (resContentChanged) {
+        responseCallback(model, errContentChanged, resContentChanged, recognizerContext);
       }
-      recognizerContextRef.recognitionContexts[0].initPromise.resolve();
-      return recognizerContextRef.recognitionContexts[0].initPromise;
-    });
+    }
+    recognizerContextRef.recognitionContexts[0].initPromise.resolve(true);
+  }
+
+  return recognizerContextRef.recognitionContexts[0].initPromise;
 }
 
 /**
@@ -360,22 +358,23 @@ async function _prepareMessage(recognizerContext, model, buildFunction, ...param
       WsRecognizerUtil.retry(_prepareMessage, recognizerContext, model, buildFunction, ...params);
     });
 
-  const resp = recognizerContextRef.recognitionContexts[0].response.promise;
-  const contentChanged = recognizerContextRef.recognitionContexts[0].contentChange.promise;
+  const resp = await recognizerContextRef.recognitionContexts[0].response.promise;
 
-  resp
-    .then(([error, result]) => {
-      responseCallback(model, error, result, recognizerContextRef);
-    });
+  if (resp) {
+    responseCallback(model, resp[0], resp[1], recognizerContextRef);
+  }
 
-  return contentChanged
-    .then(([err, res]) => {
-      responseCallback(model, err, res, recognizerContextRef);
-      return {
-        res: model,
-        types: []
-      };
-    });
+  const contentChanged = await recognizerContextRef.recognitionContexts[0].contentChange.promise;
+
+  if (contentChanged) {
+    responseCallback(model, contentChanged[0], contentChanged[1], recognizerContextRef);
+    return {
+      res: model,
+      types: []
+    };
+  }
+
+  return null;
 }
 
 /**
@@ -464,23 +463,23 @@ export async function clear(recognizerContext, model) {
   WsRecognizerUtil.sendMessage(recognizerContextRef, buildClear)
     .catch(exception => WsRecognizerUtil.retry(clear, recognizerContext, model));
 
-  const resp = recognizerContextRef.recognitionContexts[0].response.promise;
-  const contentChanged = recognizerContextRef.recognitionContexts[0].contentChange.promise;
+  const resp = await recognizerContextRef.recognitionContexts[0].response.promise;
+  const contentChanged = await recognizerContextRef.recognitionContexts[0].contentChange.promise;
 
-  resp
-    .then(([error, result]) => {
-      responseCallback(model, error, result, recognizerContextRef);
-    });
+  if (resp) {
+    responseCallback(model, resp[0], resp[1], recognizerContextRef);
+  }
 
-  return contentChanged
-    .then(([err, res]) => {
-      responseCallback(model, err, res, recognizerContextRef);
-      return {
-        err: undefined,
-        res: recognizerContextRef.recognitionContexts[0].model,
-        events: []
-      };
-    });
+  if (contentChanged) {
+    responseCallback(model, contentChanged[0], contentChanged[1], recognizerContextRef);
+    return {
+      err: undefined,
+      res: recognizerContextRef.recognitionContexts[0].model,
+      events: []
+    };
+  }
+
+  return null;
 }
 
 /**
@@ -513,7 +512,7 @@ export async function export_(recognizerContext, model, requestedMimeTypes) {
  * @param {Blob} data Import data
  */
 // eslint-disable-next-line no-underscore-dangle
-export function import_(recognizerContext, model, data) {
+export async function import_(recognizerContext, model, data) {
   const recognitionContext = {
     model,
     response: (err, res) => responseCallback(model, err, res, recognizerContext),
@@ -523,16 +522,19 @@ export function import_(recognizerContext, model, data) {
 
   const chunkSize = recognizerContext.editor.configuration.recognitionParams.server.websocket.fileChunkSize;
 
+  const messages = [];
   for (let i = 0; i < data.size; i += chunkSize) {
     if (i === 0) {
-      _prepareMessage(recognizerContextRef, model, buildImportFile, recognitionContext.importFileId, data.type);
+      messages.push(_prepareMessage(recognizerContextRef, model, buildImportFile, recognitionContext.importFileId, data.type));
     }
     const blobPart = data.slice(i, chunkSize, data.type);
     readBlob(blobPart).then((res) => {
       const params = [recognitionContext.importFileId, res, i + chunkSize > data.size];
-      _prepareMessage(recognizerContextRef, model, buildImportChunk, ...params);
+      messages.push(_prepareMessage(recognizerContextRef, model, buildImportChunk, ...params));
     });
   }
+
+  return Promise.all(messages);
 }
 
 /**

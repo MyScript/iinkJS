@@ -18,28 +18,21 @@ import {
   emitEvents,
   manageRecognizedModel
 } from './recognizer/RecognizerService';
+import * as PromiseHelper from './util/PromiseHelper';
 
 
 /**
  * Check if a clear is required, and does it if it is
- * @param {function} resetFunc
- * @param {function} func
- * @param {RecognizerContext} recognizerContext Current recognizer context
+ * @param {Editor} editor
  * @param {Model} model Current model
+ * @return {Promise<*>}
  */
-function manageResetState(resetFunc, func, recognizerContext, model, ...params) {
+async function manageResetState(editor, model) {
   // If strokes moved in the undo redo stack then a clear is mandatory before sending strokes.
-  if (resetFunc && RecognizerContext.isResetRequired(recognizerContext, model)) {
-    resetFunc(recognizerContext, model, (err, resetedModel, ...types) => {
-      if (err) {
-        handleError(recognizerContext.editor, err, ...types);
-      } else {
-        func(recognizerContext, resetedModel, ...params);
-      }
-    });
-  } else {
-    func(recognizerContext, model, ...params);
+  if (editor.recognizer.reset && RecognizerContext.isResetRequired(editor.recognizerContext, model)) {
+    return editor.recognizer.reset(editor.recognizerContext, model);
   }
+  return null;
 }
 
 /**
@@ -64,16 +57,21 @@ function isTriggerValid(editor, type, trigger = editor.configuration.triggers[ty
  * @param {Model} model
  * @param {String} [trigger]
  */
-function addStrokes(editor, model, trigger = editor.configuration.triggers.addStrokes) {
+async function addStrokes(editor, model, trigger = editor.configuration.triggers.addStrokes) {
   if (editor.recognizer && editor.recognizer.addStrokes) {
-    editor.recognizerContext.initPromise
-      .then(() => {
-        // Firing addStrokes only if recognizer is configure to do it
-        if (isTriggerValid(editor, 'addStrokes', trigger)) {
-          manageResetState(editor.recognizer.reset, editor.recognizer.addStrokes, editor.recognizerContext, model);
+    const init = await editor.recognizerContext.initPromise;
+    if (init) {
+      // Firing addStrokes only if recognizer is configure to do it
+      if (isTriggerValid(editor, 'addStrokes', trigger)) {
+        const res = await manageResetState(editor, model);
+        if (res) {
+          return editor.recognizer.addStrokes(editor.recognizerContext, res);
         }
-      });
+        return editor.recognizer.addStrokes(editor.recognizerContext, model);
+      }
+    }
   }
+  return Promise.reject('Cannot addStrokes');
 }
 
 /**
@@ -81,14 +79,16 @@ function addStrokes(editor, model, trigger = editor.configuration.triggers.addSt
  * @param {Editor} editor
  * @param {Model} model
  * @param {PointerEvents} events
+ * @return {Promise<*>}
  */
-function launchPointerEvents(editor, model, events) {
+async function launchPointerEvents(editor, model, events) {
   if (editor.recognizer && editor.recognizer.pointerEvents) {
-    editor.recognizerContext.initPromise
-      .then(() => {
-        editor.recognizer.pointerEvents(editor.recognizerContext, model, events);
-      });
+    const init = await editor.recognizerContext.initPromise;
+    if (init) {
+      return editor.recognizer.pointerEvents(editor.recognizerContext, model, events);
+    }
   }
+  return Promise.reject('Cannot launch pointerEvents');
 }
 
 /**
@@ -98,20 +98,28 @@ function launchPointerEvents(editor, model, events) {
  * @param {String} [requestedMimeTypes]
  * @param {String} [trigger]
  */
-export function launchExport(editor, model, requestedMimeTypes, trigger = editor.configuration.triggers.exportContent) {
+export async function launchExport(editor, model, requestedMimeTypes, trigger = editor.configuration.triggers.exportContent) {
   if (editor.recognizer && editor.recognizer.export_) {
-    editor.recognizerContext.initPromise
-      .then(() => {
-        // Firing export only if recognizer is configure to do it
-        if (isTriggerValid(editor, 'exportContent', trigger)) {
-          const editorRef = editor;
-          window.clearTimeout(editor.exportTimer);
-          editorRef.exportTimer = window.setTimeout(() => {
-            manageResetState(editor.recognizer.reset, editor.recognizer.export_, editor.recognizerContext, model, requestedMimeTypes);
-          }, trigger === Constants.Trigger.QUIET_PERIOD ? editor.configuration.triggerDelay : 0);
-        }
-      });
+    const init = await editor.recognizerContext.initPromise;
+    if (init) {
+      if (isTriggerValid(editor, 'exportContent', trigger)) {
+        const editorRef = editor;
+        window.clearTimeout(editor.exportTimer);
+        const timeout = trigger === Constants.Trigger.QUIET_PERIOD ? editor.configuration.triggerDelay : 0;
+        const delayer = PromiseHelper.delay(timeout);
+        editorRef.exportTimer = delayer.timer;
+        return delayer.promise
+          .then(async () => {
+            const res = await manageResetState(editor, model);
+            if (res) {
+              return editor.recognizer.export_(editor.recognizerContext, res, requestedMimeTypes);
+            }
+            return editor.recognizer.export_(editor.recognizerContext, model, requestedMimeTypes);
+          });
+      }
+    }
   }
+  return Promise.reject('Cannot launch export');
 }
 
 /**
@@ -119,23 +127,32 @@ export function launchExport(editor, model, requestedMimeTypes, trigger = editor
  * @param {Editor} editor
  * @param {Model} model
  * @param {Blob} data
+ * @return {Promise<*>}
  */
-function launchImport(editor, model, data) {
+async function launchImport(editor, model, data) {
   if (editor.recognizer && editor.recognizer.import_) {
-    editor.recognizerContext.initPromise
-      .then(() => {
-        editor.recognizer.import_(editor.recognizerContext, model, data);
-      });
+    const init = await editor.recognizerContext.initPromise;
+    if (init) {
+      return editor.recognizer.import_(editor.recognizerContext, model, data);
+    }
   }
+  return Promise.reject('Cannot launch import');
 }
 
-function launchGetSupportedImportMimeTypes(editor, model) {
+/**
+ * Get the supported mimetypes for import.
+ * @param {Editor} editor
+ * @param {Model} model
+ * @return {Promise<*>}
+ */
+async function launchGetSupportedImportMimeTypes(editor, model) {
   if (editor.recognizer && editor.recognizer.getSupportedImportMimeTypes) {
-    editor.recognizerContext.initPromise
-      .then(() => {
-        editor.recognizer.getSupportedImportMimeTypes(editor.recognizerContext, model);
-      });
+    const init = await editor.recognizerContext.initPromise;
+    if (init) {
+      return editor.recognizer.getSupportedImportMimeTypes(editor.recognizerContext, model);
+    }
   }
+  return Promise.reject('Cannot launch getSupportedImportMimeTypes');
 }
 
 /**
@@ -143,23 +160,32 @@ function launchGetSupportedImportMimeTypes(editor, model) {
  * @param {Editor} editor
  * @param {Model} model
  * @param {String} conversionState
+ * @return {Promise<*>}
  */
-function launchConvert(editor, model, conversionState) {
+async function launchConvert(editor, model, conversionState) {
   if (editor.recognizer && editor.recognizer.convert) {
-    editor.recognizerContext.initPromise
-      .then(() => {
-        editor.recognizer.convert(editor.recognizerContext, model, conversionState);
-      });
+    const init = await editor.recognizerContext.initPromise;
+    if (init) {
+      return editor.recognizer.convert(editor.recognizerContext, model, conversionState);
+    }
   }
+  return Promise.reject('Cannot launch convert');
 }
 
-function launchConfig(editor, model) {
+/**
+ * Launch the configuration for the editor
+ * @param {Editor} editor
+ * @param {Model} model
+ * @return {Promise<*>}
+ */
+async function launchConfig(editor, model) {
   if (editor.recognizer && editor.recognizer.sendConfiguration) {
-    editor.recognizerContext.initPromise
-      .then(() => {
-        editor.recognizer.sendConfiguration(editor.recognizerContext, model);
-      });
+    const init = await editor.recognizerContext.initPromise;
+    if (init) {
+      return editor.recognizer.sendConfiguration(editor.recognizerContext, model);
+    }
   }
+  return Promise.reject('Cannot launch config');
 }
 
 /**
@@ -167,74 +193,84 @@ function launchConfig(editor, model) {
  * @param {Editor} editor
  * @param {Model} model
  */
-function launchResize(editor, model) {
+async function launchResize(editor, model) {
   if (editor.recognizer && editor.recognizer.resize) {
-    editor.recognizerContext.initPromise
-      .then(() => {
-        const editorRef = editor;
-        window.clearTimeout(editor.resizeTimer);
-        editorRef.resizeTimer = window.setTimeout(() => {
-          editor.recognizer.resize(editor.recognizerContext, model, editor.domElement);
-        }, editor.configuration.resizeTriggerDelay);
-      });
-    SmartGuide.resize(editor.smartGuide);
+    const init = await editor.recognizerContext.initPromise;
+    if (init) {
+      const editorRef = editor;
+      window.clearTimeout(editor.resizeTimer);
+      const delayer = PromiseHelper.delay(editor.configuration.resizeTriggerDelay);
+      editorRef.resizeTimer = delayer.timer;
+      SmartGuide.resize(editor.smartGuide);
+      return delayer.promise
+        .then(() => editor.recognizer.resize(editor.recognizerContext, model, editor.domElement));
+    }
   }
+  return Promise.reject('Cannot launch resize');
 }
 
 /**
  * Launch wait for idle
  * @param {Editor} editor
  * @param {Model} model
+ * @return {Promise<*>}
  */
-function launchWaitForIdle(editor, model) {
+async function launchWaitForIdle(editor, model) {
   if (editor.recognizer && editor.recognizer.waitForIdle) {
-    editor.recognizerContext.initPromise
-      .then(() => {
-        editor.recognizer.waitForIdle(editor.recognizerContext, model);
-      });
+    const init = await editor.recognizerContext.initPromise;
+    if (init) {
+      return editor.recognizer.waitForIdle(editor.recognizerContext, model);
+    }
   }
+  return Promise.reject('Cannot launch wait for idle');
 }
 
 /**
  * Set pen style.
  * @param {Editor} editor
  * @param {Model} model
+ * @return {Promise<*>}
  */
-function setPenStyle(editor, model) {
+async function setPenStyle(editor, model) {
   if (editor.recognizer && editor.recognizer.setPenStyle) {
-    editor.recognizerContext.initPromise
-      .then(() => {
-        editor.recognizer.setPenStyle(editor.recognizerContext, model, editor.penStyle);
-      });
+    const init = await editor.recognizerContext.initPromise;
+    if (init) {
+      return editor.recognizer.setPenStyle(editor.recognizerContext, model, editor.penStyle);
+    }
   }
+  return Promise.reject('Cannot set pentStyle');
 }
 
 /**
  * Set pen style.
  * @param {Editor} editor
  * @param {Model} model
+ * @return {Promise<*>}
  */
-function setPenStyleClasses(editor, model) {
+async function setPenStyleClasses(editor, model) {
   if (editor.recognizer && editor.recognizer.setPenStyleClasses) {
-    editor.recognizerContext.initPromise
-      .then(() => {
-        editor.recognizer.setPenStyleClasses(editor.recognizerContext, model, editor.penStyleClasses);
-      });
+    const init = await editor.recognizerContext.initPromise;
+    if (init) {
+      return editor.recognizer.setPenStyleClasses(editor.recognizerContext, model, editor.penStyleClasses);
+    }
   }
+  return Promise.reject('Cannot set penStyleClasses');
 }
 
 /**
  * Set theme.
  * @param {Editor} editor
  * @param {Model} model
+ * @return {Promise<*>}
  */
-function setTheme(editor, model) {
+async function setTheme(editor, model) {
   if (editor.recognizer && editor.recognizer.setTheme) {
-    editor.recognizerContext.initPromise
-      .then(() => {
-        editor.recognizer.setTheme(editor.recognizerContext, model, editor.theme);
-      });
+    const init = await editor.recognizerContext.initPromise;
+    if (init) {
+      return editor.recognizer.setTheme(editor.recognizerContext, model, editor.theme);
+    }
   }
+  return Promise.reject('Cannot set theme');
 }
 
 /**
@@ -668,9 +704,9 @@ export class Editor {
   /**
    * Wait for idle state.
    */
-  waitForIdle() {
+  async waitForIdle() {
     emitEvents(this, undefined, Constants.EventType.IDLE);
-    launchWaitForIdle(this, this.model);
+    return launchWaitForIdle(this, this.model);
   }
 
   /**
@@ -684,14 +720,13 @@ export class Editor {
   /**
    * Undo the last action.
    */
-  undo() {
+  async undo() {
     logger.debug('Undo current model', this.model);
     emitEvents(this, undefined, Constants.EventType.UNDO);
-    this.undoRedoManager.undo(this.undoRedoContext, this.model)
-      .then(({ res, types }) => {
-        manageRecognizedModel(this, res, ...types);
-      })
+    const { res, types } = await this.undoRedoManager.undo(this.undoRedoContext, this.model)
       .catch(err => handleError(this, err));
+    manageRecognizedModel(this, res, ...types);
+    return res;
   }
 
   /**
@@ -704,15 +739,15 @@ export class Editor {
 
   /**
    * Redo the last action.
+   * @return {Promise<*>}
    */
-  redo() {
+  async redo() {
     logger.debug('Redo current model', this.model);
     emitEvents(this, undefined, Constants.EventType.REDO);
-    this.undoRedoManager.redo(this.undoRedoContext, this.model)
-      .then(({ res, types }) => {
-        manageRecognizedModel(this, res, ...types);
-      })
+    const { res, types } = await this.undoRedoManager.redo(this.undoRedoContext, this.model)
       .catch(err => handleError(this, err));
+    manageRecognizedModel(this, res, ...types);
+    return res;
   }
 
   /**
@@ -733,17 +768,18 @@ export class Editor {
 
   /**
    * Clear the output and the recognition result.
+   * @return {Promise<*>}
    */
-  clear() {
+  async clear() {
     if (this.canClear) {
       logger.debug('Clear current model', this.model);
       emitEvents(this, undefined, Constants.EventType.CLEAR);
-      this.recognizer.clear(this.recognizerContext, this.model)
-        .then(({ err, res, events }) => {
-          handleSuccess(this, res, ...events);
-        })
+      const { err, res, events } = await this.recognizer.clear(this.recognizerContext, this.model)
         .catch(error => handleError(this, error));
+      handleSuccess(this, res, ...events);
+      return res;
     }
+    return Promise.reject('Cannot launch clear');
   }
 
   /**
@@ -751,26 +787,30 @@ export class Editor {
    * @return {Boolean}
    */
   get canConvert() {
-    return this.canUndo && this.canClear && this.recognizer && this.recognizer.convert;
+    return !!(this.canUndo && this.canClear && this.recognizer && this.recognizer.convert);
   }
 
   /**
    * Convert the current content
+   * @param {string} conversionState
+   * @return {Promise<*>}
    */
-  convert(conversionState = 'DIGITAL_EDIT') {
+  async convert(conversionState = 'DIGITAL_EDIT') {
     if (this.canConvert) {
       emitEvents(this, undefined, Constants.EventType.CONVERT);
-      launchConvert(this, this.model, conversionState);
+      return launchConvert(this, this.model, conversionState);
     }
+    return Promise.reject('Cannot launch convert');
   }
 
   /**
    * Set the guides for text
    * @param {Boolean} [enable]
+   * @return {Promise<*|null>}
    */
-  setGuides(enable = true) {
+  async setGuides(enable = true) {
     this.configuration.recognitionParams.iink.text.guides.enable = enable;
-    launchConfig(this, this.model);
+    return launchConfig(this, this.model);
   }
 
   /**
@@ -813,24 +853,26 @@ export class Editor {
    * @param {Blob|*} data Data to import
    * @param {String} [mimetype] Mimetype of the data, needed if data is not a Blob
    */
-  import_(data, mimetype) {
+  async import_(data, mimetype) {
     emitEvents(this, undefined, Constants.EventType.IMPORT);
-    launchImport(this, this.model, !(data instanceof Blob) ? new Blob([data], { type: mimetype }) : data);
+    return launchImport(this, this.model, !(data instanceof Blob) ? new Blob([data], { type: mimetype }) : data);
   }
 
   /**
    * Get supported import mime types
+   * @return {Promise<*|null>}
    */
-  getSupportedImportMimeTypes() {
-    launchGetSupportedImportMimeTypes(this, this.model);
+  async getSupportedImportMimeTypes() {
+    return launchGetSupportedImportMimeTypes(this, this.model);
   }
 
   /**
    * pointer events
    * @param {PointerEvents} events
+   * @return {Promise<*|null>}
    */
-  pointerEvents(events) {
-    launchPointerEvents(this, this.model, events);
+  async pointerEvents(events) {
+    return launchPointerEvents(this, this.model, events);
   }
 
   /**

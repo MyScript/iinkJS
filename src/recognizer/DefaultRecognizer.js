@@ -79,15 +79,16 @@ export async function init(recognizerContext, model) {
  * Reset server context. Currently nothing to do there.
  * @param {RecognizerContext} recognizerContext Current recognizer context
  * @param {Model} model Current model
- * @param {RecognizerCallback} callback
  */
-export function reset(recognizerContext, model, callback) {
+export async function reset(recognizerContext, model) {
   const modelRef = InkModel.resetModelPositions(model);
   logger.debug('Updated model', modelRef);
   const recognizerContextRef = RecognizerContext.updateRecognitionPositions(recognizerContext, modelRef.lastPositions);
   delete recognizerContextRef.instanceId;
   logger.debug('Updated recognizer context', recognizerContextRef);
-  handleSuccess(recognizerContext.editor, modelRef);
+  return Promise.resolve({
+    res: modelRef,
+  });
 }
 
 /**
