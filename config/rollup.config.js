@@ -3,7 +3,7 @@ import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import babel from 'rollup-plugin-babel';
-import { uglify } from 'rollup-plugin-uglify';
+import { terser } from 'rollup-plugin-terser';
 
 const plugins = [
   json(),
@@ -24,11 +24,9 @@ const plugins = [
       '@babel/transform-runtime',
       '@babel/external-helpers'
     ]
-  })
+  }),
+  terser()
 ];
-
-const pluginsWithUglify = [...plugins];
-pluginsWithUglify.push(uglify());
 
 export default [{
   input: 'src/myscript.js',
@@ -40,7 +38,7 @@ export default [{
       exports: 'named'
     }
   ],
-  plugins: pluginsWithUglify
+  plugins
 }, {
   input: 'src/myscript.js',
   output: [
@@ -49,5 +47,5 @@ export default [{
       format: 'es'
     }
   ],
-  plugins: plugins
+  plugins
 }];
