@@ -1,4 +1,4 @@
-import assign from 'assign-deep';
+import merge from 'lodash.merge';
 import { editorLogger as logger } from './LoggerConfig';
 
 
@@ -132,9 +132,9 @@ export function overrideDefaultConfiguration(configuration) {
   if (confRef && confRef.recognitionParams.server && confRef.recognitionParams.server.useWindowLocation) {
     confRef.recognitionParams.server.scheme = window.location.protocol.slice(0, -1);
     confRef.recognitionParams.server.host = window.location.host;
-    currentConfiguration = assign({}, defaultConfiguration, confRef === undefined ? {} : confRef);
+    currentConfiguration = merge({}, defaultConfiguration, confRef === undefined ? {} : confRef);
   } else {
-    currentConfiguration = assign({}, defaultConfiguration, configuration === undefined ? {} : configuration);
+    currentConfiguration = merge({}, defaultConfiguration, configuration === undefined ? {} : configuration);
   }
   logger.debug('Override default configuration', currentConfiguration);
   return currentConfiguration;
