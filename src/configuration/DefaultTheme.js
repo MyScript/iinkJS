@@ -1,5 +1,5 @@
 import JsonCSS from 'json-css';
-import assign from 'assign-deep';
+import merge from 'lodash.merge';
 import { editorLogger as logger } from './LoggerConfig';
 
 /**
@@ -58,7 +58,7 @@ const parser = new JsonCSS();
  * @return {Theme} Overridden theme
  */
 export function overrideDefaultTheme(theme) {
-  const currentTheme = assign({}, defaultTheme, theme === undefined ? {} : theme);
+  const currentTheme = merge({}, defaultTheme, theme === undefined ? {} : theme);
   logger.debug('Override default theme', currentTheme);
   return currentTheme;
 }

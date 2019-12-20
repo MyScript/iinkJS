@@ -1,5 +1,5 @@
 import JsonCSS from 'json-css';
-import assign from 'assign-deep';
+import merge from 'lodash.merge';
 import { editorLogger as logger } from './LoggerConfig';
 
 /**
@@ -23,7 +23,7 @@ const parser = new JsonCSS();
  * @return {PenStyle} Overridden style
  */
 export function overrideDefaultPenStyle(style) {
-  const currentStyle = assign({}, defaultPenStyle, style === undefined ? {} : style);
+  const currentStyle = merge({}, defaultPenStyle, style === undefined ? {} : style);
   logger.debug('Override default pen style', currentStyle);
   return currentStyle;
 }
