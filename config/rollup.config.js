@@ -1,9 +1,9 @@
 /* eslint-disable object-shorthand */
-import json from 'rollup-plugin-json';
-import resolve from 'rollup-plugin-node-resolve';
+import json from '@rollup/plugin-json';
+import resolve from '@rollup/plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import babel from 'rollup-plugin-babel';
-import uglify from 'rollup-plugin-uglify';
+import { uglify } from 'rollup-plugin-uglify';
 
 const plugins = [
   json(),
@@ -16,11 +16,13 @@ const plugins = [
   babel({
     exclude: 'node_modules/**',
     babelrc: false,
+    runtimeHelpers: true,
     presets: [
-      ['env', { modules: false }]
+      ['@babel/env']
     ],
     plugins: [
-      'external-helpers',
+      '@babel/transform-runtime',
+      '@babel/external-helpers'
     ]
   })
 ];
