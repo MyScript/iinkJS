@@ -125,6 +125,11 @@ function findValuesHelper(obj, key, list) {
   return list;
 }
 
+function noop() {
+  return {};
+}
+
+require.extensions['.css'] = noop;
 
 module.exports = {
   parseItf,

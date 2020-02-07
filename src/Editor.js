@@ -1,4 +1,5 @@
 /* eslint-disable no-underscore-dangle */
+import style from './myscript.css';
 import { editorLogger as logger } from './configuration/LoggerConfig';
 import * as DefaultBehaviors from './configuration/DefaultBehaviors';
 import * as DefaultConfiguration from './configuration/DefaultConfiguration';
@@ -283,6 +284,14 @@ export class Editor {
    * @param {Behaviors} [behaviors] Custom behaviors to apply
    */
   constructor(element, configuration, penStyle, theme, behaviors) {
+    const styleElement = document.createElement('style');
+    styleElement.appendChild(document.createTextNode(''));
+    element.appendChild(styleElement);
+
+    const sheet = styleElement.sheet;
+    styleElement.textContent = style;
+
+    this.sheet = sheet;
     /**
      * Inner reference to the DOM Element
      * @type {Element}
