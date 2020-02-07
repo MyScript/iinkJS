@@ -4,6 +4,8 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import babel from 'rollup-plugin-babel';
 import { terser } from 'rollup-plugin-terser';
+import postcss from 'rollup-plugin-postcss';
+import toImport from 'postcss-import';
 
 const plugins = [
   json(),
@@ -25,7 +27,11 @@ const plugins = [
       '@babel/external-helpers'
     ]
   }),
-  terser()
+  terser(),
+  postcss({
+    plugins: [toImport],
+    inject: false
+  })
 ];
 
 export default [{
