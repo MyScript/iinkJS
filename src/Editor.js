@@ -27,7 +27,7 @@ import * as PromiseHelper from './util/PromiseHelper';
  * @param {Model} model Current model
  * @return {Promise<*>}
  */
-async function manageResetState(editor, model) {
+function manageResetState(editor, model) {
   // If strokes moved in the undo redo stack then a clear is mandatory before sending strokes.
   if (editor.recognizer.reset && RecognizerContext.isResetRequired(editor.recognizerContext, model)) {
     return editor.recognizer.reset(editor.recognizerContext, model);
@@ -108,14 +108,12 @@ export async function launchExport(editor, model, requestedMimeTypes, trigger = 
         const timeout = trigger === Constants.Trigger.QUIET_PERIOD ? editor.configuration.triggerDelay : 0;
         const delayer = PromiseHelper.delay(timeout);
         editorRef.exportTimer = delayer.timer;
-        return delayer.promise
-          .then(async () => {
-            const res = await manageResetState(editor, model);
-            if (res) {
-              return editor.recognizer.export_(editor.recognizerContext, res, requestedMimeTypes);
-            }
-            return editor.recognizer.export_(editor.recognizerContext, model, requestedMimeTypes);
-          });
+        await delayer.promise;
+        const res = await manageResetState(editor, model);
+        if (res) {
+          return editor.recognizer.export_(editor.recognizerContext, res, requestedMimeTypes);
+        }
+        return editor.recognizer.export_(editor.recognizerContext, model, requestedMimeTypes);
       }
     }
   }
@@ -202,8 +200,8 @@ async function launchResize(editor, model) {
       const delayer = PromiseHelper.delay(editor.configuration.resizeTriggerDelay);
       editorRef.resizeTimer = delayer.timer;
       SmartGuide.resize(editor.smartGuide);
-      return delayer.promise
-        .then(() => editor.recognizer.resize(editor.recognizerContext, model, editor.domElement));
+      await delayer.promise;
+      return editor.recognizer.resize(editor.recognizerContext, model, editor.domElement);
     }
   }
   return Promise.reject('Cannot launch resize');
@@ -421,7 +419,9 @@ export class Editor {
      * @type {Theme}
      */
     this.innerTheme = DefaultTheme.overrideDefaultTheme(theme);
-    setTheme(this, this.model);
+    setTheme(this, this.model)
+      .then(res => console.log(res))
+      .catch(err => console.error(err));
   }
 
   /**
@@ -703,8 +703,9 @@ export class Editor {
 
   /**
    * Wait for idle state.
+   * @return {Promise<*>}
    */
-  async waitForIdle() {
+  waitForIdle() {
     emitEvents(this, undefined, Constants.EventType.IDLE);
     return launchWaitForIdle(this, this.model);
   }
@@ -719,6 +720,7 @@ export class Editor {
 
   /**
    * Undo the last action.
+   * @return {Promise<*>}
    */
   async undo() {
     logger.debug('Undo current model', this.model);
@@ -752,7 +754,7 @@ export class Editor {
 
   /**
    * True if empty, false otherwise
-   * @returns {boolean}
+   * @return {boolean}
    */
   get isEmpty() {
     return this.recognizerContext.isEmpty;
@@ -774,7 +776,7 @@ export class Editor {
     if (this.canClear) {
       logger.debug('Clear current model', this.model);
       emitEvents(this, undefined, Constants.EventType.CLEAR);
-      const { err, res, events } = await this.recognizer.clear(this.recognizerContext, this.model)
+      const { res, events } = await this.recognizer.clear(this.recognizerContext, this.model)
         .catch(error => handleError(this, error));
       handleSuccess(this, res, ...events);
       return res;
@@ -795,7 +797,7 @@ export class Editor {
    * @param {string} conversionState
    * @return {Promise<*>}
    */
-  async convert(conversionState = 'DIGITAL_EDIT') {
+  convert(conversionState = 'DIGITAL_EDIT') {
     if (this.canConvert) {
       emitEvents(this, undefined, Constants.EventType.CONVERT);
       return launchConvert(this, this.model, conversionState);
@@ -808,7 +810,7 @@ export class Editor {
    * @param {Boolean} [enable]
    * @return {Promise<*|null>}
    */
-  async setGuides(enable = true) {
+  setGuides(enable = true) {
     this.configuration.recognitionParams.iink.text.guides.enable = enable;
     return launchConfig(this, this.model);
   }
@@ -844,8 +846,9 @@ export class Editor {
   export_(requestedMimeTypes) {
     if (this.canExport) {
       emitEvents(this, undefined, Constants.EventType.EXPORT);
-      launchExport(this, this.model, requestedMimeTypes, Constants.Trigger.DEMAND);
+      return launchExport(this, this.model, requestedMimeTypes, Constants.Trigger.DEMAND);
     }
+    return Promise.reject('Cannot launch export');
   }
 
   /**
@@ -853,7 +856,7 @@ export class Editor {
    * @param {Blob|*} data Data to import
    * @param {String} [mimetype] Mimetype of the data, needed if data is not a Blob
    */
-  async import_(data, mimetype) {
+  import_(data, mimetype) {
     emitEvents(this, undefined, Constants.EventType.IMPORT);
     return launchImport(this, this.model, !(data instanceof Blob) ? new Blob([data], { type: mimetype }) : data);
   }
@@ -862,7 +865,7 @@ export class Editor {
    * Get supported import mime types
    * @return {Promise<*|null>}
    */
-  async getSupportedImportMimeTypes() {
+  getSupportedImportMimeTypes() {
     return launchGetSupportedImportMimeTypes(this, this.model);
   }
 
@@ -871,7 +874,7 @@ export class Editor {
    * @param {PointerEvents} events
    * @return {Promise<*|null>}
    */
-  async pointerEvents(events) {
+  pointerEvents(events) {
     return launchPointerEvents(this, this.model, events);
   }
 
@@ -893,7 +896,7 @@ export class Editor {
   resize() {
     logger.debug('Resizing editor');
     this.renderer.resize(this.rendererContext, this.model, this.stroker, this.configuration.renderingParams.minHeight, this.configuration.renderingParams.minWidth);
-    launchResize(this, this.model);
+    return launchResize(this, this.model);
   }
 
   /**
