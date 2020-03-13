@@ -95,7 +95,7 @@ const inks = [{
   strokes: threetimes2,
   apiVersion: 'V4',
   exports: {
-    LATEX: ['3', '31', '311','3112']
+    LATEX: ['3', '31', '311', '3112']
   }
 }, {
   name: 'hello',
