@@ -33,7 +33,7 @@ pipeline {
 
       stage ('test'){
         steps {
-          sh "make ${env.MAKE_ARGS} test"
+          sh "make ${env.MAKE_ARGS} test-e2e"
         }
       }
 
