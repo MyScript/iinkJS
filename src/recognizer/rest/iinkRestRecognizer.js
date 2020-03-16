@@ -44,7 +44,7 @@ export function getInfo() {
  * @param {String} mimeType
  * @return {Promise.<Model>} Promise that return an updated model as a result
  */
-export async function postMessage(suffixUrl, recognizerContext, model, buildMessage, conversionState = '', mimeType) {
+export function postMessage(suffixUrl, recognizerContext, model, buildMessage, conversionState = '', mimeType) {
   const configuration = recognizerContext.editor.configuration;
   return NetworkInterface.post(recognizerContext, `${configuration.recognitionParams.server.scheme}://${configuration.recognitionParams.server.host}${suffixUrl}`, buildMessage(recognizerContext, model, conversionState), 'V4', mimeType)
     .then((response) => {
@@ -171,10 +171,10 @@ function resultCallback(recognizerContext, model, configuration, res, mimeType) 
  * @param {Model} model Current model
  * @param {Array[String]} requestedMimeTypes
  */
-export async function export_(recognizerContext, model, requestedMimeTypes) {
+export function export_(recognizerContext, model, requestedMimeTypes) {
   const configuration = recognizerContext.editor.configuration;
 
-  async function callPostMessage(mimeType) {
+  function callPostMessage(mimeType) {
     return postMessage('/api/v4.0/iink/batch', recognizerContext, model, buildData, configuration.restConversionState, mimeType)
       .then((res) => {
         resultCallback(recognizerContext, model, configuration, res, mimeType);

@@ -18,7 +18,7 @@ import Constants from '../configuration/Constants';
  * @param {Boolean} [clone=true] Whether or not to clone the model
  * @param {...String} types
  */
-export async function getModel(undoRedoContext, clone = true, ...types) {
+export function getModel(undoRedoContext, clone = true, ...types) {
   const model = undoRedoContext.stack[undoRedoContext.currentPosition];
   const val = {
     res: clone ? InkModel.cloneModel(model) : model,
@@ -32,7 +32,7 @@ export async function getModel(undoRedoContext, clone = true, ...types) {
  * @param {UndoRedoContext} undoRedoContext Current undo/redo context.
  * @param {Model} model Current model.
  */
-export async function updateModel(undoRedoContext, model) {
+export function updateModel(undoRedoContext, model) {
   // Used to update the model with the recognition result if relevant
   const modelIndex = undoRedoContext.stack.findIndex(item => (item.modificationTime === model.modificationTime) && (item.rawStrokes.length === model.rawStrokes.length));
 
@@ -65,7 +65,7 @@ export async function updateModel(undoRedoContext, model) {
  * @param {UndoRedoContext} undoRedoContext Current undo/redo context.
  * @param {Model} model Current model.
  */
-export async function undo(undoRedoContext, model) {
+export function undo(undoRedoContext, model) {
   const undoRedoContextReference = undoRedoContext;
   if (undoRedoContextReference.currentPosition > 0) {
     undoRedoContextReference.currentPosition -= 1;
@@ -80,7 +80,7 @@ export async function undo(undoRedoContext, model) {
  * @param {UndoRedoContext} undoRedoContext Current undo/redo context.
  * @param {Model} model Current model.
  */
-export async function redo(undoRedoContext, model) {
+export function redo(undoRedoContext, model) {
   const undoRedoContextReference = undoRedoContext;
   if (undoRedoContextReference.currentPosition < undoRedoContextReference.stack.length - 1) {
     undoRedoContextReference.currentPosition += 1;
