@@ -61,7 +61,7 @@ import { handleSuccess } from './RecognizerService';
  * @param {RecognizerContext} recognizerContext Current recognizer context
  * @param {Model} model Current model
  */
-export async function init(recognizerContext, model) {
+export function init(recognizerContext, model) {
   const modelRef = InkModel.resetModelPositions(model);
   logger.debug('Updated model', modelRef);
   const recognizerContextRef = RecognizerContext.updateRecognitionPositions(recognizerContext, modelRef.lastPositions);
@@ -80,7 +80,7 @@ export async function init(recognizerContext, model) {
  * @param {RecognizerContext} recognizerContext Current recognizer context
  * @param {Model} model Current model
  */
-export async function reset(recognizerContext, model) {
+export function reset(recognizerContext, model) {
   const modelRef = InkModel.resetModelPositions(model);
   logger.debug('Updated model', modelRef);
   const recognizerContextRef = RecognizerContext.updateRecognitionPositions(recognizerContext, modelRef.lastPositions);
@@ -96,7 +96,7 @@ export async function reset(recognizerContext, model) {
  * @param {RecognizerContext} recognizerContext Current recognizer context
  * @param {Model} model Current model
  */
-export async function clear(recognizerContext, model) {
+export function clear(recognizerContext, model) {
   const modelRef = InkModel.clearModel(model);
   logger.debug('Updated model', modelRef);
   const recognizerContextRef = RecognizerContext.updateRecognitionPositions(recognizerContext, modelRef.lastPositions);

@@ -27,7 +27,7 @@ function buildUrl(configuration, suffixUrl) {
  * @param {function(recognizerContext: RecognizerContext, model: Model, callback: RecognizerCallback)} reconnect
  * @return {Promise} Fulfilled when the init phase is over.
  */
-export async function init(suffixUrl, recognizerContext, buildWebSocketCallback, reconnect) {
+export function init(suffixUrl, recognizerContext, buildWebSocketCallback, reconnect) {
   const recognitionContext = recognizerContext.recognitionContexts[0];
   const recognizerContextReference = RecognizerContext.updateRecognitionPositions(recognizerContext, recognitionContext.model.lastPositions);
   recognizerContextReference.url = buildUrl(recognizerContext.editor.configuration, suffixUrl);
@@ -109,7 +109,7 @@ export function clear(recognizerContext, model, callback) {
  * @param {RecognizerContext} recognizerContext
  * @param {Model} model
  */
-export async function close(recognizerContext, model) {
+export function close(recognizerContext, model) {
   const initPromise = PromiseHelper.destructurePromise();
   const recognitionContext = {
     model,

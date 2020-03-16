@@ -382,7 +382,7 @@ async function _prepareMessage(recognizerContext, model, buildFunction, ...param
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export async function newContentPart(recognizerContext, model) {
+export function newContentPart(recognizerContext, model) {
   return _prepareMessage(recognizerContext, model, buildNewContentPart, recognizerContext.editor.configuration);
 }
 
@@ -391,7 +391,7 @@ export async function newContentPart(recognizerContext, model) {
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export async function openContentPart(recognizerContext, model) {
+export function openContentPart(recognizerContext, model) {
   const params = [recognizerContext.editor.configuration, recognizerContext.currentPartId];
   return _prepareMessage(recognizerContext, model, buildOpenContentPart, params);
 }
@@ -401,7 +401,7 @@ export async function openContentPart(recognizerContext, model) {
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export async function sendConfiguration(recognizerContext, model) {
+export function sendConfiguration(recognizerContext, model) {
   return _prepareMessage(recognizerContext, model, buildConfiguration, recognizerContext.editor.configuration);
 }
 
@@ -411,7 +411,7 @@ export async function sendConfiguration(recognizerContext, model) {
  * @param {Model} model Current model
  * @param {PointerEvents} events to be imported
  */
-export async function pointerEvents(recognizerContext, model, events) {
+export function pointerEvents(recognizerContext, model, events) {
   return _prepareMessage(recognizerContext, model, buildPointerEvents, events);
 }
 
@@ -420,7 +420,7 @@ export async function pointerEvents(recognizerContext, model, events) {
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export async function addStrokes(recognizerContext, model) {
+export function addStrokes(recognizerContext, model) {
   const params = [recognizerContext, model];
   return _prepareMessage(recognizerContext, model, buildAddStrokes, ...params);
 }
@@ -430,7 +430,7 @@ export async function addStrokes(recognizerContext, model) {
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export async function undo(recognizerContext, model) {
+export function undo(recognizerContext, model) {
   return _prepareMessage(recognizerContext, model, buildUndo);
 }
 
@@ -439,7 +439,7 @@ export async function undo(recognizerContext, model) {
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export async function redo(recognizerContext, model) {
+export function redo(recognizerContext, model) {
   return _prepareMessage(recognizerContext, model, buildRedo);
 }
 
@@ -488,7 +488,7 @@ export async function clear(recognizerContext, model) {
  * @param {Model} model Current model
  * @param {String} conversionState Conversion State, by default DigitalEdit
  */
-export async function convert(recognizerContext, model, conversionState) {
+export function convert(recognizerContext, model, conversionState) {
   return _prepareMessage(recognizerContext, model, buildConvert, conversionState);
 }
 
@@ -500,7 +500,7 @@ export async function convert(recognizerContext, model, conversionState) {
  * @param {Array[String]} requestedMimeTypes
  */
 // eslint-disable-next-line no-underscore-dangle
-export async function export_(recognizerContext, model, requestedMimeTypes) {
+export function export_(recognizerContext, model, requestedMimeTypes) {
   const params = [recognizerContext.editor.configuration, recognizerContext.currentPartId, requestedMimeTypes];
   return _prepareMessage(recognizerContext, model, buildExport, ...params);
 }
@@ -512,7 +512,7 @@ export async function export_(recognizerContext, model, requestedMimeTypes) {
  * @param {Blob} data Import data
  */
 // eslint-disable-next-line no-underscore-dangle
-export async function import_(recognizerContext, model, data) {
+export function import_(recognizerContext, model, data) {
   const recognitionContext = {
     model,
     response: (err, res) => responseCallback(model, err, res, recognizerContext),
@@ -542,7 +542,7 @@ export async function import_(recognizerContext, model, data) {
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export async function getSupportedImportMimeTypes(recognizerContext, model) {
+export function getSupportedImportMimeTypes(recognizerContext, model) {
   return _prepareMessage(recognizerContext, model, buildGetSupportedImportMimeTypes);
 }
 
@@ -551,7 +551,7 @@ export async function getSupportedImportMimeTypes(recognizerContext, model) {
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export async function waitForIdle(recognizerContext, model) {
+export function waitForIdle(recognizerContext, model) {
   return _prepareMessage(recognizerContext, model, buildWaitForIdle);
 }
 
@@ -561,7 +561,7 @@ export async function waitForIdle(recognizerContext, model) {
  * @param {Model} model Current model
  * @param {Element} element Current element
  */
-export async function resize(recognizerContext, model, element) {
+export function resize(recognizerContext, model, element) {
   const params = [element, recognizerContext.editor.configuration.renderingParams.minHeight, recognizerContext.editor.configuration.renderingParams.minWidth];
   return _prepareMessage(recognizerContext, model, buildResize, ...params);
 }
@@ -572,7 +572,7 @@ export async function resize(recognizerContext, model, element) {
  * @param {Model} model Current model
  * @param {Number} value=10 Zoom value
  */
-export async function zoom(recognizerContext, model, value = 10) {
+export function zoom(recognizerContext, model, value = 10) {
   return _prepareMessage(recognizerContext, model, buildZoom, value);
 }
 
@@ -582,7 +582,7 @@ export async function zoom(recognizerContext, model, value = 10) {
  * @param {Model} model Current model
  * @param {PenStyle} penStyle Current penStyle
  */
-export async function setPenStyle(recognizerContext, model, penStyle) {
+export function setPenStyle(recognizerContext, model, penStyle) {
   return _prepareMessage(recognizerContext, model, buildSetPenStyle, penStyle);
 }
 
@@ -592,7 +592,7 @@ export async function setPenStyle(recognizerContext, model, penStyle) {
  * @param {Model} model Current model
  * @param {String} penStyleClasses Current penStyleClasses
  */
-export async function setPenStyleClasses(recognizerContext, model, penStyleClasses) {
+export function setPenStyleClasses(recognizerContext, model, penStyleClasses) {
   return _prepareMessage(recognizerContext, model, buildSetPenStyleClasses, penStyleClasses);
 }
 
@@ -602,6 +602,6 @@ export async function setPenStyleClasses(recognizerContext, model, penStyleClass
  * @param {Model} model Current model
  * @param {Theme} theme Current theme
  */
-export async function setTheme(recognizerContext, model, theme) {
+export function setTheme(recognizerContext, model, theme) {
   return _prepareMessage(recognizerContext, model, buildSetTheme, theme);
 }
