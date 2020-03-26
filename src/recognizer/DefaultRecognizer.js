@@ -60,6 +60,7 @@ import { handleSuccess } from './RecognizerService';
  * Initialize recognition
  * @param {RecognizerContext} recognizerContext Current recognizer context
  * @param {Model} model Current model
+ * @return {Promise}
  */
 export function init(recognizerContext, model) {
   const modelRef = InkModel.resetModelPositions(model);
@@ -79,6 +80,7 @@ export function init(recognizerContext, model) {
  * Reset server context. Currently nothing to do there.
  * @param {RecognizerContext} recognizerContext Current recognizer context
  * @param {Model} model Current model
+ * @return {Promise}
  */
 export function reset(recognizerContext, model) {
   const modelRef = InkModel.resetModelPositions(model);
@@ -95,6 +97,7 @@ export function reset(recognizerContext, model) {
  * Clear server context. Currently nothing to do there.
  * @param {RecognizerContext} recognizerContext Current recognizer context
  * @param {Model} model Current model
+ * @return {Promise}
  */
 export function clear(recognizerContext, model) {
   const modelRef = InkModel.clearModel(model);
@@ -113,10 +116,11 @@ export function clear(recognizerContext, model) {
  * Close and free all resources that will no longer be used by the recognizer.
  * @param {RecognizerContext} recognizerContext Current recognizer context
  * @param {Model} model Current model
+ * @return {Promise}
  */
 export function close(recognizerContext, model) {
   const recognizerContextRef = recognizerContext;
   recognizerContextRef.initialized = false;
   delete recognizerContextRef.instanceId;
-  handleSuccess(recognizerContext.editor, model);
+  return Promise.resolve(model);
 }

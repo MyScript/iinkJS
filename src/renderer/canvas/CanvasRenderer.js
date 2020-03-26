@@ -120,7 +120,6 @@ export function attach(element, minHeight = 0, minWidth = 0) {
  */
 export function detach(element, context) {
   logger.debug('detach renderer', element);
-  context.resources.forEach(res => element.removeChild(res));
   element.removeChild(context.renderingCanvas);
   element.removeChild(context.capturingCanvas);
 }
