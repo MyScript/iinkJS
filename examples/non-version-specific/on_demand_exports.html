@@ -45,37 +45,37 @@
       <div id="editor" touch-action="none"></div>
     </div>
     <script>
-      var editorElement = document.getElementById('editor');
-      var resultElement = document.getElementById('export-result');
-      var undoElement = document.getElementById('undo');
-      var redoElement = document.getElementById('redo');
-      var clearElement = document.getElementById('clear');
-      var exportElement = document.getElementById('exportContent');
+      const editorElement = document.getElementById('editor');
+      const resultElement = document.getElementById('export-result');
+      const undoElement = document.getElementById('undo');
+      const redoElement = document.getElementById('redo');
+      const clearElement = document.getElementById('clear');
+      const exportElement = document.getElementById('exportContent');
 
-      editorElement.addEventListener('changed', function (event) {
+      editorElement.addEventListener('changed', (event) => {
         undoElement.disabled = !event.detail.canUndo;
         redoElement.disabled = !event.detail.canRedo;
         exportElement.disabled = !event.detail.canExport;
         clearElement.disabled = event.detail.isEmpty;
       });
 
-      editorElement.addEventListener('exported', function (evt) {
+      editorElement.addEventListener('exported', (evt) => {
         if (evt.detail) {
         resultElement.innerHTML = '<span>' + JSON.stringify(evt.detail) + '</span>';
         } else {
           resultElement.innerHTML = '';
         }
       });
-      undoElement.addEventListener('click', function () {
+      undoElement.addEventListener('click', () => {
         editorElement.editor.undo();
       });
-      redoElement.addEventListener('click', function () {
+      redoElement.addEventListener('click', () => {
         editorElement.editor.redo();
       });
-      clearElement.addEventListener('click', function () {
+      clearElement.addEventListener('click', () => {
         editorElement.editor.clear();
       });
-      exportElement.addEventListener('click', function () {
+      exportElement.addEventListener('click', () => {
         exportElement.disabled = true;
         editorElement.editor.export_();
       });
@@ -103,7 +103,7 @@
         }
       });
 
-      window.addEventListener('resize', function () {
+      window.addEventListener('resize', () => {
         editorElement.editor.resize();
       });
 

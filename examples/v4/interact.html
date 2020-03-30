@@ -49,28 +49,28 @@
     nextButton.classList.add('classic-btn');
     nextButton.innerHTML = 'Next question<svg class="icn"><use xmlns:xlink="http://www.w3.org/1999/xlink" href="#icn-play"></use></svg>';
 
-    var editorElement = document.getElementById('editor');
-    var questionElement = document.getElementById('question');
-    var resultElement = document.getElementById('result');
-    var nextDivElement = document.getElementById('nextDiv');
+    const editorElement = document.getElementById('editor');
+    const questionElement = document.getElementById('question');
+    const resultElement = document.getElementById('result');
+    const nextDivElement = document.getElementById('nextDiv');
 
-    var undoElement = document.getElementById('undo');
-    var redoElement = document.getElementById('redo');
+    const undoElement = document.getElementById('undo');
+    const redoElement = document.getElementById('redo');
 
     const countries = ['France', 'Italy', 'Spain', 'Argentina', 'Japan'];
     const capitals = ['Paris', 'Rome', 'Madrid', 'Buenos Aires', 'Tokyo'];
 
-    var randomNumber = Math.floor(Math.random() * countries.length);
+    let randomNumber = Math.floor(Math.random() * countries.length);
 
     questionElement.innerText = 'What is the capital of ' + countries[randomNumber] + '?';
 
-    editorElement.addEventListener('changed', function (event) {
+    editorElement.addEventListener('changed', (event) => {
       undoElement.disabled = !event.detail.canUndo;
       redoElement.disabled = !event.detail.canRedo;
     });
 
-    editorElement.addEventListener('exported', function (evt) {
-      var exports = evt.detail.exports;
+    editorElement.addEventListener('exported', (evt) => {
+      const exports = evt.detail.exports;
       if (exports && exports['text/plain']) {
         exportedIsAnswer(exports);
       } else {
@@ -78,13 +78,13 @@
       }
     });
 
-    nextButton.addEventListener('click', function () {
+    nextButton.addEventListener('click', () => {
       changeQuestion();
     });
-    undoElement.addEventListener('click', function () {
+    undoElement.addEventListener('click', () => {
       editorElement.editor.undo();
     });
-    redoElement.addEventListener('click', function () {
+    redoElement.addEventListener('click', () => {
       editorElement.editor.redo();
     });
 
@@ -133,7 +133,7 @@
       }
     });
 
-    window.addEventListener('resize', function () {
+    window.addEventListener('resize', () => {
       editorElement.editor.resize();
     });
   </script>

@@ -43,7 +43,7 @@
   const redoElement = document.getElementById('redo');
   const clearElement = document.getElementById('clear');
 
-  editorElement.addEventListener('changed', function (event) {
+  editorElement.addEventListener('changed', (event) => {
     undoElement.disabled = !event.detail.canUndo;
     redoElement.disabled = !event.detail.canRedo;
   });
@@ -70,7 +70,7 @@
       .replace(new RegExp("(align.{1})", "g"), "aligned");
   }
 
-  editorElement.addEventListener('exported', function (evt) {
+  editorElement.addEventListener('exported', (evt) => {
     const exports = evt.detail.exports;
     console.log(evt);
     if (exports && exports['application/x-latex']) {
@@ -82,13 +82,13 @@
     }
   });
 
-  undoElement.addEventListener('click', function () {
+  undoElement.addEventListener('click', () => {
     editorElement.editor.undo();
   });
-  redoElement.addEventListener('click', function () {
+  redoElement.addEventListener('click', () => {
     editorElement.editor.redo();
   });
-  clearElement.addEventListener('click', function () {
+  clearElement.addEventListener('click', () => {
     editorElement.editor.clear();
   });
 
@@ -119,7 +119,7 @@
     }
   });
 
-  window.addEventListener('resize', function () {
+  window.addEventListener('resize', () => {
     editorElement.editor.resize();
   });
 </script>

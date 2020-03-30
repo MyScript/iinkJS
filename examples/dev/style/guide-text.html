@@ -75,26 +75,26 @@
   <div id="editor" touch-action="none"></div>
 </div>
 <script>
-  var editorElement = document.getElementById('editor');
-  var undoElement = document.getElementById('undo');
-  var redoElement = document.getElementById('redo');
-  var clearElement = document.getElementById('clear');
-  var convertElement = document.getElementById('convert');
+  const editorElement = document.getElementById('editor');
+  const undoElement = document.getElementById('undo');
+  const redoElement = document.getElementById('redo');
+  const clearElement = document.getElementById('clear');
+  const convertElement = document.getElementById('convert');
 
-  var fontStyle = document.getElementById('font-style');
-  var fontWeight = document.getElementById('font-weight');
-  var fontSize = document.getElementById('font-size');
-  var lineHeight = document.getElementById('line-height');
-  var penWidth = document.getElementById('-myscript-pen-width');
-  var penBrush = document.getElementById('-myscript-pen-brush');
-  var color = document.getElementById('color');
-  var textDecoration = document.getElementById('-myscript-text-decoration-style');
-  var textDecorationColor = document.getElementById('-myscript-text-decoration-color');
-  var textDecorationBackgroundColor = document.getElementById('-myscript-text-decoration-background-color');
-  var textDecorationPenWidth = document.getElementById('-myscript-text-decoration-pen-width');
+  const fontStyle = document.getElementById('font-style');
+  const fontWeight = document.getElementById('font-weight');
+  const fontSize = document.getElementById('font-size');
+  const lineHeight = document.getElementById('line-height');
+  const penWidth = document.getElementById('-myscript-pen-width');
+  const penBrush = document.getElementById('-myscript-pen-brush');
+  const color = document.getElementById('color');
+  const textDecoration = document.getElementById('-myscript-text-decoration-style');
+  const textDecorationColor = document.getElementById('-myscript-text-decoration-color');
+  const textDecorationBackgroundColor = document.getElementById('-myscript-text-decoration-background-color');
+  const textDecorationPenWidth = document.getElementById('-myscript-text-decoration-pen-width');
 
 
-  var theme = {
+  const theme = {
     ink: {
       'color': color.value,
       '-myscript-pen-width': penWidth.value,
@@ -129,23 +129,23 @@
     }
   ));
 
-  editorElement.addEventListener('changed', function (evt) {
+  editorElement.addEventListener('changed', (evt) => {
     clearElement.disabled = evt.detail.isEmpty;
     undoElement.disabled = !evt.detail.canUndo;
     redoElement.disabled = !evt.detail.canRedo;
     convertElement.disabled = !evt.detail.canConvert;
   });
 
-  undoElement.addEventListener('click', function () {
+  undoElement.addEventListener('click', () => {
     editorElement.editor.undo();
   });
-  redoElement.addEventListener('click', function () {
+  redoElement.addEventListener('click', () => {
     editorElement.editor.redo();
   });
-  clearElement.addEventListener('click', function () {
+  clearElement.addEventListener('click', () => {
     editorElement.editor.clear();
   });
-  convertElement.addEventListener('click', function () {
+  convertElement.addEventListener('click', () => {
     editorElement.editor.convert();
   });
 
@@ -154,7 +154,7 @@
    * @param {Element} The DOM element to attach the ink paper
    * @param {Object} The recognition parameters
    */
-  var editor = MyScript.register(editorElement, {
+  const editor = MyScript.register(editorElement, {
     recognitionParams: {
       type: 'TEXT',
       protocol: 'WEBSOCKET',
@@ -172,7 +172,7 @@
     }
   });
 
-  window.addEventListener('resize', function () {
+  window.addEventListener('resize', ()  => {
     editorElement.editor.resize();
   });
 </script>

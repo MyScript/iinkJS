@@ -58,16 +58,16 @@
     localStorage.removeItem('editorTextContent');
   });
 
-  editorElement.addEventListener('changed', function (event) {
+  editorElement.addEventListener('changed', (event) => {
     undoElement.disabled = !event.detail.canUndo;
     redoElement.disabled = !event.detail.canRedo;
   });
 
-  editorElement.addEventListener('exported', function (event) {
+  editorElement.addEventListener('exported', (event) => {
     localStorage.setItem('editorTextContent', event.detail.exports['text/plain']);
   });
 
-  editorElement.addEventListener('loaded', function (evt) {
+  editorElement.addEventListener('loaded', (evt) => {
     /**
      * Retrieve the list of available recognition languages
      * @param {Object} The editor recognition parameters
@@ -76,24 +76,24 @@
     const res = MyScript.getAvailableLanguageList();
 
     if (languageElement.options.length === 0) {
-      Object.keys(res.result).forEach(function (key) {
+      Object.keys(res.result).forEach((key) => {
         const selected = currentLanguage === key;
         languageElement.options[languageElement.options.length] = new Option(res.result[key], key, selected, selected);
       });
     }
   });
 
-  languageElement.addEventListener('change', function (e) {
+  languageElement.addEventListener('change', (e) => {
     const configuration = editorElement.editor.configuration;
     //The path to the language depend of the version of API you are using.
     configuration.recognitionParams.iink.lang = e.target.value;
     editorElement.editor.configuration = configuration;
   });
 
-  undoElement.addEventListener('click', function () {
+  undoElement.addEventListener('click', () => {
     editorElement.editor.undo();
   });
-  redoElement.addEventListener('click', function () {
+  redoElement.addEventListener('click', () => {
     editorElement.editor.redo();
   });
 
@@ -121,7 +121,7 @@
     editorElement.editor.import_(editorTextContent, 'text/plain');
   }
 
-  window.addEventListener('resize', function () {
+  window.addEventListener('resize', () => {
     editorElement.editor.resize();
   });
 </script>

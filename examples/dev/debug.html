@@ -49,43 +49,43 @@
       <div id="editor" touch-action="none"></div>
     </div>
     <script>
-      var editorElement = document.getElementById('editor');
-      var undoElement = document.getElementById('undo');
-      var redoElement = document.getElementById('redo');
-      var levelElement = document.getElementById('level');
+      const editorElement = document.getElementById('editor');
+      const undoElement = document.getElementById('undo');
+      const redoElement = document.getElementById('redo');
+      const levelElement = document.getElementById('level');
 
-      editorElement.addEventListener('changed', function (event) {
+      editorElement.addEventListener('changed', (event) => {
         undoElement.disabled = !event.detail.canUndo;
         redoElement.disabled = !event.detail.canRedo;
       });
 
-      undoElement.addEventListener('click', function () {
+      undoElement.addEventListener('click', () => {
         editorElement.editor.undo();
       });
-      redoElement.addEventListener('click', function () {
+      redoElement.addEventListener('click', () => {
         editorElement.editor.redo();
       });
 
-      levelElement.addEventListener('change', function (e) {
+      levelElement.addEventListener('change', (e) => {
         Object.keys(MyScript.Constants.Logger).forEach(function (key) {
-          var name = MyScript.Constants.Logger[key];
-          var logger = MyScript.LoggerConfig.getLogger(name);
+          const name = MyScript.Constants.Logger[key];
+          const logger = MyScript.LoggerConfig.getLogger(name);
           logger.setLevel(e.target.value, false);
         });
       });
 
-      var defaultLevel = 'DEBUG';
-      Object.keys(MyScript.Constants.Logger).forEach(function (key) {
-        var name = MyScript.Constants.Logger[key];
-        var logger = MyScript.LoggerConfig.getLogger(name);
+      const defaultLevel = 'DEBUG';
+      Object.keys(MyScript.Constants.Logger).forEach((key) => {
+        const name = MyScript.Constants.Logger[key];
+        const logger = MyScript.LoggerConfig.getLogger(name);
         logger.setLevel(defaultLevel, false);
       });
 
       /**
        * Initialize the list of available log levels
        */
-      Object.keys(MyScript.Constants.LogLevel).forEach(function (key) {
-        var selected = defaultLevel === key;
+      Object.keys(MyScript.Constants.LogLevel).forEach((key) => {
+        const selected = defaultLevel === key;
         levelElement.options[levelElement.options.length] = new Option(MyScript.Constants.LogLevel[key], key, selected, selected);
       });
       levelElement.disabled = false;
@@ -106,7 +106,7 @@
         }
       });
 
-      window.addEventListener('resize', function () {
+      window.addEventListener('resize', () => {
         editorElement.editor.resize();
       });
     </script>

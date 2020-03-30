@@ -42,20 +42,20 @@
   <div id="editor" touch-action="none"></div>
 </div>
 <script>
-  var editorElement = document.getElementById('editor');
+  const editorElement = document.getElementById('editor');
 
-  var undoElement = document.getElementById('undo');
-  var redoElement = document.getElementById('redo');
+  const undoElement = document.getElementById('undo');
+  const redoElement = document.getElementById('redo');
 
-  editorElement.addEventListener('changed', function (event) {
+  editorElement.addEventListener('changed', (event) => {
     undoElement.disabled = !event.detail.canUndo;
     redoElement.disabled = !event.detail.canRedo;
   });
 
-  undoElement.addEventListener('click', function () {
+  undoElement.addEventListener('click', () => {
     editorElement.editor.undo();
   });
-  redoElement.addEventListener('click', function () {
+  redoElement.addEventListener('click', () => {
     editorElement.editor.redo();
   });
 
@@ -85,7 +85,7 @@
     }
   });
 
-  window.addEventListener('resize', function () {
+  window.addEventListener('resize', () => {
     editorElement.editor.resize();
   });
 </script>

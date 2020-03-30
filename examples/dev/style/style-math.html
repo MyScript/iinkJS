@@ -86,31 +86,31 @@
   <div id="editor" touch-action="none"></div>
 </div>
 <script>
-  var editorElement = document.getElementById('editor');
-  var undoElement = document.getElementById('undo');
-  var redoElement = document.getElementById('redo');
-  var clearElement = document.getElementById('clear');
-  var convertElement = document.getElementById('convert');
+  const editorElement = document.getElementById('editor');
+  const undoElement = document.getElementById('undo');
+  const redoElement = document.getElementById('redo');
+  const clearElement = document.getElementById('clear');
+  const convertElement = document.getElementById('convert');
 
-  var fontStyle = document.getElementById('font-style-math');
-  var fontWeight = document.getElementById('font-weight-math');
-  var fontSize = document.getElementById('font-size-math');
-  var lineHeight = document.getElementById('line-height-math');
-  var color = document.getElementById('color-math');
-  var penWidth = document.getElementById('-myscript-pen-width-math');
-  var penBrush = document.getElementById('-myscript-pen-brush-math');
+  const fontStyle = document.getElementById('font-style-math');
+  const fontWeight = document.getElementById('font-weight-math');
+  const fontSize = document.getElementById('font-size-math');
+  const lineHeight = document.getElementById('line-height-math');
+  const color = document.getElementById('color-math');
+  const penWidth = document.getElementById('-myscript-pen-width-math');
+  const penBrush = document.getElementById('-myscript-pen-brush-math');
 
-  var fontStyleVariable = document.getElementById('font-style-math-variable');
-  var fontWeightVariable = document.getElementById('font-weight-math-variable');
-  var fontSizeVariable = document.getElementById('font-size-math-variable');
-  var colorVariable = document.getElementById('color-math-variable');
+  const fontStyleVariable = document.getElementById('font-style-math-variable');
+  const fontWeightVariable = document.getElementById('font-weight-math-variable');
+  const fontSizeVariable = document.getElementById('font-size-math-variable');
+  const colorVariable = document.getElementById('color-math-variable');
 
-  var fontStyleSolved = document.getElementById('font-style-math-solved');
-  var fontWeightSolved = document.getElementById('font-weight-math-solved');
-  var fontSizeSolved = document.getElementById('font-size-math-solved');
-  var colorSolved = document.getElementById('color-math-solved');
+  const fontStyleSolved = document.getElementById('font-style-math-solved');
+  const fontWeightSolved = document.getElementById('font-weight-math-solved');
+  const fontSizeSolved = document.getElementById('font-size-math-solved');
+  const colorSolved = document.getElementById('color-math-solved');
 
-  var theme = {
+  const theme = {
     '.math': {
       'font-style': fontStyle.value,
       'font-weight': fontWeight.value,
@@ -144,23 +144,23 @@
     }
   ));
 
-  editorElement.addEventListener('changed', function (evt) {
+  editorElement.addEventListener('changed', (evt) => {
     clearElement.disabled = evt.detail.isEmpty;
     undoElement.disabled = !evt.detail.canUndo;
     redoElement.disabled = !evt.detail.canRedo;
     convertElement.disabled = !evt.detail.canConvert;
   });
 
-  undoElement.addEventListener('click', function () {
+  undoElement.addEventListener('click', () => {
     editorElement.editor.undo();
   });
-  redoElement.addEventListener('click', function () {
+  redoElement.addEventListener('click', () => {
     editorElement.editor.redo();
   });
-  clearElement.addEventListener('click', function () {
+  clearElement.addEventListener('click', () => {
     editorElement.editor.clear();
   });
-  convertElement.addEventListener('click', function () {
+  convertElement.addEventListener('click', () => {
     editorElement.editor.convert();
   });
 
@@ -169,7 +169,7 @@
    * @param {Element} The DOM element to attach the ink paper
    * @param {Object} The recognition parameters
    */
-  var editor = MyScript.register(editorElement, {
+  const editor = MyScript.register(editorElement, {
     recognitionParams: {
       type: 'MATH',
       protocol: 'WEBSOCKET',
@@ -187,7 +187,7 @@
     }
   });
 
-  window.addEventListener('resize', function () {
+  window.addEventListener('resize', () => {
     editorElement.editor.resize();
   });
 </script>

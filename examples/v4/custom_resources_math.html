@@ -44,20 +44,20 @@
   <div id="editor" touch-action="none"></div>
 </div>
 <script>
-  var editorElement = document.getElementById('editor');
-  var resultElement = document.getElementById('result');
-  var undoElement = document.getElementById('undo');
-  var redoElement = document.getElementById('redo');
-  var clearElement = document.getElementById('clear');
-  var convertElement = document.getElementById('convert');
+  const editorElement = document.getElementById('editor');
+  const resultElement = document.getElementById('result');
+  const undoElement = document.getElementById('undo');
+  const redoElement = document.getElementById('redo');
+  const clearElement = document.getElementById('clear');
+  const convertElement = document.getElementById('convert');
 
-  editorElement.addEventListener('changed', function (event) {
+  editorElement.addEventListener('changed', (event) => {
     undoElement.disabled = !event.detail.canUndo;
     redoElement.disabled = !event.detail.canRedo;
     clearElement.disabled = event.detail.isEmpty;
   });
 
-  editorElement.addEventListener('exported', function (evt) {
+  editorElement.addEventListener('exported', (evt) => {
     const exports = evt.detail.exports;
     if (exports && exports['application/x-latex']) {
       convertElement.disabled = false;
@@ -67,16 +67,16 @@
       resultElement.innerHTML = '';
     }
   });
-  undoElement.addEventListener('click', function () {
+  undoElement.addEventListener('click', () => {
     editorElement.editor.undo();
   });
-  redoElement.addEventListener('click', function () {
+  redoElement.addEventListener('click', () => {
     editorElement.editor.redo();
   });
-  clearElement.addEventListener('click', function () {
+  clearElement.addEventListener('click', () => {
     editorElement.editor.clear();
   });
-  convertElement.addEventListener('click', function () {
+  convertElement.addEventListener('click', () => {
     editorElement.editor.convert();
   });
 
@@ -103,7 +103,7 @@
     }
   });
 
-  window.addEventListener('resize', function () {
+  window.addEventListener('resize', () => {
     editorElement.editor.resize();
   });
 </script>

@@ -58,12 +58,12 @@
       <button class="classic-btn" id="pointerEvents">Process</button>
     </div>
     <script>
-      var editorElement = document.getElementById('editor');
-      var pointerEventsElement = document.getElementById('pointerEvents');
-      var pointerEventsObjectElement = document.getElementById('pointerEventsObject');
+      const editorElement = document.getElementById('editor');
+      const pointerEventsElement = document.getElementById('pointerEvents');
+      const pointerEventsObjectElement = document.getElementById('pointerEventsObject');
 
-      pointerEventsElement.addEventListener('click', function () {
-        var pointerEventsObject = JSON.parse(pointerEventsObjectElement.value);
+      pointerEventsElement.addEventListener('click', () => {
+        const pointerEventsObject = JSON.parse(pointerEventsObjectElement.value);
         console.log('Pointer events being processed', pointerEventsObject);
         editorElement.editor.pointerEvents(pointerEventsObject);
       });
@@ -84,7 +84,7 @@
         }
       });
 
-      window.addEventListener('resize', function () {
+      window.addEventListener('resize', () => {
         editorElement.editor.resize();
       });
     </script>
