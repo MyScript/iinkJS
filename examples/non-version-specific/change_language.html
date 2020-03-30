@@ -25,7 +25,7 @@
       const languageElement = document.getElementById('language');
       const editorElement = document.getElementById('editor');
 
-      languageElement.addEventListener('change', function (e) {
+      languageElement.addEventListener('change', (e) => {
         const configuration = editorElement.editor.configuration;
         //The path to the language depend of the version of API you are using.
         configuration.recognitionParams.iink.lang = e.target.value;
@@ -53,7 +53,7 @@
       const res = MyScript.getAvailableLanguageList();
 
       if (languageElement.options.length === 0) {
-        Object.keys(res.result).forEach(function (key) {
+        Object.keys(res.result).forEach((key) => {
           const selected = currentLanguage === key;
           languageElement.options[languageElement.options.length] = new Option(res.result[key], key, selected, selected);
         });

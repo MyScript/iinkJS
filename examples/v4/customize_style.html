@@ -148,7 +148,8 @@
 <script>
   function request(url) {
     return new Promise(function (resolve, reject) {
-      var xhr = new XMLHttpRequest();
+      // TODO replace with fetch
+      const xhr = new XMLHttpRequest();
       xhr.open('GET', url);
       xhr.onload = resolve;
       xhr.onerror = reject;
@@ -156,18 +157,18 @@
     });
   }
 
-  var editorElement = document.getElementById('editor');
-  var themeSelector = document.getElementById('theme');
-  var penEnabled = document.getElementById('penenabled');
-  var penSettings = document.getElementsByClassName('pensettings');
-  var penColor = document.getElementById('pencolor');
-  var penWidth = document.getElementById('penwidth');
-  var penStyleClasses = document.getElementById('penStyleClasses');
-  var fontsElement = document.getElementById('fonts');
-  var languageElement = document.getElementById('language');
-  var prompterText = document.getElementById('prompter-css-text');
+  const editorElement = document.getElementById('editor');
+  const themeSelector = document.getElementById('theme');
+  const penEnabled = document.getElementById('penenabled');
+  const penSettings = document.getElementsByClassName('pensettings');
+  const penColor = document.getElementById('pencolor');
+  const penWidth = document.getElementById('penwidth');
+  const penStyleClasses = document.getElementById('penStyleClasses');
+  const fontsElement = document.getElementById('fonts');
+  const languageElement = document.getElementById('language');
+  const prompterText = document.getElementById('prompter-css-text');
 
-  var themes = [
+  const themes = [
     {
       name: 'Normal white theme',
       id: 'normal-white',
@@ -206,15 +207,15 @@
       }
     }];
 
-  var defaultTheme = 'normal-white';
-  themes.forEach(function (theme) {
-    var selected = defaultTheme === theme.id;
+  const defaultTheme = 'normal-white';
+  themes.forEach((theme) => {
+    const selected = defaultTheme === theme.id;
     themeSelector.options[themeSelector.options.length] = new Option(theme.name, theme.id, selected, selected);
   });
   themeSelector.disabled = false;
 
   function getTheme(themes, id) {
-    return themes.filter(function (theme) {
+    return themes.filter((theme) => {
       return theme.id === id;
     })[0].theme;
   }
@@ -234,42 +235,42 @@
     }
   }
 
-  editorElement.addEventListener('loaded', function (evt) {
-    var currentLanguage = evt.target.editor.configuration.recognitionParams.iink.lang;
-    var res = MyScript.getAvailableLanguageList();
+  editorElement.addEventListener('loaded', (evt) => {
+    const currentLanguage = evt.target.editor.configuration.recognitionParams.iink.lang;
+    const res = MyScript.getAvailableLanguageList();
 
     if (languageElement.options.length === 0) {
-      Object.keys(res.result).forEach(function (key) {
-        var selected = currentLanguage === key;
+      Object.keys(res.result).forEach((key) => {
+        const selected = currentLanguage === key;
         languageElement.options[languageElement.options.length] = new Option(res.result[key], key, selected, selected);
       });
     }
 
     fontsElement.options.length = 0;
     request('https://webdemoapi.myscript.com/api/v4.0/iink/font/google/language/' + currentLanguage)
-      .then(function(e) {
-        res = JSON.parse(e.target.responseText).result.sort();
-        Object.keys(res).forEach(function (index) {
-          fontsElement.options[fontsElement.options.length] = new Option(res[index], res[index]);
+      .then((e) => {
+        const result = JSON.parse(e.target.responseText).result.sort();
+        Object.keys(result).forEach((index) => {
+          fontsElement.options[fontsElement.options.length] = new Option(result[index], result[index]);
         });
-      }, function(e) {
+      }, (e) => {
         console.log('Error on get language', e);
       });
   });
 
-  languageElement.addEventListener('change', function (e) {
+  languageElement.addEventListener('change', (e) => {
     editor.penStyle = undefined;
     penEnabled.checked = false;
     penStyleClasses.checked = false;
     updatePrompter('Theme reset');
 
-    var configuration = editorElement.editor.configuration;
+    const configuration = editorElement.editor.configuration;
     //The path to the language depend of the version of API you are using.
     configuration.recognitionParams.iink.lang = e.target.value;
     editorElement.editor.configuration = configuration;
   });
 
-  fontsElement.addEventListener('change', function (e) {
+  fontsElement.addEventListener('change', (e) => {
     const fontFamily = e.target.value;
     const currentTheme = Object.assign({}, getTheme(themes, themeSelector.value));
     currentTheme['.text']['font-family'] = fontFamily;
@@ -339,7 +340,7 @@
    * @param {Element} The DOM element to attach the ink paper
    * @param {Object} The recognition parameters
    */
-  var editor = MyScript.register(editorElement, {
+  const editor = MyScript.register(editorElement, {
       recognitionParams: {
         type: 'TEXT',
         protocol: 'WEBSOCKET',
@@ -353,7 +354,7 @@
     },
     undefined, getTheme(themes, defaultTheme));
 
-  window.addEventListener('resize', function () {
+  window.addEventListener('resize', () => {
     editorElement.editor.resize();
   });
 </script>

@@ -34,13 +34,13 @@
   <div id="editor" touch-action="none"></div>
 </div>
 <script>
-  var editorElement = document.getElementById('editor');
-  var resultElement = document.getElementById('result');
-  var languageElement = document.getElementById('language');
-  var convertElement = document.getElementById('convert');
-  var searchInput = document.getElementById('searchInput');
-  var searchBtn = document.getElementById('searchBtn');
-  var lastJiix = undefined;
+  const editorElement = document.getElementById('editor');
+  const resultElement = document.getElementById('result');
+  const languageElement = document.getElementById('language');
+  const convertElement = document.getElementById('convert');
+  const searchInput = document.getElementById('searchInput');
+  const searchBtn = document.getElementById('searchBtn');
+  let lastJiix = undefined;
 
   // Utility function transforming millimeters to pixel as iinkSDK is millimeters only
   function mmToPixel(mm) {
@@ -99,8 +99,8 @@
   }
   searchBtn.addEventListener('click', performSearch);
 
-  editorElement.addEventListener('exported', function (evt) {
-    var exports = evt.detail.exports;
+  editorElement.addEventListener('exported', (evt) => {
+    const exports = evt.detail.exports;
     if (exports) {
       convertElement.disabled = false;
       if (exports['application/vnd.myscript.jiix']) {
@@ -110,17 +110,17 @@
     }
   });
 
-  editorElement.addEventListener('loaded', function (evt) {
+  editorElement.addEventListener('loaded', (evt) => {
     /**
      * Retrieve the list of available recognition languages
      * @param {Object} The editor recognition parameters
      */
-    var currentLanguage = evt.target.editor.configuration.recognitionParams.iink.lang;
-    var res = MyScript.getAvailableLanguageList();
+    const currentLanguage = evt.target.editor.configuration.recognitionParams.iink.lang;
+    const res = MyScript.getAvailableLanguageList();
 
     if (languageElement.options.length === 0) {
-      Object.keys(res.result).forEach(function (key) {
-        var selected = currentLanguage === key;
+      Object.keys(res.result).forEach((key) => {
+        const selected = currentLanguage === key;
         languageElement.options[languageElement.options.length] = new Option(res.result[key], key, selected, selected);
       });
     }
@@ -130,15 +130,15 @@
     document.querySelectorAll('.highlight').forEach(elem => elem.parentNode.removeChild(elem));
   });
 
-  languageElement.addEventListener('change', function (e) {
+  languageElement.addEventListener('change', (e) => {
     resultElement.innerHTML = '';
-    var configuration = editorElement.editor.configuration;
+    const configuration = editorElement.editor.configuration;
     //The path to the language depend of the version of API you are using.
     configuration.recognitionParams.iink.lang = e.target.value;
     editorElement.editor.configuration = configuration;
   });
 
-  convertElement.addEventListener('click', function () {
+  convertElement.addEventListener('click', () => {
     editorElement.editor.convert();
   });
 
@@ -170,7 +170,7 @@
     }
   });
 
-  window.addEventListener('resize', function () {
+  window.addEventListener('resize', () => {
     editorElement.editor.resize();
   });
 </script>

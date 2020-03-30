@@ -57,7 +57,7 @@
       const clearElement = document.getElementById('clear');
       const exportElement = document.getElementById('exportContent');
 
-      editorElement.addEventListener('changed', function (event) {
+      editorElement.addEventListener('changed', (event) => {
         undoElement.disabled = !event.detail.canUndo;
         redoElement.disabled = !event.detail.canRedo;
         exportElement.disabled = event.detail.isEmpty;
@@ -112,22 +112,22 @@
         selectElement.appendChild(optionElement);
       }
 
-      editorElement.addEventListener('exported', function (evt) {
+      editorElement.addEventListener('exported', (evt) => {
         const fileType = exportFileType[selectElement.options[selectElement.selectedIndex].value];
         if (evt.detail && evt.detail.exports && evt.detail.exports[fileType.mimeType]) {
           window.saveAs(fileType.transform(evt.detail.exports[fileType.mimeType], fileType.mimeType), `myDocument.${fileType.extension}`);
         }
       });
-      undoElement.addEventListener('click', function () {
+      undoElement.addEventListener('click', () => {
         editorElement.editor.undo();
       });
-      redoElement.addEventListener('click', function () {
+      redoElement.addEventListener('click', () => {
         editorElement.editor.redo();
       });
-      clearElement.addEventListener('click', function () {
+      clearElement.addEventListener('click', () => {
         editorElement.editor.clear();
       });
-      exportElement.addEventListener('click', function () {
+      exportElement.addEventListener('click', () => {
         const mimeType = exportFileType[selectElement.options[selectElement.selectedIndex].value].mimeType;
         editorElement.editor.export_([mimeType, 'application/vnd.myscript.jiix']);
       });
@@ -157,7 +157,7 @@
         }
       });
 
-      window.addEventListener('resize', function () {
+      window.addEventListener('resize', () => {
         editorElement.editor.resize();
       });
 

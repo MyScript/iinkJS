@@ -40,18 +40,18 @@
   const importContentField = document.getElementById('importContentField');
   const importContentElement = document.getElementById('importContent');
 
-  editorElement.addEventListener('changed', function (event) {
+  editorElement.addEventListener('changed', (event) => {
     undoElement.disabled = !event.detail.canUndo;
     redoElement.disabled = !event.detail.canRedo;
   });
 
-  undoElement.addEventListener('click', function () {
+  undoElement.addEventListener('click', () => {
     editorElement.editor.undo();
   });
-  redoElement.addEventListener('click', function () {
+  redoElement.addEventListener('click', () => {
     editorElement.editor.redo();
   });
-  importContentElement.addEventListener('click', function () {
+  importContentElement.addEventListener('click', () => {
     const value = importContentField.value.replace('\\n', '\n');
     editorElement.editor.import_(value, importContentField.dataset.type);
   });
@@ -72,7 +72,7 @@
     }
   });
 
-  window.addEventListener('resize', function () {
+  window.addEventListener('resize', () => {
     editorElement.editor.resize();
   });
 </script>

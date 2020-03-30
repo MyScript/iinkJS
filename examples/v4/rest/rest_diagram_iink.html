@@ -119,14 +119,14 @@
     manageEmptySvg();
   });
 
-  previewButton.addEventListener('click', function () {
+  previewButton.addEventListener('click', () => {
     isPreview = true;
     previewButton.style.display = 'none';
     editButton.style.display = 'flex';
     manageEditMode(this, true);
   });
 
-  editButton.addEventListener('click', function () {
+  editButton.addEventListener('click', () => {
     isPreview = false;
     editButton.style.display = 'none';
     previewButton.style.display = 'flex';
@@ -193,7 +193,7 @@
     }
   });
 
-  window.addEventListener('resize', function () {
+  window.addEventListener('resize', () => {
     editorElement.editor.resize();
   });
 </script>
