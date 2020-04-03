@@ -289,7 +289,8 @@ export async function init(recognizerContext, model) {
   let recognizerContextRef;
   let contentChanged = null;
 
-  if (recognizerContext.editor.innerConfiguration.recognitionParams.type === 'MATH') {
+  if (recognizerContext.editor.innerConfiguration.recognitionParams.type === 'MATH' ||
+    recognizerContext.editor.innerConfiguration.recognitionParams.type === 'DIAGRAM') {
     recognizerContextRef = RecognizerContext.setRecognitionContext(recognizerContext, {
       model: InkModel.updateModelSentPosition(model, model.lastPositions.lastReceivedPosition),
       partChange,
@@ -496,8 +497,7 @@ export function convert(recognizerContext, model, conversionState) {
  * Export action
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
- * @param {RecognizerCallback} callback
- * @param {Array[String]} requestedMimeTypes
+ * @param {Array} requestedMimeTypes
  */
 // eslint-disable-next-line no-underscore-dangle
 export function export_(recognizerContext, model, requestedMimeTypes) {
