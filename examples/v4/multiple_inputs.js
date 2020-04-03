@@ -269,7 +269,7 @@ editorElement.addEventListener('loaded', () => {
 
 function initEditors(editors) {
   editors.forEach((editor) => {
-    MyScript.register(editor, {
+    iink.register(editor, {
       recognitionParams: {
         type: 'TEXT',
         protocol: 'WEBSOCKET',

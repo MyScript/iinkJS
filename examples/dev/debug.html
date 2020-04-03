@@ -27,7 +27,7 @@
     </style>
 
     <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
-    <script type="text/javascript" src="../../dist/myscript.min.js"></script>
+    <script type="text/javascript" src="../../dist/iink.min.js"></script>
   </head>
 
   <body>
@@ -67,26 +67,26 @@
       });
 
       levelElement.addEventListener('change', (e) => {
-        Object.keys(MyScript.Constants.Logger).forEach(function (key) {
-          const name = MyScript.Constants.Logger[key];
-          const logger = MyScript.LoggerConfig.getLogger(name);
+        Object.keys(iink.Constants.Logger).forEach(function (key) {
+          const name = iink.Constants.Logger[key];
+          const logger = iink.LoggerConfig.getLogger(name);
           logger.setLevel(e.target.value, false);
         });
       });
 
       const defaultLevel = 'DEBUG';
-      Object.keys(MyScript.Constants.Logger).forEach((key) => {
-        const name = MyScript.Constants.Logger[key];
-        const logger = MyScript.LoggerConfig.getLogger(name);
+      Object.keys(iink.Constants.Logger).forEach((key) => {
+        const name = iink.Constants.Logger[key];
+        const logger = iink.LoggerConfig.getLogger(name);
         logger.setLevel(defaultLevel, false);
       });
 
       /**
        * Initialize the list of available log levels
        */
-      Object.keys(MyScript.Constants.LogLevel).forEach((key) => {
+      Object.keys(iink.Constants.LogLevel).forEach((key) => {
         const selected = defaultLevel === key;
-        levelElement.options[levelElement.options.length] = new Option(MyScript.Constants.LogLevel[key], key, selected, selected);
+        levelElement.options[levelElement.options.length] = new Option(iink.Constants.LogLevel[key], key, selected, selected);
       });
       levelElement.disabled = false;
 
@@ -95,7 +95,7 @@
        * @param {Element} The DOM element to attach the ink paper
        * @param {Object} The recognition parameters
        */
-      MyScript.register(editorElement, {
+      iink.register(editorElement, {
         recognitionParams: {
           server: {
             scheme: 'https',

@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="../examples.css">
 
     <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
-    <script type="text/javascript" src="../../dist/myscript.min.js"></script>
+    <script type="text/javascript" src="../../dist/iink.min.js"></script>
   </head>
 
   <body>
@@ -50,7 +50,7 @@
        * @param {Object} The editor recognition parameters
        */
       const currentLanguage = 'en_US';
-      const res = MyScript.getAvailableLanguageList();
+      const res = iink.getAvailableLanguageList();
 
       if (languageElement.options.length === 0) {
         Object.keys(res.result).forEach((key) => {
@@ -59,7 +59,7 @@
         });
       }
 
-      MyScript.register(editorElement, configuration);
+      iink.register(editorElement, configuration);
     </script>
   </body>
 

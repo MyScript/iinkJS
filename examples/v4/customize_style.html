@@ -104,7 +104,7 @@
   </style>
 
   <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
-  <script type="text/javascript" src="../../dist/myscript.min.js"></script>
+  <script type="text/javascript" src="../../dist/iink.min.js"></script>
 </head>
 
 <body>
@@ -237,7 +237,7 @@
 
   editorElement.addEventListener('loaded', (evt) => {
     const currentLanguage = evt.target.editor.configuration.recognitionParams.iink.lang;
-    const res = MyScript.getAvailableLanguageList();
+    const res = iink.getAvailableLanguageList();
 
     if (languageElement.options.length === 0) {
       Object.keys(res.result).forEach((key) => {
@@ -340,7 +340,7 @@
    * @param {Element} The DOM element to attach the ink paper
    * @param {Object} The recognition parameters
    */
-  const editor = MyScript.register(editorElement, {
+  const editor = iink.register(editorElement, {
       recognitionParams: {
         type: 'TEXT',
         protocol: 'WEBSOCKET',

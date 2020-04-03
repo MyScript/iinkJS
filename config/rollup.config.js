@@ -35,21 +35,21 @@ const plugins = [
 ];
 
 export default [{
-  input: 'src/myscript.js',
+  input: 'src/iink.js',
   output: [
     {
-      name: 'MyScript',
-      file: 'dist/myscript.min.js',
+      name: 'iink',
+      file: 'dist/iink.min.js',
       format: 'umd',
       exports: 'named'
     }
   ],
   plugins
 }, {
-  input: 'src/myscript.js',
+  input: 'src/iink.js',
   output: [
     {
-      file: 'dist/myscript.esm.js',
+      file: 'dist/iink.esm.js',
       format: 'es'
     }
   ],

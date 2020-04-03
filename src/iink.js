@@ -9,7 +9,7 @@ import { Editor } from './Editor';
 import { register, getAvailableLanguageList } from './EditorFacade';
 import * as RecognizerContext from './model/RecognizerContext';
 
-const MyScript = {
+const iink = {
   Constants,
   // Default instantiations
   DefaultConfiguration,
@@ -27,7 +27,7 @@ const MyScript = {
 };
 
 export {
-  MyScript as default,
+  iink as default,
   Constants,
   // Default instantiations
   DefaultConfiguration,
