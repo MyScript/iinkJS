@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import style from './myscript.css';
+import style from './iink.css';
 import { editorLogger as logger } from './configuration/LoggerConfig';
 import * as DefaultBehaviors from './configuration/DefaultBehaviors';
 import * as DefaultConfiguration from './configuration/DefaultConfiguration';
@@ -57,6 +57,7 @@ function isTriggerValid(editor, type, trigger = editor.configuration.triggers[ty
  * @param {Editor} editor
  * @param {Model} model
  * @param {String} [trigger]
+ * @return {Promise}
  */
 async function addStrokes(editor, model, trigger = editor.configuration.triggers.addStrokes) {
   if (editor.recognizer && editor.recognizer.addStrokes) {

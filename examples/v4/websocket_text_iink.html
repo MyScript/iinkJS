@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="../examples.css">
 
   <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
-  <script type="text/javascript" src="../../dist/myscript.min.js"></script>
+  <script type="text/javascript" src="../../dist/iink.min.js"></script>
 </head>
 
 <body>
@@ -49,7 +49,7 @@
      * @param {Object} The editor recognition parameters
      */
     const currentLanguage = evt.target.editor.configuration.recognitionParams.iink.lang;
-    const res = MyScript.getAvailableLanguageList();
+    const res = iink.getAvailableLanguageList();
 
     if (languageElement.options.length === 0) {
       Object.keys(res.result).forEach((key) => {
@@ -78,13 +78,13 @@
    * @param {Element} The DOM element to attach the ink paper
    * @param {Object} The recognition parameters
    */
-  MyScript.register(editorElement, {
+  iink.register(editorElement, {
     recognitionParams: {
       type: 'TEXT',
       protocol: 'WEBSOCKET',
       server: {
-        scheme: 'https',
-        host: 'webdemoapi.myscript.com',
+        scheme: 'http',
+        host: 'localhost:8897',
         applicationKey: '515131ab-35fa-411c-bb4d-3917e00faf60',
         hmacKey: '54b2ca8a-6752-469d-87dd-553bb450e9ad'
       },

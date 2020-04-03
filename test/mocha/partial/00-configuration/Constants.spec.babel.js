@@ -6,10 +6,14 @@ import { testLogger } from '../../../../src/configuration/LoggerConfig';
 describe('Check constants', () => {
   testLogger.debug(Constants);
 
-  const recognitionTypes = ['TEXT', 'MATH', 'SHAPE', 'MUSIC', 'ANALYZER'];
+  const recognitionTypes = ['TEXT', 'MATH', 'DIAGRAM', 'RAWCONTENT'];
   recognitionTypes.forEach((recognitionType) => {
     it(`Should have ${recognitionType} recognition type declared`, () => {
-      expect(Constants.RecognitionType[recognitionType]).to.equal(recognitionType);
+      let result = recognitionType;
+      if (recognitionType === 'RAWCONTENT') {
+        result = 'Raw Content';
+      }
+      expect(Constants.RecognitionType[recognitionType]).to.equal(result);
     });
   });
 

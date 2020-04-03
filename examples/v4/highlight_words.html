@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="../examples.css">
 
   <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
-  <script type="text/javascript" src="../../dist/myscript.min.js"></script>
+  <script type="text/javascript" src="../../dist/iink.min.js"></script>
   <style type="text/css">
     #editor {
       width: auto;
@@ -346,7 +346,7 @@
    * @param {Element} the DOM element to attach the ink paper
    * @param {Object} the recognition parameters
    */
-  const editor = MyScript.register(editorElement, {
+  const editor = iink.register(editorElement, {
     recognitionParams: {
       type: 'TEXT',
       protocol: 'WEBSOCKET',

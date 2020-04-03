@@ -21,7 +21,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/auto-render.min.js"
           integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"
           onload="renderMathInElement(document.body, {displayMode : false});"></script>
-  <script type="text/javascript" src="../../dist/myscript.min.js"></script>
+  <script type="text/javascript" src="../../dist/iink.min.js"></script>
 
   <style>
 
@@ -230,7 +230,7 @@
     convertElement.disabled = event.detail.isEmpty;
   });
 
-  MyScript.register(editor, {
+  iink.register(editor, {
     recognitionParams: {
       type: 'MATH',
       protocol: 'WEBSOCKET',

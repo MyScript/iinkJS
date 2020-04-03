@@ -1,16 +1,17 @@
 {
-  "name": "myscript",
-  "version": "4.3.0",
-  "main": "dist/myscript.min.js",
-  "module": "dist/myscript.esm.js",
-  "description": "MyScriptJS is the fastest way to integrate handwriting panel and recognition in your webapp",
+  "name": "iink-js",
+  "version": "1.4.0",
+  "main": "dist/iink.min.js",
+  "module": "dist/iink.esm.js",
+  "description": "iinkJS is the fastest way to integrate handwriting panel and recognition in your webapp",
   "keywords": [
     "myscript",
     "javascript",
     "developer",
     "handwriting",
     "recognition",
-    "cloud"
+    "cloud",
+    "iink"
   ],
   "files": [
     "dist"
@@ -66,8 +67,8 @@
   },
   "scripts": {
     "lint": "eslint --ext js src",
-    "docs": "npx jsdoc -R README.md -P package.json -d docs -t node_modules/minami src",
-    "minify-css": "cleancss -o dist/myscript.min.css src/*.css",
+    "docs": "npx jsdoc -R README.md -P package.json -d docs -t node_modules/minami -r src",
+    "minify-css": "cleancss -o dist/iink.min.css src/*.css",
     "test:mocha": "mocha --require @babel/register,./test/lib/common.js --recursive test/mocha/ --reporter progress",
     "test:mocha-xunit": "mocha --require @babel/register --recursive test/mocha/ --reporter xunit --reporter-options output=./test/mocha/results/xunit.xml",
     "test:e2e": "mocha --require @babel/register --recursive test/puppeteer --timeout 30000",

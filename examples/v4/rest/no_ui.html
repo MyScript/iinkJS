@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="../../examples.css">
 
   <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
-  <script type="text/javascript" src="../../../dist/myscript.min.js"></script>
+  <script type="text/javascript" src="../../../dist/iink.min.js"></script>
 
   <style>
     body {
@@ -112,19 +112,19 @@
     .addEventListener('click', () => {
 
       // Creating a recognizer
-      const iinkRecognizer = MyScript.DefaultBehaviors.recognizerList.find(x => {
+      const iinkRecognizer = iink.DefaultBehaviors.recognizerList.find(x => {
         const infos = x.getInfo();
         return infos.protocol === 'REST';
       });
 
       // Creating a empty model
-      const model = MyScript.InkModel.createModel();
+      const model = iink.InkModel.createModel();
       // Filling the model with the stroke groups
       model.strokeGroups = JSON.parse(document.querySelector('#rawStrokesT').value);
 
       // Creating a recognizer context with the configuration attached
-      const recognizerContext = MyScript.RecognizerContext.createEmptyRecognizerContext({
-        configuration: MyScript.DefaultConfiguration
+      const recognizerContext = iink.RecognizerContext.createEmptyRecognizerContext({
+        configuration: iink.DefaultConfiguration
       });
       //const mimeType = 'application/vnd.myscript.jiix';
       const requestedMimeType = ['text/plain', 'image/png'];
@@ -138,7 +138,7 @@
       };
 
       // Assigning a theme to the document
-      recognizerContext.editor.theme = MyScript.DefaultTheme;
+      recognizerContext.editor.theme = iink.DefaultTheme;
 
       // Defining the behaviour on recognition result
       const recognitionCallback = (err, x) => {

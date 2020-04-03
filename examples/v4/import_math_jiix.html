@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="../examples.css">
 
   <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
-  <script type="text/javascript" src="../../dist/myscript.min.js"></script>
+  <script type="text/javascript" src="../../dist/iink.min.js"></script>
 
   <style>
     #editor, #editor2 {
@@ -118,7 +118,7 @@
       registeredEditor.resize();
     });
 
-    const registeredEditor = MyScript.register(editor, {
+    const registeredEditor = iink.register(editor, {
       recognitionParams: {
         type: 'MATH',
         protocol: 'WEBSOCKET',

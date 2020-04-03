@@ -1,4 +1,4 @@
-# MyScriptJS
+# iinkJS
 
 [![npm version](https://badge.fury.io/js/myscript.svg)](https://badge.fury.io/js/myscript)
 [![Examples](https://img.shields.io/badge/Link%20to-examples-blue.svg)](https://myscript.github.io/MyScriptJS/examples/)
@@ -10,7 +10,7 @@
   <img src="https://myscript.github.io/MyScriptJS/preview.gif">
 </div>
 
-MyScriptJS is a JavaScript library that can be used in every web application to bring handwriting recognition.
+iinkJS is a JavaScript library that can be used in every web application to bring handwriting recognition.
 
 It integrates all you need:
 
@@ -34,7 +34,7 @@ It integrates all you need:
 
 ## Examples
 
-Discover Interactive Ink with MyScriptJS and its major features with our [text demo and tutorial](http://webdemo.myscript.com/views/text.html).
+Discover Interactive Ink with iinkJS and its major features with our [text demo and tutorial](http://webdemo.myscript.com/views/text.html).
 
 Try our two basic examples featuring [the text recognition](https://myscript.github.io/MyScriptJS//examples/v4/websocket_text_iink.html) and [the math recognition](https://myscript.github.io/MyScriptJS/examples/v4/websocket_math_iink.html).
 
@@ -70,7 +70,7 @@ You can discover all the features on our Developer website for [Text](https://de
 
 ## Installation
 
-MyScriptJS can be installed with the well known package managers `npm`, `yarn` and `bower`. 
+iinkJS can be installed with the well known package managers `npm`, `yarn` and `bower`. 
 
 If you want to use `npm` or `yarn` you first have to init a project (or use an existing one). 
 
@@ -80,7 +80,7 @@ OR
 yarn init 
 ```
 
-You can then install MyScriptJS and use it as showed in the [Usage](https://github.com/MyScript/MyScriptJS#usage) section.
+You can then install iinkJS and use it as showed in the [Usage](https://github.com/MyScript/MyScriptJS#usage) section.
 
 ```shell
 npm install myscript
@@ -88,7 +88,7 @@ OR
 yarn add myscript
 ```
 
-You can also install MyScriptJS using bower (with or without an existing project) and use it as showed in the [Usage](https://github.com/MyScript/MyScriptJS#usage) section replacing `node_modules` by `bower_components`.
+You can also install iinkJS using bower (with or without an existing project) and use it as showed in the [Usage](https://github.com/MyScript/MyScriptJS#usage) section replacing `node_modules` by `bower_components`.
 
 ```shell
 bower install myscript
@@ -99,7 +99,7 @@ bower install myscript
 
 1. Create an `index.html` file in the same directory.
 
-2. Add the following lines in the `head` section of your file to use MyScriptJS and the css. We use [PEP](https://github.com/jquery/PEP) to ensure better browsers compatibilities. Note that you can also use it using dependencies from `node_modules` or `bower_components`:
+2. Add the following lines in the `head` section of your file to use iinkJS and the css. We use [PEP](https://github.com/jquery/PEP) to ensure better browsers compatibilities. Note that you can also use it using dependencies from `node_modules` or `bower_components`:
 ```html
 <link rel="stylesheet" href="node_modules/myscript/dist/myscript.min.css"/>
 <script src="node_modules/myscript/dist/myscript.min.js"></script>
@@ -125,7 +125,7 @@ bower install myscript
 ```javascript
   const editorElement = document.getElementById('editor');
 
-  MyScript.register(editorElement, {
+  Iink.register(editorElement, {
     recognitionParams: {
       type: 'TEXT',
       server: {
@@ -155,7 +155,7 @@ bower install myscript
     <script>
         const editorElement = document.getElementById('editor');
 
-        MyScript.register(editorElement, {
+        Iink.register(editorElement, {
             recognitionParams: {
                 type: 'TEXT',
                 server: {
@@ -177,7 +177,7 @@ You can find this guide and a more complete example on the [MyScript Developer w
 
 You can find a complete documentation with the following sections on our Developer website:
 
-* **Get Started**: [how to use MyScriptJS with a full example](https://developer.myscript.com/docs/interactive-ink/latest/web/myscriptjs/get-started/),
+* **Get Started**: [how to use iinkJS with a full example](https://developer.myscript.com/docs/interactive-ink/latest/web/myscriptjs/get-started/),
 * **Editing**: [how to interact with content](https://developer.myscript.com/docs/interactive-ink/latest/web/myscriptjs/editing/),
 * **Conversion**: [how to convert your handwritten content](https://developer.myscript.com/docs/interactive-ink/latest/web/myscriptjs/conversion/),
 * **Import and Export**: [how to import and export your content](https://developer.myscript.com/docs/interactive-ink/latest/web/myscriptjs/import-and-export/),
@@ -198,12 +198,12 @@ You can get support and ask your questions on the [dedicated section](https://de
 
 ## Sharing your feedback ?
 
-Made a cool app with MyScriptJS? We would love to hear about you!
+Made a cool app with iinkJS? We would love to hear about you!
 We’re planning to showcase apps using it so let us know by sending a quick mail to [myapp@myscript.com](mailto://myapp@myscript.com).
 
 ## Contributing
 
-We welcome your contributions: if you would like to extend MyScriptJS for your needs, feel free to fork it! 
+We welcome your contributions: if you would like to extend iinkJS for your needs, feel free to fork it! 
 
 Please take a look at our [contributing](https://github.com/MyScript/MyScriptJS/blob/master/CONTRIBUTING.md) guidelines before submitting your pull request.
 
