@@ -7,7 +7,7 @@
  * @param {{x: Number, y: Number, p: Number}} point
  * @param angle
  * @param width
- * @return {[{x: Number, y: Number},{x: Number, y: Number}]}
+ * @return {({x: number, y: *}|{x: *, y: number})}
  */
 export function computeLinksPoints(point, angle, width) {
   const radius = point.p * width;

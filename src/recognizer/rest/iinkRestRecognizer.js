@@ -39,7 +39,7 @@ export function getInfo() {
  * @param {String} suffixUrl
  * @param {RecognizerContext} recognizerContext
  * @param {Model} model
- * @param {function(recognizerContext: RecognizerContext, model: Model, conversionState: String): Object} buildMessage
+ * @param {function} buildMessage
  * @param {String} conversionState
  * @param {String} mimeType
  * @return {Promise.<Model>} Promise that return an updated model as a result
@@ -169,7 +169,7 @@ function resultCallback(recognizerContext, model, configuration, res, mimeType) 
  * Export content
  * @param {RecognizerContext} recognizerContext Current recognizer context
  * @param {Model} model Current model
- * @param {Array[String]} requestedMimeTypes
+ * @param {Array} requestedMimeTypes
  */
 export function export_(recognizerContext, model, requestedMimeTypes) {
   const configuration = recognizerContext.editor.configuration;

@@ -1,4 +1,4 @@
-import { callbackLogger as logger } from '../configuration/LoggerConfig';
+import { eventLogger as logger } from '../configuration/LoggerConfig';
 
 /**
  * Emits an event when the editor state change

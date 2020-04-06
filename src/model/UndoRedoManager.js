@@ -6,10 +6,10 @@ import Constants from '../configuration/Constants';
 /**
  * Undo/redo manager
  * @typedef {Object} UndoRedoManager
- * @property {function(undoRedoContext: UndoRedoContext, model: Model, callback: RecognizerCallback)} updateModel Push the current model into the undo/redo context.
- * @property {function(undoRedoContext: UndoRedoContext, model: Model, callback: RecognizerCallback)} undo Undo.
- * @property {function(undoRedoContext: UndoRedoContext, model: Model, callback: RecognizerCallback)} redo Redo.
- * @property {function(undoRedoContext: UndoRedoContext, model: Model, callback: RecognizerCallback)} clear Clear.
+ * @property {function} updateModel Push the current model into the undo/redo context.
+ * @property {function} undo Undo.
+ * @property {function} redo Redo.
+ * @property {function} clear Clear.
  */
 
 /**

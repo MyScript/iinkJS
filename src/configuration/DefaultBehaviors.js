@@ -15,7 +15,7 @@ import emit from '../event/Event';
  * @property {Stroker} stroker Stroker to draw stroke
  * @property {Renderer} renderer Renderer to draw on the editor
  * @property {Recognizer} recognizer Recognizer to call the recognition service
- * @property {Array} callbacks Functions to handle model changes
+ * @property {Array} events Functions to handle model changes
  */
 
 /**
@@ -25,8 +25,8 @@ import emit from '../event/Event';
  * @property {Array<Stroker>} strokerList List of stroker to draw stroke
  * @property {Array<Renderer>} rendererList List of renderer to draw on the editor
  * @property {Array<Recognizer>} recognizerList Recognizers to call the recognition service
- * @property {function(behaviors: Behaviors, configuration: Configuration): Behavior} getBehaviorFromConfiguration Get the current behavior to use regarding the current configuration
- * @property {Array} callbacks Functions to handle model changes
+ * @property {function} getBehaviorFromConfiguration Get the current behavior to use regarding the current configuration
+ * @property {Array} events Functions to handle model changes
  */
 
 /**

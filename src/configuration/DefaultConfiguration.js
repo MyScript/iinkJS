@@ -4,7 +4,6 @@ import { editorLogger as logger } from './LoggerConfig';
 
 /**
  * Default configuration
- * @type {Configuration}
  * See https://developer.myscript.com/docs/interactive-ink/latest/reference/web/configuration/ for a full documentation of parameters.
  */
 const defaultConfiguration = {

@@ -54,8 +54,8 @@ recognizerLogger.setDefaultLevel(Constants.LogLevel.ERROR);
  * Log callback events
  * @type {Object}
  */
-export const callbackLogger = log.getLogger(Constants.Logger.CALLBACK);
-callbackLogger.setDefaultLevel(Constants.LogLevel.ERROR);
+export const eventLogger = log.getLogger(Constants.Logger.EVENT);
+eventLogger.setDefaultLevel(Constants.LogLevel.ERROR);
 
 /**
  * Log util events

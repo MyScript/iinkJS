@@ -12,8 +12,8 @@ import { computeLinksPoints, computeMiddlePoint, computeAxeAngle } from '../../Q
 /**
  * Define how a stroke should be drawn
  * @typedef {Object} Stroker
- * @property {function(): StrokerInfo} getInfo Get some information about this stroker
- * @property {function(context: Object, stroke: Stroke)} drawStroke Render a stroke on the current context.
+ * @property {function} getInfo Get some information about this stroker
+ * @property {function} drawStroke Render a stroke on the current context.
  */
 
 /**
