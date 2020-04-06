@@ -38,22 +38,22 @@ import { handleSuccess } from './RecognizerService';
 /**
  * Recognition service entry point
  * @typedef {Object} Recognizer
- * @property {function(): RecognizerInfo} getInfo Get information about the supported configuration (protocol, type, apiVersion, ...).
- * @property {function(recognizerContext: RecognizerContext, model: Model)} init Initialize recognition.
- * @property {function(recognizerContext: RecognizerContext, model: Model)} clear Clear server context. Currently nothing to do there.
- * @property {function(recognizerContext: RecognizerContext, model: Model)} close Close and free all resources that will no longer be used by the recognizer.
- * @property {function(recognizerContext: RecognizerContext, model: Model)} [undo] Undo Undo the last done action.
- * @property {function(recognizerContext: RecognizerContext, model: Model)} [redo] Redo Redo the previously undone action.
- * @property {function(recognizerContext: RecognizerContext, model: Model, element: Element)} [resize] Resize.
- * @property {function(recognizerContext: RecognizerContext, model: Model, strokes: Array<Stroke>)} [pointerEvents] Pointer Events.
- * @property {function(recognizerContext: RecognizerContext, model: Model)} [addStrokes] Add strokes.
- * @property {function(recognizerContext: RecognizerContext, model: Model)} [export_] Export content.
- * @property {function(recognizerContext: RecognizerContext, model: Model, data: Blob)} [import_] Import content.
- * @property {function(recognizerContext: RecognizerContext, model: Model, conversionState: String)} [convert] Convert.
- * @property {function(recognizerContext: RecognizerContext, model: Model)} [waitForIdle] Wait for idle.
- * @property {function(recognizerContext: RecognizerContext, model: Model, penStyle: PenStyle)} [setPenStyle] Set pen style.
- * @property {function(recognizerContext: RecognizerContext, model: Model, penStyleClasses: String)} [setPenStyleClasses] Set pen style classes.
- * @property {function(recognizerContext: RecognizerContext, model: Model, theme: Theme)} [setTheme] Set theme.
+ * @property {function} getInfo Get information about the supported configuration (protocol, type, apiVersion, ...).
+ * @property {function} init Initialize recognition.
+ * @property {function} clear Clear server context. Currently nothing to do there.
+ * @property {function} close Close and free all resources that will no longer be used by the recognizer.
+ * @property {function} [undo] Undo Undo the last done action.
+ * @property {function} [redo] Redo Redo the previously undone action.
+ * @property {function} [resize] Resize.
+ * @property {function} [pointerEvents] Pointer Events.
+ * @property {function} [addStrokes] Add strokes.
+ * @property {function} [export_] Export content.
+ * @property {function} [import_] Import content.
+ * @property {function} [convert] Convert.
+ * @property {function} [waitForIdle] Wait for idle.
+ * @property {function} [setPenStyle] Set pen style.
+ * @property {function} [setPenStyleClasses] Set pen style classes.
+ * @property {function} [setTheme] Set theme.
  */
 
 /**

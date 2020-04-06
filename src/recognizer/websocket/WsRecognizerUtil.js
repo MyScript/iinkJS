@@ -24,7 +24,7 @@ function buildUrl(configuration, suffixUrl) {
  * @param {String} suffixUrl
  * @param {RecognizerContext} recognizerContext
  * @param {BuildWebSocketFunction} buildWebSocketCallback
- * @param {function(recognizerContext: RecognizerContext, model: Model, callback: RecognizerCallback)} reconnect
+ * @param {function} reconnect
  * @return {Promise} Fulfilled when the init phase is over.
  */
 export function init(suffixUrl, recognizerContext, buildWebSocketCallback, reconnect) {
@@ -59,7 +59,7 @@ export function retry(func, recognizerContext, model, callback, ...params) {
 
 /**
  * @param {RecognizerContext} recognizerContext
- * @param {function(params: ...Object): Object} buildMessage
+ * @param {function} buildMessage
  * @param {...Object} params
  * @return {Promise}
  */

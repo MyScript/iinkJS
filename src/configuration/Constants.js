@@ -23,11 +23,7 @@ const Constants = {
   RecognitionType: {
     TEXT: 'TEXT',
     MATH: 'MATH',
-    SHAPE: 'SHAPE',
-    MUSIC: 'MUSIC',
-    ANALYZER: 'ANALYZER',
     DIAGRAM: 'DIAGRAM',
-    NEBO: 'NEBO',
     RAWCONTENT: 'Raw Content'
   },
   Protocol: {
@@ -54,7 +50,7 @@ const Constants = {
     GRABBER: 'grabber',
     RENDERER: 'renderer',
     RECOGNIZER: 'recognizer',
-    CALLBACK: 'callback',
+    EVENT: 'event',
     UTIL: 'util',
     SMARTGUIDE: 'smartguide'
   },

@@ -14,12 +14,12 @@ import * as InkModel from '../../model/InkModel';
 /**
  * Default renderer
  * @typedef {Object} Renderer
- * @property {function(): RendererInfo} getInfo Get some information about this renderer
- * @property {function(element: Element, minHeight: Number, minWidth: Number): Object} attach Populate the DOM element to create rendering area.
- * @property {function(element: Element, context: Object)} detach Remove rendering area from the DOM element.
- * @property {function(context: Object, model: Model, stroker: Stroker)} resize Explicitly resize the rendering area.
- * @property {function(context: Object, model: Model, stroker: Stroker): Model} drawCurrentStroke Draw the model currentStroke.
- * @property {function(context: Object, model: Model, stroker: Stroker): Model} drawModel Draw the model defaultSymbols and recognizedSymbols.
+ * @property {function} getInfo Get some information about this renderer
+ * @property {function} attach Populate the DOM element to create rendering area.
+ * @property {function} detach Remove rendering area from the DOM element.
+ * @property {function} resize Explicitly resize the rendering area.
+ * @property {function} drawCurrentStroke Draw the model currentStroke.
+ * @property {function} drawModel Draw the model defaultSymbols and recognizedSymbols.
  */
 
 /**

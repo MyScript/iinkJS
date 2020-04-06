@@ -3,15 +3,15 @@ import { grabberLogger as logger } from '../configuration/LoggerConfig';
 /**
  * Grab pointerDown, pointerMove and pointerUp events
  * @typedef {Object} Grabber
- * @property {function(element: Element, editor: Editor): GrabberContext} attach Attach events and decide when to call editor pointerDown/Move/Up methods
- * @property {function(element: Element, context: GrabberContext)} detach Detach the grabber
+ * @property {function} attach Attach events and decide when to call editor pointerDown/Move/Up methods
+ * @property {function} detach Detach the grabber
  */
 
 /**
  * Grabber listener
  * @typedef {Object} GrabberListener
  * @property {Array<String>} types Event types to listen
- * @property {function(event: Event)} listener Event listener for these events
+ * @property {function} listener Event listener for these events
  */
 
 /**
