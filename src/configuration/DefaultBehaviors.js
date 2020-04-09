@@ -1,12 +1,12 @@
-import { editorLogger as logger } from './LoggerConfig';
-import * as PointerEventGrabber from '../grabber/PointerEventGrabber';
-import * as CanvasRenderer from '../renderer/canvas/CanvasRenderer';
-import * as QuadraticCanvasStroker from '../renderer/canvas/stroker/QuadraticCanvasStroker';
-import * as SVGRenderer from '../renderer/svg/SVGRenderer';
-import * as QuadraticSVGStroker from '../renderer/svg/stroker/QuadraticSVGStroker';
-import * as iinkRestRecognizer from '../recognizer/rest/iinkRestRecognizer';
-import * as iinkWsRecognizer from '../recognizer/websocket/IInkWsRecognizer';
-import emit from '../event/Event';
+import { editorLogger as logger } from './LoggerConfig'
+import * as PointerEventGrabber from '../grabber/PointerEventGrabber'
+import * as CanvasRenderer from '../renderer/canvas/CanvasRenderer'
+import * as QuadraticCanvasStroker from '../renderer/canvas/stroker/QuadraticCanvasStroker'
+import * as SVGRenderer from '../renderer/svg/SVGRenderer'
+import * as QuadraticSVGStroker from '../renderer/svg/stroker/QuadraticSVGStroker'
+import * as iinkRestRecognizer from '../recognizer/rest/iinkRestRecognizer'
+import * as iinkWsRecognizer from '../recognizer/websocket/IInkWsRecognizer'
+import emit from '../event/Event'
 
 /**
  * Current behavior
@@ -40,30 +40,30 @@ export const defaultBehaviors = {
   recognizerList: [iinkRestRecognizer, iinkWsRecognizer],
   events: emit,
   getBehaviorFromConfiguration: (behaviors, configuration) => {
-    const behavior = {};
-    behavior.grabber = behaviors.grabber;
+    const behavior = {}
+    behavior.grabber = behaviors.grabber
     if (configuration) {
       if (configuration.recognitionParams.protocol === 'REST') {
-        behavior.stroker = QuadraticCanvasStroker;
-        behavior.renderer = CanvasRenderer;
-        behavior.recognizer = iinkRestRecognizer;
+        behavior.stroker = QuadraticCanvasStroker
+        behavior.renderer = CanvasRenderer
+        behavior.recognizer = iinkRestRecognizer
       } else {
-        behavior.stroker = QuadraticSVGStroker;
-        behavior.renderer = SVGRenderer;
-        behavior.recognizer = iinkWsRecognizer;
+        behavior.stroker = QuadraticSVGStroker
+        behavior.renderer = SVGRenderer
+        behavior.recognizer = iinkWsRecognizer
       }
     }
-    behavior.events = behaviors.events;
-    return behavior;
+    behavior.events = behaviors.events
+    return behavior
   }
-};
+}
 
 /**
  * Generate behaviors
  * @param {Behaviors} behaviors Behaviors to be used
  * @return {Behaviors} Overridden behaviors
  */
-export function overrideDefaultBehaviors(behaviors) {
+export function overrideDefaultBehaviors (behaviors) {
   if (behaviors) {
     const currentBehaviors = {
       grabber: behaviors.grabber || defaultBehaviors.grabber,
@@ -72,11 +72,11 @@ export function overrideDefaultBehaviors(behaviors) {
       recognizerList: behaviors.recognizerList || defaultBehaviors.recognizerList,
       events: behaviors.events || defaultBehaviors.events,
       getBehaviorFromConfiguration: behaviors.getBehaviorFromConfiguration || defaultBehaviors.getBehaviorFromConfiguration
-    };
-    logger.debug('Override default behaviors', currentBehaviors);
-    return currentBehaviors;
+    }
+    logger.debug('Override default behaviors', currentBehaviors)
+    return currentBehaviors
   }
-  return defaultBehaviors;
+  return defaultBehaviors
 }
 
-export default defaultBehaviors;
+export default defaultBehaviors

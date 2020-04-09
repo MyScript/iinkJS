@@ -1,29 +1,28 @@
-import uuid from 'uuid-js';
-import { recognizerLogger as logger } from '../../configuration/LoggerConfig';
-import Constants from '../../configuration/Constants';
-import * as DefaultTheme from '../../configuration/DefaultTheme';
-import * as DefaultPenStyle from '../../configuration/DefaultPenStyle';
-import * as InkModel from '../../model/InkModel';
-import * as RecognizerContext from '../../model/RecognizerContext';
-import * as DefaultRecognizer from '../DefaultRecognizer';
-import * as WsBuilder from './WsBuilder';
-import * as WsRecognizerUtil from './WsRecognizerUtil';
-import * as PromiseHelper from '../../util/PromiseHelper';
-import { handleError, handleSuccess } from '../RecognizerService';
+import uuid from 'uuid-js'
+import { recognizerLogger as logger } from '../../configuration/LoggerConfig'
+import Constants from '../../configuration/Constants'
+import * as DefaultTheme from '../../configuration/DefaultTheme'
+import * as DefaultPenStyle from '../../configuration/DefaultPenStyle'
+import * as InkModel from '../../model/InkModel'
+import * as RecognizerContext from '../../model/RecognizerContext'
+import * as DefaultRecognizer from '../DefaultRecognizer'
+import * as WsBuilder from './WsBuilder'
+import * as WsRecognizerUtil from './WsRecognizerUtil'
+import * as PromiseHelper from '../../util/PromiseHelper'
+import { handleError, handleSuccess } from '../RecognizerService'
 
-export { close } from './WsRecognizerUtil';
+export { close } from './WsRecognizerUtil'
 
-function readBlob(blob) {
-  const fileReader = new FileReader();
+function readBlob (blob) {
+  const fileReader = new FileReader()
   return new Promise((resolve, reject) => {
-    fileReader.onload = event => resolve(event.target.result);
-    fileReader.onerror = () => reject(this);
-    fileReader.readAsText(blob);
-  });
+    fileReader.onload = event => resolve(event.target.result)
+    fileReader.onerror = () => reject(new Error(this))
+    fileReader.readAsText(blob)
+  })
 }
 
-
-function getDPI(element) {
+function getDPI (element) {
   // const startDpi = 56;
   // for (let dpi = startDpi; dpi < 2000; dpi++) {
   //   if (window.matchMedia(`(max-resolution: ${dpi}dpi)`).matches === true) {
@@ -31,7 +30,7 @@ function getDPI(element) {
   //   }
   // }
   // return startDpi;
-  return 96;
+  return 96
 }
 
 /**
@@ -45,17 +44,17 @@ export const IinkWsConfiguration = {
     exportContent: [Constants.Trigger.POINTER_UP, Constants.Trigger.DEMAND],
     addStrokes: [Constants.Trigger.POINTER_UP]
   }
-};
+}
 
 /**
  * Get the configuration supported by this recognizer
  * @return {RecognizerInfo}
  */
-export function getInfo() {
-  return IinkWsConfiguration;
+export function getInfo () {
+  return IinkWsConfiguration
 }
 
-export function buildNewContentPackageInput(configuration, element) {
+export function buildNewContentPackageInput (configuration, element) {
   return {
     type: 'newContentPackage',
     applicationKey: configuration.recognitionParams.server.applicationKey,
@@ -63,10 +62,10 @@ export function buildNewContentPackageInput(configuration, element) {
     yDpi: getDPI(element),
     viewSizeHeight: element.clientHeight < configuration.renderingParams.minHeight ? configuration.renderingParams.minHeight : element.clientHeight,
     viewSizeWidth: element.clientWidth < configuration.renderingParams.minWidth ? configuration.renderingParams.minWidth : element.clientWidth
-  };
+  }
 }
 
-export function buildRestoreIInkSessionInput(configuration, element, sessionId) {
+export function buildRestoreIInkSessionInput (configuration, element, sessionId) {
   return {
     type: 'restoreIInkSession',
     iinkSessionId: sessionId,
@@ -75,35 +74,35 @@ export function buildRestoreIInkSessionInput(configuration, element, sessionId) 
     yDpi: getDPI(element),
     viewSizeHeight: element.clientHeight < configuration.renderingParams.minHeight ? configuration.renderingParams.minHeight : element.clientHeight,
     viewSizeWidth: element.clientWidth < configuration.renderingParams.minWidth ? configuration.renderingParams.minWidth : element.clientWidth
-  };
+  }
 }
 
-export function buildNewContentPart(configuration) {
+export function buildNewContentPart (configuration) {
   return {
     type: 'newContentPart',
     contentType: configuration.recognitionParams.type,
-    mimeTypes: (configuration.triggers.exportContent !== Constants.Trigger.DEMAND) ?
-      configuration.recognitionParams.iink[`${configuration.recognitionParams.type.toLowerCase()}`].mimeTypes : undefined
-  };
+    mimeTypes: (configuration.triggers.exportContent !== Constants.Trigger.DEMAND)
+      ? configuration.recognitionParams.iink[`${configuration.recognitionParams.type.toLowerCase()}`].mimeTypes : undefined
+  }
 }
 
-export function buildOpenContentPart(configuration, partId) {
+export function buildOpenContentPart (configuration, partId) {
   return {
     type: 'openContentPart',
     id: partId,
-    mimeTypes: (configuration.triggers.exportContent !== Constants.Trigger.DEMAND) ?
-      configuration.recognitionParams.iink[`${configuration.recognitionParams.type.toLowerCase()}`].mimeTypes : undefined
-  };
+    mimeTypes: (configuration.triggers.exportContent !== Constants.Trigger.DEMAND)
+      ? configuration.recognitionParams.iink[`${configuration.recognitionParams.type.toLowerCase()}`].mimeTypes : undefined
+  }
 }
 
-export function buildConfiguration(configuration) {
-  return Object.assign({ type: 'configuration' }, configuration.recognitionParams.iink);
+export function buildConfiguration (configuration) {
+  return Object.assign({ type: 'configuration' }, configuration.recognitionParams.iink)
 }
 
-function buildAddStrokes(recognizerContext, model) {
-  const strokes = InkModel.extractPendingStrokes(model, recognizerContext.lastPositions.lastSentPosition + 1);
+function buildAddStrokes (recognizerContext, model) {
+  const strokes = InkModel.extractPendingStrokes(model, recognizerContext.lastPositions.lastSentPosition + 1)
   if (strokes.length > 0) {
-    InkModel.updateModelSentPosition(model);
+    InkModel.updateModelSentPosition(model)
     return {
       type: 'addStrokes',
       strokes: strokes.map(stroke => Object.assign({}, {
@@ -115,161 +114,161 @@ function buildAddStrokes(recognizerContext, model) {
         t: stroke.t,
         p: stroke.p
       }))
-    };
+    }
   }
-  return undefined;
+  return undefined
 }
 
-function buildUndo() {
+function buildUndo () {
   return {
     type: 'undo'
-  };
+  }
 }
 
-function buildRedo() {
+function buildRedo () {
   return {
     type: 'redo'
-  };
+  }
 }
 
-function buildClear() {
+function buildClear () {
   return {
     type: 'clear'
-  };
+  }
 }
 
-function buildConvert(state) {
+function buildConvert (state) {
   return {
     type: 'convert',
     conversionState: state
-  };
+  }
 }
 
-function buildZoom(value) {
+function buildZoom (value) {
   return {
     type: 'zoom',
     zoom: value
-  };
+  }
 }
 
-function buildResize(element, minHeight = 0, minWidth = 0) {
+function buildResize (element, minHeight = 0, minWidth = 0) {
   return {
     type: 'changeViewSize',
     height: element.clientHeight < minHeight ? minHeight : element.clientHeight,
     width: element.clientWidth < minWidth ? minWidth : element.clientWidth
-  };
+  }
 }
 
-function buildExport(configuration, partId, requestedMimeType) {
-  let usedMimeType;
+function buildExport (configuration, partId, requestedMimeType) {
+  let usedMimeType
   if (requestedMimeType && Object.keys(requestedMimeType).length !== 0) {
-    usedMimeType = requestedMimeType;
+    usedMimeType = requestedMimeType
   } else {
-    usedMimeType = configuration.recognitionParams.iink[`${configuration.recognitionParams.type.toLowerCase()}`].mimeTypes;
+    usedMimeType = configuration.recognitionParams.iink[`${configuration.recognitionParams.type.toLowerCase()}`].mimeTypes
   }
 
   return {
     type: 'export',
     partId,
     mimeTypes: usedMimeType
-  };
+  }
 }
 
-function buildImportFile(id, mimetype) {
+function buildImportFile (id, mimetype) {
   return {
     type: 'importFile',
     importFileId: id,
     mimeType: mimetype
-  };
+  }
 }
 
-function buildImportChunk(id, data, lastChunk) {
+function buildImportChunk (id, data, lastChunk) {
   return {
     type: 'fileChunk',
     importFileId: id,
     data,
     lastChunk
-  };
+  }
 }
 
-function buildPointerEvents(events) {
-  return Object.assign({ type: 'pointerEvents' }, events);
+function buildPointerEvents (events) {
+  return Object.assign({ type: 'pointerEvents' }, events)
 }
 
-function buildWaitForIdle() {
+function buildWaitForIdle () {
   return {
     type: 'waitForIdle'
-  };
+  }
 }
 
-function buildGetSupportedImportMimeTypes() {
+function buildGetSupportedImportMimeTypes () {
   return {
     type: 'getSupportedImportMimeTypes'
-  };
+  }
 }
 
-export function buildSetPenStyle(penStyle) {
+export function buildSetPenStyle (penStyle) {
   return {
     type: 'setPenStyle',
     style: penStyle ? DefaultPenStyle.toCSS(penStyle) : ''
-  };
+  }
 }
 
-export function buildSetPenStyleClasses(penStyleClasses) {
+export function buildSetPenStyleClasses (penStyleClasses) {
   return {
     type: 'setPenStyleClasses',
     styleClasses: penStyleClasses
-  };
+  }
 }
 
-export function buildSetTheme(theme) {
+export function buildSetTheme (theme) {
   return {
     type: 'setTheme',
     theme: DefaultTheme.toCSS(theme)
-  };
+  }
 }
 
 const responseCallback = (model, err, res, recognizerContext) => {
-  const modelReference = InkModel.updateModelReceivedPosition(model);
+  const modelReference = InkModel.updateModelReceivedPosition(model)
   if (res) {
-    let event = '';
+    let event = ''
     if (res.updates !== undefined) {
       if (modelReference.recognizedSymbols) {
-        modelReference.recognizedSymbols.push(res);
+        modelReference.recognizedSymbols.push(res)
       } else {
-        modelReference.recognizedSymbols = [res];
+        modelReference.recognizedSymbols = [res]
       }
-      event = Constants.EventType.RENDERED;
+      event = Constants.EventType.RENDERED
     }
     if (res.exports !== undefined) {
-      modelReference.rawResults.exports = res;
-      modelReference.exports = res.exports;
-      event = Constants.EventType.EXPORTED;
+      modelReference.rawResults.exports = res
+      modelReference.exports = res.exports
+      event = Constants.EventType.EXPORTED
     }
 
     if ((res.canUndo !== undefined) || (res.canRedo !== undefined)) {
-      event = Constants.EventType.CHANGED;
+      event = Constants.EventType.CHANGED
     }
 
     if (res.type === 'supportedImportMimeTypes') {
-      event = Constants.EventType.SUPPORTED_IMPORT_MIMETYPES;
+      event = Constants.EventType.SUPPORTED_IMPORT_MIMETYPES
     }
 
     if (res.type === 'partChanged') {
-      event = Constants.EventType.LOADED;
+      event = Constants.EventType.LOADED
     }
 
     if (res.type === 'idle') {
-      event = Constants.EventType.IDLE;
+      event = Constants.EventType.IDLE
     }
 
     if (res.type === 'close') {
-      event = Constants.EventType.CHANGED;
+      event = Constants.EventType.CHANGED
     }
-    return handleSuccess(recognizerContext.editor, model, event);
+    return handleSuccess(recognizerContext.editor, model, event)
   }
-  return handleError(recognizerContext.editor, err);
-};
+  return handleError(recognizerContext.editor, err)
+}
 
 /**
  * Initialize recognition
@@ -281,13 +280,13 @@ const responseCallback = (model, err, res, recognizerContext) => {
  * @param {RecognizerContext} recognizerContext Current recognizer context
  * @param {Model} model Current model
  */
-export async function init(recognizerContext, model) {
-  const contentChange = PromiseHelper.destructurePromise();
-  const partChange = PromiseHelper.destructurePromise();
-  const initPromise = PromiseHelper.destructurePromise();
+export async function init (recognizerContext, model) {
+  const contentChange = PromiseHelper.destructurePromise()
+  const partChange = PromiseHelper.destructurePromise()
+  const initPromise = PromiseHelper.destructurePromise()
 
-  let recognizerContextRef;
-  let contentChanged = null;
+  let recognizerContextRef
+  let contentChanged = null
 
   if (recognizerContext.editor.innerConfiguration.recognitionParams.type === 'MATH' ||
     recognizerContext.editor.innerConfiguration.recognitionParams.type === 'DIAGRAM') {
@@ -296,7 +295,7 @@ export async function init(recognizerContext, model) {
       partChange,
       initPromise,
       patch: (err, res) => responseCallback(model, err, res, recognizerContextRef)
-    });
+    })
   } else {
     recognizerContextRef = RecognizerContext.setRecognitionContext(recognizerContext, {
       model: InkModel.updateModelSentPosition(model, model.lastPositions.lastReceivedPosition),
@@ -304,34 +303,34 @@ export async function init(recognizerContext, model) {
       partChange,
       initPromise,
       patch: (err, res) => responseCallback(model, err, res, recognizerContextRef)
-    });
-    contentChanged = recognizerContextRef.recognitionContexts[0].contentChange.promise;
+    })
+    contentChanged = recognizerContextRef.recognitionContexts[0].contentChange.promise
   }
 
   WsRecognizerUtil.init('/api/v4.0/iink/document', recognizerContextRef, WsBuilder.buildWebSocketCallback, init)
     .catch((err) => {
       if (RecognizerContext.shouldAttemptImmediateReconnect(recognizerContext) && recognizerContext.reconnect) {
-        logger.info('Attempting a reconnect', recognizerContext.currentReconnectionCount);
-        recognizerContext.reconnect(recognizerContext, model);
+        logger.info('Attempting a reconnect', recognizerContext.currentReconnectionCount)
+        recognizerContext.reconnect(recognizerContext, model)
       } else {
-        logger.error('Unable to reconnect', err);
-        responseCallback(model, err, undefined, recognizerContext);
+        logger.error('Unable to reconnect', err)
+        responseCallback(model, err, undefined, recognizerContext)
       }
-    });
+    })
 
-  const [errPartChanged, resPartChanged] = await recognizerContextRef.recognitionContexts[0].partChange.promise;
+  const [errPartChanged, resPartChanged] = await recognizerContextRef.recognitionContexts[0].partChange.promise
   if (resPartChanged) {
-    responseCallback(model, errPartChanged, resPartChanged, recognizerContext);
+    responseCallback(model, errPartChanged, resPartChanged, recognizerContext)
     if (contentChanged !== null) {
-      const [errContentChanged, resContentChanged] = await contentChanged;
+      const [errContentChanged, resContentChanged] = await contentChanged
       if (resContentChanged) {
-        responseCallback(model, errContentChanged, resContentChanged, recognizerContext);
+        responseCallback(model, errContentChanged, resContentChanged, recognizerContext)
       }
     }
-    recognizerContextRef.recognitionContexts[0].initPromise.resolve(true);
+    recognizerContextRef.recognitionContexts[0].initPromise.resolve(true)
   }
 
-  return recognizerContextRef.recognitionContexts[0].initPromise;
+  return recognizerContextRef.recognitionContexts[0].initPromise
 }
 
 /**
@@ -343,39 +342,39 @@ export async function init(recognizerContext, model) {
  * @private
  */
 // eslint-disable-next-line no-underscore-dangle
-async function _prepareMessage(recognizerContext, model, buildFunction, ...params) {
-  logger.info(`-- Prepare message for ${buildFunction.name} --`);
-  const response = PromiseHelper.destructurePromise();
-  const contentChange = PromiseHelper.destructurePromise();
+async function _prepareMessage (recognizerContext, model, buildFunction, ...params) {
+  logger.info(`-- Prepare message for ${buildFunction.name} --`)
+  const response = PromiseHelper.destructurePromise()
+  const contentChange = PromiseHelper.destructurePromise()
   const recognizerContextRef = RecognizerContext.setRecognitionContext(recognizerContext, {
     model,
     response,
     contentChange,
     patch: (err, res) => responseCallback(model, err, res, recognizerContextRef)
-  });
+  })
   WsRecognizerUtil.sendMessage(recognizerContextRef, buildFunction, ...params)
     .catch((err) => {
-      logger.error(err);
-      WsRecognizerUtil.retry(_prepareMessage, recognizerContext, model, buildFunction, ...params);
-    });
+      logger.error(err)
+      WsRecognizerUtil.retry(_prepareMessage, recognizerContext, model, buildFunction, ...params)
+    })
 
-  const resp = await recognizerContextRef.recognitionContexts[0].response.promise;
+  const resp = await recognizerContextRef.recognitionContexts[0].response.promise
 
   if (resp) {
-    responseCallback(model, resp[0], resp[1], recognizerContextRef);
+    responseCallback(model, resp[0], resp[1], recognizerContextRef)
   }
 
-  const contentChanged = await recognizerContextRef.recognitionContexts[0].contentChange.promise;
+  const contentChanged = await recognizerContextRef.recognitionContexts[0].contentChange.promise
 
   if (contentChanged) {
-    responseCallback(model, contentChanged[0], contentChanged[1], recognizerContextRef);
+    responseCallback(model, contentChanged[0], contentChanged[1], recognizerContextRef)
     return {
       res: model,
       types: []
-    };
+    }
   }
 
-  return null;
+  return null
 }
 
 /**
@@ -383,8 +382,8 @@ async function _prepareMessage(recognizerContext, model, buildFunction, ...param
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export function newContentPart(recognizerContext, model) {
-  return _prepareMessage(recognizerContext, model, buildNewContentPart, recognizerContext.editor.configuration);
+export function newContentPart (recognizerContext, model) {
+  return _prepareMessage(recognizerContext, model, buildNewContentPart, recognizerContext.editor.configuration)
 }
 
 /**
@@ -392,9 +391,9 @@ export function newContentPart(recognizerContext, model) {
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export function openContentPart(recognizerContext, model) {
-  const params = [recognizerContext.editor.configuration, recognizerContext.currentPartId];
-  return _prepareMessage(recognizerContext, model, buildOpenContentPart, params);
+export function openContentPart (recognizerContext, model) {
+  const params = [recognizerContext.editor.configuration, recognizerContext.currentPartId]
+  return _prepareMessage(recognizerContext, model, buildOpenContentPart, params)
 }
 
 /**
@@ -402,8 +401,8 @@ export function openContentPart(recognizerContext, model) {
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export function sendConfiguration(recognizerContext, model) {
-  return _prepareMessage(recognizerContext, model, buildConfiguration, recognizerContext.editor.configuration);
+export function sendConfiguration (recognizerContext, model) {
+  return _prepareMessage(recognizerContext, model, buildConfiguration, recognizerContext.editor.configuration)
 }
 
 /**
@@ -412,8 +411,8 @@ export function sendConfiguration(recognizerContext, model) {
  * @param {Model} model Current model
  * @param {PointerEvents} events to be imported
  */
-export function pointerEvents(recognizerContext, model, events) {
-  return _prepareMessage(recognizerContext, model, buildPointerEvents, events);
+export function pointerEvents (recognizerContext, model, events) {
+  return _prepareMessage(recognizerContext, model, buildPointerEvents, events)
 }
 
 /**
@@ -421,9 +420,9 @@ export function pointerEvents(recognizerContext, model, events) {
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export function addStrokes(recognizerContext, model) {
-  const params = [recognizerContext, model];
-  return _prepareMessage(recognizerContext, model, buildAddStrokes, ...params);
+export function addStrokes (recognizerContext, model) {
+  const params = [recognizerContext, model]
+  return _prepareMessage(recognizerContext, model, buildAddStrokes, ...params)
 }
 
 /**
@@ -431,8 +430,8 @@ export function addStrokes(recognizerContext, model) {
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export function undo(recognizerContext, model) {
-  return _prepareMessage(recognizerContext, model, buildUndo);
+export function undo (recognizerContext, model) {
+  return _prepareMessage(recognizerContext, model, buildUndo)
 }
 
 /**
@@ -440,8 +439,8 @@ export function undo(recognizerContext, model) {
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export function redo(recognizerContext, model) {
-  return _prepareMessage(recognizerContext, model, buildRedo);
+export function redo (recognizerContext, model) {
+  return _prepareMessage(recognizerContext, model, buildRedo)
 }
 
 /**
@@ -449,38 +448,39 @@ export function redo(recognizerContext, model) {
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export async function clear(recognizerContext, model) {
-  const response = PromiseHelper.destructurePromise();
-  const contentChange = PromiseHelper.destructurePromise();
+export async function clear (recognizerContext, model) {
+  const response = PromiseHelper.destructurePromise()
+  const contentChange = PromiseHelper.destructurePromise()
   const recognizerContextRef = RecognizerContext.setRecognitionContext(recognizerContext, {
     model,
     response,
     contentChange,
+    // eslint-disable-next-line handle-callback-err
     patch: async (error, result) => {
-      const { err, res, events } = await DefaultRecognizer.clear(recognizerContext, model);
-      responseCallback(res, err, result, recognizerContextRef);
+      const { err, res } = await DefaultRecognizer.clear(recognizerContext, model)
+      responseCallback(res, err, result, recognizerContextRef)
     }
-  });
+  })
   WsRecognizerUtil.sendMessage(recognizerContextRef, buildClear)
-    .catch(exception => WsRecognizerUtil.retry(clear, recognizerContext, model));
+    .catch(exception => WsRecognizerUtil.retry(clear, recognizerContext, model))
 
-  const resp = await recognizerContextRef.recognitionContexts[0].response.promise;
-  const contentChanged = await recognizerContextRef.recognitionContexts[0].contentChange.promise;
+  const resp = await recognizerContextRef.recognitionContexts[0].response.promise
+  const contentChanged = await recognizerContextRef.recognitionContexts[0].contentChange.promise
 
   if (resp) {
-    responseCallback(model, resp[0], resp[1], recognizerContextRef);
+    responseCallback(model, resp[0], resp[1], recognizerContextRef)
   }
 
   if (contentChanged) {
-    responseCallback(model, contentChanged[0], contentChanged[1], recognizerContextRef);
+    responseCallback(model, contentChanged[0], contentChanged[1], recognizerContextRef)
     return {
       err: undefined,
       res: recognizerContextRef.recognitionContexts[0].model,
       events: []
-    };
+    }
   }
 
-  return null;
+  return null
 }
 
 /**
@@ -489,8 +489,8 @@ export async function clear(recognizerContext, model) {
  * @param {Model} model Current model
  * @param {String} conversionState Conversion State, by default DigitalEdit
  */
-export function convert(recognizerContext, model, conversionState) {
-  return _prepareMessage(recognizerContext, model, buildConvert, conversionState);
+export function convert (recognizerContext, model, conversionState) {
+  return _prepareMessage(recognizerContext, model, buildConvert, conversionState)
 }
 
 /**
@@ -500,9 +500,9 @@ export function convert(recognizerContext, model, conversionState) {
  * @param {Array} requestedMimeTypes
  */
 // eslint-disable-next-line no-underscore-dangle
-export function export_(recognizerContext, model, requestedMimeTypes) {
-  const params = [recognizerContext.editor.configuration, recognizerContext.currentPartId, requestedMimeTypes];
-  return _prepareMessage(recognizerContext, model, buildExport, ...params);
+export function export_ (recognizerContext, model, requestedMimeTypes) {
+  const params = [recognizerContext.editor.configuration, recognizerContext.currentPartId, requestedMimeTypes]
+  return _prepareMessage(recognizerContext, model, buildExport, ...params)
 }
 
 /**
@@ -512,29 +512,29 @@ export function export_(recognizerContext, model, requestedMimeTypes) {
  * @param {Blob} data Import data
  */
 // eslint-disable-next-line no-underscore-dangle
-export function import_(recognizerContext, model, data) {
+export function import_ (recognizerContext, model, data) {
   const recognitionContext = {
     model,
     response: (err, res) => responseCallback(model, err, res, recognizerContext),
     importFileId: uuid.create(4).toString()
-  };
-  const recognizerContextRef = RecognizerContext.setRecognitionContext(recognizerContext, recognitionContext);
+  }
+  const recognizerContextRef = RecognizerContext.setRecognitionContext(recognizerContext, recognitionContext)
 
-  const chunkSize = recognizerContext.editor.configuration.recognitionParams.server.websocket.fileChunkSize;
+  const chunkSize = recognizerContext.editor.configuration.recognitionParams.server.websocket.fileChunkSize
 
-  const messages = [];
+  const messages = []
   for (let i = 0; i < data.size; i += chunkSize) {
     if (i === 0) {
-      messages.push(_prepareMessage(recognizerContextRef, model, buildImportFile, recognitionContext.importFileId, data.type));
+      messages.push(_prepareMessage(recognizerContextRef, model, buildImportFile, recognitionContext.importFileId, data.type))
     }
-    const blobPart = data.slice(i, chunkSize, data.type);
+    const blobPart = data.slice(i, chunkSize, data.type)
     readBlob(blobPart).then((res) => {
-      const params = [recognitionContext.importFileId, res, i + chunkSize > data.size];
-      messages.push(_prepareMessage(recognizerContextRef, model, buildImportChunk, ...params));
-    });
+      const params = [recognitionContext.importFileId, res, i + chunkSize > data.size]
+      messages.push(_prepareMessage(recognizerContextRef, model, buildImportChunk, ...params))
+    })
   }
 
-  return Promise.all(messages);
+  return Promise.all(messages)
 }
 
 /**
@@ -542,8 +542,8 @@ export function import_(recognizerContext, model, data) {
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export function getSupportedImportMimeTypes(recognizerContext, model) {
-  return _prepareMessage(recognizerContext, model, buildGetSupportedImportMimeTypes);
+export function getSupportedImportMimeTypes (recognizerContext, model) {
+  return _prepareMessage(recognizerContext, model, buildGetSupportedImportMimeTypes)
 }
 
 /**
@@ -551,8 +551,8 @@ export function getSupportedImportMimeTypes(recognizerContext, model) {
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export function waitForIdle(recognizerContext, model) {
-  return _prepareMessage(recognizerContext, model, buildWaitForIdle);
+export function waitForIdle (recognizerContext, model) {
+  return _prepareMessage(recognizerContext, model, buildWaitForIdle)
 }
 
 /**
@@ -561,9 +561,9 @@ export function waitForIdle(recognizerContext, model) {
  * @param {Model} model Current model
  * @param {Element} element Current element
  */
-export function resize(recognizerContext, model, element) {
-  const params = [element, recognizerContext.editor.configuration.renderingParams.minHeight, recognizerContext.editor.configuration.renderingParams.minWidth];
-  return _prepareMessage(recognizerContext, model, buildResize, ...params);
+export function resize (recognizerContext, model, element) {
+  const params = [element, recognizerContext.editor.configuration.renderingParams.minHeight, recognizerContext.editor.configuration.renderingParams.minWidth]
+  return _prepareMessage(recognizerContext, model, buildResize, ...params)
 }
 
 /**
@@ -572,8 +572,8 @@ export function resize(recognizerContext, model, element) {
  * @param {Model} model Current model
  * @param {Number} value=10 Zoom value
  */
-export function zoom(recognizerContext, model, value = 10) {
-  return _prepareMessage(recognizerContext, model, buildZoom, value);
+export function zoom (recognizerContext, model, value = 10) {
+  return _prepareMessage(recognizerContext, model, buildZoom, value)
 }
 
 /**
@@ -582,8 +582,8 @@ export function zoom(recognizerContext, model, value = 10) {
  * @param {Model} model Current model
  * @param {PenStyle} penStyle Current penStyle
  */
-export function setPenStyle(recognizerContext, model, penStyle) {
-  return _prepareMessage(recognizerContext, model, buildSetPenStyle, penStyle);
+export function setPenStyle (recognizerContext, model, penStyle) {
+  return _prepareMessage(recognizerContext, model, buildSetPenStyle, penStyle)
 }
 
 /**
@@ -592,8 +592,8 @@ export function setPenStyle(recognizerContext, model, penStyle) {
  * @param {Model} model Current model
  * @param {String} penStyleClasses Current penStyleClasses
  */
-export function setPenStyleClasses(recognizerContext, model, penStyleClasses) {
-  return _prepareMessage(recognizerContext, model, buildSetPenStyleClasses, penStyleClasses);
+export function setPenStyleClasses (recognizerContext, model, penStyleClasses) {
+  return _prepareMessage(recognizerContext, model, buildSetPenStyleClasses, penStyleClasses)
 }
 
 /**
@@ -602,6 +602,6 @@ export function setPenStyleClasses(recognizerContext, model, penStyleClasses) {
  * @param {Model} model Current model
  * @param {Theme} theme Current theme
  */
-export function setTheme(recognizerContext, model, theme) {
-  return _prepareMessage(recognizerContext, model, buildSetTheme, theme);
+export function setTheme (recognizerContext, model, theme) {
+  return _prepareMessage(recognizerContext, model, buildSetTheme, theme)
 }

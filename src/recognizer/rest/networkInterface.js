@@ -1,19 +1,19 @@
 /* eslint-disable no-unused-expressions */
-import * as CryptoHelper from '../CryptoHelper';
+import * as CryptoHelper from '../CryptoHelper'
 
 /**
  * Parse JSON String to Object
  * @param {Object} req JSON string result to be parsed
  * @return {Object} Parsed response
  */
-function parse(req) {
-  let result;
+function parse (req) {
+  let result
   try {
-    result = JSON.parse(req.responseText);
+    result = JSON.parse(req.responseText)
   } catch (e) {
-    result = req.responseText;
+    result = req.responseText
   }
-  return result;
+  return result
 }
 
 /**
@@ -21,15 +21,15 @@ function parse(req) {
  * @param {Object} obj Query properties
  * @return {String} URI encoded string
  */
-function transformRequest(obj) {
-  const str = [];
+function transformRequest (obj) {
+  const str = []
   Object.keys(obj).forEach((p) => {
     if ((typeof obj[p] !== 'undefined') &&
         (typeof obj[p] !== 'function')) {
-      str.push(`${encodeURIComponent(p)}=${encodeURIComponent(obj[p])}`);
+      str.push(`${encodeURIComponent(p)}=${encodeURIComponent(obj[p])}`)
     }
-  });
-  return str.join('&');
+  })
+  return str.join('&')
 }
 
 /**
@@ -42,73 +42,74 @@ function transformRequest(obj) {
  * @param {String} mimeType MimeType to be used
  * @return {Promise}
  */
-function xhr(type, url, data, recognizerContext = {}, apiVersion, mimeType) {
-  const pptxMimeType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
-  const configuration = recognizerContext.editor.configuration;
-  const recognizerContextRef = recognizerContext;
+function xhr (type, url, data, recognizerContext = {}, apiVersion, mimeType) {
+  const pptxMimeType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+  const configuration = recognizerContext.editor.configuration
+  const recognizerContextRef = recognizerContext
   return new Promise((resolve, reject) => {
     // We are writing some browser module here so the no import found should be ignored
     // eslint-disable-next-line no-undef
-    const request = new XMLHttpRequest();
-    request.open(type, url, true);
-    request.withCredentials = true;
+    const request = new XMLHttpRequest()
+    request.open(type, url, true)
+    request.withCredentials = true
 
     switch (configuration.recognitionParams.type) {
       case 'TEXT':
-        request.setRequestHeader('Accept', 'application/json,' + mimeType);
-        break;
+        request.setRequestHeader('Accept', 'application/json,' + mimeType)
+        break
       case 'MATH':
-        request.setRequestHeader('Accept', 'application/json,' + mimeType);
-        break;
+        request.setRequestHeader('Accept', 'application/json,' + mimeType)
+        break
       case 'DIAGRAM':
-        request.setRequestHeader('Accept', 'application/json,' + mimeType);
-        break;
+        request.setRequestHeader('Accept', 'application/json,' + mimeType)
+        break
       case 'Raw Content':
-        request.setRequestHeader('Accept', 'application/json,' + mimeType);
-        break;
+        request.setRequestHeader('Accept', 'application/json,' + mimeType)
+        break
       default:
-        break;
+        break
     }
-    request.setRequestHeader('applicationKey', configuration.recognitionParams.server.applicationKey);
-    request.setRequestHeader('hmac', CryptoHelper.computeHmac(JSON.stringify(data), configuration.recognitionParams.server.applicationKey, configuration.recognitionParams.server.hmacKey));
-    request.setRequestHeader('Content-Type', 'application/json');
+    request.setRequestHeader('applicationKey', configuration.recognitionParams.server.applicationKey)
+    request.setRequestHeader('hmac', CryptoHelper.computeHmac(JSON.stringify(data), configuration.recognitionParams.server.applicationKey, configuration.recognitionParams.server.hmacKey))
+    request.setRequestHeader('Content-Type', 'application/json')
 
-    const isBlobType = mimeType && (mimeType === pptxMimeType || mimeType.startsWith('image/png') || mimeType.startsWith('image/jpeg'));
+    const isBlobType = mimeType && (mimeType === pptxMimeType || mimeType.startsWith('image/png') || mimeType.startsWith('image/jpeg'))
     if (isBlobType) {
-      request.responseType = 'blob';
+      request.responseType = 'blob'
     }
 
     request.onerror = () => {
-      reject({ msg: `Could not connect to ${url} connection error`, recoverable: false });
-    };
+      // eslint-disable-next-line prefer-promise-reject-errors
+      reject({ msg: `Could not connect to ${url} connection error`, recoverable: false })
+    }
 
     request.onload = () => {
       if (request.status >= 200 && request.status < 300) {
-        isBlobType ? resolve(request.response) : resolve(parse(request));
+        isBlobType ? resolve(request.response) : resolve(parse(request))
       } else {
-        reject(new Error(request.responseText));
+        reject(new Error(request.responseText))
       }
-    };
+    }
 
     request.onreadystatechange = () => {
       if (request.readyState === 4) {
         if (request.status >= 200 && request.status < 300) {
-          isBlobType ? resolve(request.response) : resolve(parse(request));
+          isBlobType ? resolve(request.response) : resolve(parse(request))
         }
       }
-    };
-
-    if (recognizerContextRef) {
-      recognizerContextRef.idle = false;
     }
 
-    request.send(JSON.stringify(data));
+    if (recognizerContextRef) {
+      recognizerContextRef.idle = false
+    }
+
+    request.send(JSON.stringify(data))
   }).then((res) => {
     if (recognizerContextRef) {
-      recognizerContextRef.idle = true;
+      recognizerContextRef.idle = true
     }
-    return res;
-  });
+    return res
+  })
 }
 
 /**
@@ -118,12 +119,12 @@ function xhr(type, url, data, recognizerContext = {}, apiVersion, mimeType) {
  * @param {Object} params Query properties
  * @return {Promise}
  */
-export function get(recognizerContext, url, params) {
-  let queryUrl = url;
+export function get (recognizerContext, url, params) {
+  let queryUrl = url
   if (params) {
-    queryUrl += `?${transformRequest(params)}`;
+    queryUrl += `?${transformRequest(params)}`
   }
-  return xhr('GET', queryUrl, undefined, recognizerContext);
+  return xhr('GET', queryUrl, undefined, recognizerContext)
 }
 
 /**
@@ -135,6 +136,6 @@ export function get(recognizerContext, url, params) {
  * @param {String} mimeType MimeType to be used
  * @return {Promise}
  */
-export function post(recognizerContext, url, data, apiVersion, mimeType) {
-  return xhr('POST', url, data, recognizerContext, apiVersion, mimeType);
+export function post (recognizerContext, url, data, apiVersion, mimeType) {
+  return xhr('POST', url, data, recognizerContext, apiVersion, mimeType)
 }

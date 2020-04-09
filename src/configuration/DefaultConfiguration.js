@@ -1,6 +1,5 @@
-import merge from 'lodash.merge';
-import { editorLogger as logger } from './LoggerConfig';
-
+import merge from 'lodash.merge'
+import { editorLogger as logger } from './LoggerConfig'
 
 /**
  * Default configuration
@@ -118,25 +117,25 @@ const defaultConfiguration = {
     minHeight: 100,
     minWidth: 100
   }
-};
+}
 
 /**
  * Generate parameters
  * @param {Configuration} configuration Configuration to be used
  * @return {Configuration} Overridden configuration
  */
-export function overrideDefaultConfiguration(configuration) {
-  const confRef = configuration;
-  let currentConfiguration;
+export function overrideDefaultConfiguration (configuration) {
+  const confRef = configuration
+  let currentConfiguration
   if (confRef && confRef.recognitionParams.server && confRef.recognitionParams.server.useWindowLocation) {
-    confRef.recognitionParams.server.scheme = window.location.protocol.slice(0, -1);
-    confRef.recognitionParams.server.host = window.location.host;
-    currentConfiguration = merge({}, defaultConfiguration, confRef === undefined ? {} : confRef);
+    confRef.recognitionParams.server.scheme = window.location.protocol.slice(0, -1)
+    confRef.recognitionParams.server.host = window.location.host
+    currentConfiguration = merge({}, defaultConfiguration, confRef === undefined ? {} : confRef)
   } else {
-    currentConfiguration = merge({}, defaultConfiguration, configuration === undefined ? {} : configuration);
+    currentConfiguration = merge({}, defaultConfiguration, configuration === undefined ? {} : configuration)
   }
-  logger.debug('Override default configuration', currentConfiguration);
-  return currentConfiguration;
+  logger.debug('Override default configuration', currentConfiguration)
+  return currentConfiguration
 }
 
-export default defaultConfiguration;
+export default defaultConfiguration

@@ -1,6 +1,6 @@
-import JsonCSS from 'json-css';
-import merge from 'lodash.merge';
-import { editorLogger as logger } from './LoggerConfig';
+import JsonCSS from 'json-css'
+import merge from 'lodash.merge'
+import { editorLogger as logger } from './LoggerConfig'
 
 /**
  * @typedef {Object} PenStyle
@@ -14,27 +14,27 @@ import { editorLogger as logger } from './LoggerConfig';
  * Default style
  * @type {PenStyle}
  */
-const defaultPenStyle = undefined;
-const parser = new JsonCSS();
+const defaultPenStyle = undefined
+const parser = new JsonCSS()
 
 /**
  * Generate style
  * @param {PenStyle} style Custom style to be applied
  * @return {PenStyle} Overridden style
  */
-export function overrideDefaultPenStyle(style) {
-  const currentStyle = merge({}, defaultPenStyle, style === undefined ? {} : style);
-  logger.debug('Override default pen style', currentStyle);
-  return currentStyle;
+export function overrideDefaultPenStyle (style) {
+  const currentStyle = merge({}, defaultPenStyle, style === undefined ? {} : style)
+  logger.debug('Override default pen style', currentStyle)
+  return currentStyle
 }
 
-export function toCSS(penStyle) { // FIXME Ugly hack to parse JSON to CSS inline
-  const css = parser.toCSS({ css: penStyle });
-  return css.substring(6, css.length - 3);
+export function toCSS (penStyle) { // FIXME Ugly hack to parse JSON to CSS inline
+  const css = parser.toCSS({ css: penStyle })
+  return css.substring(6, css.length - 3)
 }
 
-export function toJSON(penStyle) { // FIXME Ugly hack to parse CSS inline to JSON
-  return parser.toJSON(`css {${penStyle}}`).css;
+export function toJSON (penStyle) { // FIXME Ugly hack to parse CSS inline to JSON
+  return parser.toJSON(`css {${penStyle}}`).css
 }
 
-export default defaultPenStyle;
+export default defaultPenStyle

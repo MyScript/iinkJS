@@ -78,5 +78,5 @@ const Constants = {
   Exports: {
     JIIX: 'application/vnd.myscript.jiix'
   }
-};
-export default Constants;
+}
+export default Constants

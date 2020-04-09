@@ -1,4 +1,4 @@
-import { grabberLogger as logger } from '../configuration/LoggerConfig';
+import { grabberLogger as logger } from '../configuration/LoggerConfig'
 
 /**
  * Grab pointerDown, pointerMove and pointerUp events
@@ -21,32 +21,32 @@ import { grabberLogger as logger } from '../configuration/LoggerConfig';
  * @property {Array<GrabberListener>} listeners Registered listeners
  */
 
-const floatPrecisionArray = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000];
+const floatPrecisionArray = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000]
 
-function roundFloat(oneFloat, requestedFloatPrecision) {
+function roundFloat (oneFloat, requestedFloatPrecision) {
   if (requestedFloatPrecision || requestedFloatPrecision === 0) {
-    let floatPrecision;
+    let floatPrecision
     if (requestedFloatPrecision > 10) {
-      floatPrecision = floatPrecisionArray[10];
+      floatPrecision = floatPrecisionArray[10]
     } else {
-      floatPrecision = floatPrecisionArray[requestedFloatPrecision];
+      floatPrecision = floatPrecisionArray[requestedFloatPrecision]
     }
-    return Math.round(oneFloat * floatPrecision) / floatPrecision;
+    return Math.round(oneFloat * floatPrecision) / floatPrecision
   }
-  return oneFloat;
+  return oneFloat
 }
 
-function extractPoint(event, domElement, configuration, offsetTop = 0, offsetLeft = 0) {
-  let eventRef = event;
+function extractPoint (event, domElement, configuration, offsetTop = 0, offsetLeft = 0) {
+  let eventRef = event
   if (eventRef.changedTouches) {
-    eventRef = eventRef.changedTouches[0];
+    eventRef = eventRef.changedTouches[0]
   }
-  const rect = domElement.getBoundingClientRect();
+  const rect = domElement.getBoundingClientRect()
   return {
     x: roundFloat(eventRef.clientX - rect.left - domElement.clientLeft - offsetLeft, configuration.xyFloatPrecision),
     y: roundFloat(eventRef.clientY - rect.top - domElement.clientTop - offsetTop, configuration.xyFloatPrecision),
     t: roundFloat(Date.now(), configuration.timestampFloatPrecision)
-  };
+  }
 }
 
 /**
@@ -65,110 +65,110 @@ function extractPoint(event, domElement, configuration, offsetTop = 0, offsetLef
  * @listens {Event} pointerleave: a pointer leaves the bounding box of an element.
  * @listens {Event} pointercancel: a pointer will no longer generate events.
  */
-export function attach(element, editor, offsetTop = 0, offsetLeft = 0) {
-  let mMaxDiffX = 0;
+export function attach (element, editor, offsetTop = 0, offsetLeft = 0) {
+  let mMaxDiffX = 0
 
-  function unfocus() {
+  function unfocus () {
     if (window.getSelection().type !== 'None') {
-      window.getSelection().removeAllRanges();
+      window.getSelection().removeAllRanges()
     }
   }
 
-  function hideMenu(evt) {
-    const moreMenuInDocument = document.querySelector('.more-menu');
+  function hideMenu (evt) {
+    const moreMenuInDocument = document.querySelector('.more-menu')
     if (!evt.target.classList.contains('ellipsis') && !evt.target.classList.contains('more-menu') && !evt.target.classList.contains('options-label-button') && moreMenuInDocument && moreMenuInDocument.style.display !== 'none') {
-      moreMenuInDocument.style.display = 'none';
-      return true;
+      moreMenuInDocument.style.display = 'none'
+      return true
     }
-    return false;
+    return false
   }
 
-  function hideCandidates(evt) {
-    const candidatesInDocument = document.querySelector('.candidates');
+  function hideCandidates (evt) {
+    const candidatesInDocument = document.querySelector('.candidates')
     if (!evt.target.classList.contains('candidates') && !(evt.target.tagName === 'SPAN') && candidatesInDocument && candidatesInDocument.style.display !== 'none') {
-      candidatesInDocument.style.display = 'none';
-      return true;
+      candidatesInDocument.style.display = 'none'
+      return true
     }
-    return false;
+    return false
   }
 
-  function pointerDownHandler(evt) { // Trigger a pointerDown
-    const pointerDownOnEditor = evt.target.id === editor.domElement.id || evt.target.classList.contains('ms-canvas');
+  function pointerDownHandler (evt) { // Trigger a pointerDown
+    const pointerDownOnEditor = evt.target.id === editor.domElement.id || evt.target.classList.contains('ms-canvas')
     if (this.activePointerId !== undefined) {
       if (this.activePointerId === evt.pointerId) {
-        logger.trace(`${evt.type} event with the same id without any pointer up`, evt.pointerId);
+        logger.trace(`${evt.type} event with the same id without any pointer up`, evt.pointerId)
       }
     } else if ((evt.button !== 2) && (evt.buttons !== 2) && pointerDownOnEditor) { // Ignore right click
       if (!hideMenu(evt) && !hideCandidates(evt)) {
-        this.activePointerId = evt.pointerId;
+        this.activePointerId = evt.pointerId
         // Hack for iOS 9 Safari : pointerId has to be int so -1 if > max value
-        const pointerId = evt.pointerId > 2147483647 ? -1 : evt.pointerId;
-        unfocus();
-        evt.stopPropagation();
-        editor.pointerDown(extractPoint(evt, element, editor.configuration, offsetTop, offsetLeft), evt.pointerType, pointerId);
+        const pointerId = evt.pointerId > 2147483647 ? -1 : evt.pointerId
+        unfocus()
+        evt.stopPropagation()
+        editor.pointerDown(extractPoint(evt, element, editor.configuration, offsetTop, offsetLeft), evt.pointerType, pointerId)
       }
     } else if (evt.target.classList.contains('ellipsis') || evt.target.classList.contains('tag-icon')) {
-      hideMenu(evt);
-      hideCandidates(evt);
+      hideMenu(evt)
+      hideCandidates(evt)
     } else { // FIXME add more complete verification to pointer down on smartguide
-      hideMenu(evt);
-      hideCandidates(evt);
-      this.smartGuidePointerDown = true;
-      this.downSmartGuidePoint = extractPoint(evt, element, editor.configuration);
+      hideMenu(evt)
+      hideCandidates(evt)
+      this.smartGuidePointerDown = true
+      this.downSmartGuidePoint = extractPoint(evt, element, editor.configuration)
     }
   }
 
-  function pointerMoveHandler(evt) { // Trigger a pointerMove
+  function pointerMoveHandler (evt) { // Trigger a pointerMove
     // Only considering the active pointer
     if (this.activePointerId !== undefined && this.activePointerId === evt.pointerId) {
-      unfocus();
-      editor.pointerMove(extractPoint(evt, element, editor.configuration, offsetTop, offsetLeft));
+      unfocus()
+      editor.pointerMove(extractPoint(evt, element, editor.configuration, offsetTop, offsetLeft))
     } else if (this.smartGuidePointerDown) {
-      const point = extractPoint(evt, element, editor.configuration, offsetTop, offsetLeft);
-      const diffX = Math.abs(this.downSmartGuidePoint.x - point.x);
-      const diffY = Math.abs(this.downSmartGuidePoint.y - point.y);
-      mMaxDiffX = Math.max(diffX, mMaxDiffX);
-      const cond1 = diffX < 5 && diffY > 5 && mMaxDiffX < 15;
-      const cond2 = diffX > 5 && diffY > 5 && mMaxDiffX < 15;
+      const point = extractPoint(evt, element, editor.configuration, offsetTop, offsetLeft)
+      const diffX = Math.abs(this.downSmartGuidePoint.x - point.x)
+      const diffY = Math.abs(this.downSmartGuidePoint.y - point.y)
+      mMaxDiffX = Math.max(diffX, mMaxDiffX)
+      const cond1 = diffX < 5 && diffY > 5 && mMaxDiffX < 15
+      const cond2 = diffX > 5 && diffY > 5 && mMaxDiffX < 15
       if (cond1 || cond2) {
-        this.activePointerId = evt.pointerId;
+        this.activePointerId = evt.pointerId
         // Hack for iOS 9 Safari : pointerId has to be int so -1 if > max value
-        const pointerId = evt.pointerId > 2147483647 ? -1 : evt.pointerId;
-        unfocus();
-        editor.pointerDown(this.downSmartGuidePoint, evt.pointerType, pointerId);
+        const pointerId = evt.pointerId > 2147483647 ? -1 : evt.pointerId
+        unfocus()
+        editor.pointerDown(this.downSmartGuidePoint, evt.pointerType, pointerId)
       }
     } else {
-      logger.trace(`${evt.type} event from another pointerid (${evt.pointerId})`, this.activePointerId);
+      logger.trace(`${evt.type} event from another pointerid (${evt.pointerId})`, this.activePointerId)
     }
   }
 
-  function pointerUpHandler(evt) { // Trigger a pointerUp
-    mMaxDiffX = 0;
-    this.smartGuidePointerDown = false;
-    const smartGuideIds = ['smartguide', 'prompter-text-container', 'prompter-text', 'tag-icon', 'ellipsis'];
-    const scrollbarClasses = ['ps__rail-x', 'ps__thumb-x'];
+  function pointerUpHandler (evt) { // Trigger a pointerUp
+    mMaxDiffX = 0
+    this.smartGuidePointerDown = false
+    const smartGuideIds = ['smartguide', 'prompter-text-container', 'prompter-text', 'tag-icon', 'ellipsis']
+    const scrollbarClasses = ['ps__rail-x', 'ps__thumb-x']
     // Check if pointer entered into any smartguide elements or scrollbar
     // Use case : when the pointer is entering the smartguide or scrollbar, a pointerout (or leave) is fired.
     // The related target is then the DOM element that was left.
     // We don't want this to cause editor.pointerUp because the stroke isn't finished.
-    const pointerEnteredSmartGuide = evt.relatedTarget && (smartGuideIds.includes(evt.relatedTarget.className) || scrollbarClasses.includes(evt.relatedTarget.className));
+    const pointerEnteredSmartGuide = evt.relatedTarget && (smartGuideIds.includes(evt.relatedTarget.className) || scrollbarClasses.includes(evt.relatedTarget.className))
     // Check if pointer didn't stay in the smartguide and pointer exited the smartguide or scrollbar
     // Use case : when the pointer is leaving the smartguide or scrollbar, a pointerout (or leave) is fired.
     // The related target is then the DOM element that was left (the smart guide)
     // We are entering again the editor
     // We don't want this to cause editor.pointerUp because the stroke isn't finished.
-    const pointerExitedSmartGuide = evt.relatedTarget && evt.target && (smartGuideIds.includes(evt.target.className) || scrollbarClasses.includes(evt.target.className));
+    const pointerExitedSmartGuide = evt.relatedTarget && evt.target && (smartGuideIds.includes(evt.target.className) || scrollbarClasses.includes(evt.target.className))
     // Check if pointer moved between words in smartguide
     // Same use case as pointerEnteredSmartGuide but for the words in the smartguide (each word is a span).
-    const pointerMovedWords = evt.relatedTarget && evt.target && (evt.target.tagName === 'SPAN' || evt.relatedTarget.tagName === 'SPAN');
+    const pointerMovedWords = evt.relatedTarget && evt.target && (evt.target.tagName === 'SPAN' || evt.relatedTarget.tagName === 'SPAN')
     if (pointerEnteredSmartGuide || pointerExitedSmartGuide || pointerMovedWords) {
-      evt.stopPropagation();
+      evt.stopPropagation()
     } else if (this.activePointerId !== undefined && this.activePointerId === evt.pointerId) { // Only considering the active pointer
-      this.activePointerId = undefined; // Managing the active pointer
-      evt.stopPropagation();
-      editor.pointerUp(extractPoint(evt, element, editor.configuration, offsetTop, offsetLeft));
+      this.activePointerId = undefined // Managing the active pointer
+      evt.stopPropagation()
+      editor.pointerUp(extractPoint(evt, element, editor.configuration, offsetTop, offsetLeft))
     } else {
-      logger.trace(`${evt.type} event from another pointerid (${evt.pointerId})`, this.activePointerId);
+      logger.trace(`${evt.type} event from another pointerid (${evt.pointerId})`, this.activePointerId)
     }
   }
 
@@ -184,18 +184,18 @@ export function attach(element, editor, offsetTop = 0, offsetLeft = 0) {
       types: ['pointerup', 'pointerout', 'pointerleave', 'pointercancel'],
       listener: pointerUpHandler
     }]
-  };
+  }
 
-  logger.debug('attaching listeners', context);
+  logger.debug('attaching listeners', context)
   context.listeners.forEach((item) => {
-    item.types.forEach(type => element.addEventListener(type, item.listener, context.options));
-  });
-  return context;
+    item.types.forEach(type => element.addEventListener(type, item.listener, context.options))
+  })
+  return context
 }
 
-export function detach(element, context) {
-  logger.debug('detaching listeners', context);
+export function detach (element, context) {
+  logger.debug('detaching listeners', context)
   context.listeners.forEach((item) => {
-    item.types.forEach(type => element.removeEventListener(type, item.listener, context.options));
-  });
+    item.types.forEach(type => element.removeEventListener(type, item.listener, context.options))
+  })
 }

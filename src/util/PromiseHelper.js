@@ -9,30 +9,28 @@
  * destructurePromise
  * @returns {{resolve: *, reject: *, promise: Promise<unknown>}}
  */
-export function destructurePromise() {
-  let resolve;
-  let reject;
+export function destructurePromise () {
+  let resolveParam
+  let rejectParam
   const initPromise = new Promise(
-    (resolveParam, rejectParam) => {
-      resolve = resolveParam;
-      reject = rejectParam;
-    });
-  return { promise: initPromise, resolve, reject };
+    (resolve, reject) => {
+      resolveParam = resolve
+      rejectParam = reject
+    })
+  return { promise: initPromise, resolve: resolveParam, reject: rejectParam }
 }
-
 
 /**
  * @param time
  * @return {{timer: *, promise: Promise}}
  */
-export function delay(time) {
-  let timer = null;
+export function delay (time) {
+  let timer = null
   const promise = new Promise((resolve) => {
-    timer = setTimeout(resolve, time);
-  });
+    timer = setTimeout(resolve, time)
+  })
   return {
     promise,
-    timer,
-  };
+    timer
+  }
 }
-

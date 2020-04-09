@@ -1,6 +1,6 @@
-import * as languagesJson from './configuration/languages.json';
-import { editorLogger as logger } from './configuration/LoggerConfig';
-import { Editor } from './Editor';
+import * as languagesJson from './configuration/languages.json'
+import { editorLogger as logger } from './configuration/LoggerConfig'
+import { Editor } from './Editor'
 
 /**
  * Attach an Editor to a DOMElement
@@ -11,9 +11,9 @@ import { Editor } from './Editor';
  * @param {Behaviors} [behaviors] Custom behaviors to apply
  * @return {Editor} New editor
  */
-export function register(element, configuration, penStyle, theme, behaviors) {
-  logger.debug('Registering a new editor');
-  return new Editor(element, configuration, penStyle, theme, behaviors);
+export function register (element, configuration, penStyle, theme, behaviors) {
+  logger.debug('Registering a new editor')
+  return new Editor(element, configuration, penStyle, theme, behaviors)
 }
 
 /**
@@ -21,6 +21,6 @@ export function register(element, configuration, penStyle, theme, behaviors) {
  * @param {Configuration} [configuration] Configuration to get the languages
  * @return {JSON} A list of available languages
  */
-export function getAvailableLanguageList(configuration) {
-  return languagesJson;
+export function getAvailableLanguageList (configuration) {
+  return languagesJson
 }
