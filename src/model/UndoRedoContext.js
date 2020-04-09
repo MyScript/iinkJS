@@ -1,5 +1,3 @@
-import { modelLogger as logger } from '../configuration/LoggerConfig';
-
 /**
  * Undo/redo context
  * @typedef {Object} UndoRedoContext
@@ -15,14 +13,14 @@ import { modelLogger as logger } from '../configuration/LoggerConfig';
  * @param {Configuration} configuration Current configuration
  * @return {UndoRedoContext} New undo/redo context
  */
-export function createUndoRedoContext(configuration) {
+export function createUndoRedoContext (configuration) {
   return {
     stack: [],
     currentPosition: -1,
     maxSize: configuration.undoRedoMaxStackSize,
     canUndo: false,
     canRedo: false
-  };
+  }
 }
 
 /**
@@ -30,9 +28,9 @@ export function createUndoRedoContext(configuration) {
  * @param {UndoRedoContext} undoRedoContext Current undo/redo context
  * @return {UndoRedoContext} Updated undo/redo context
  */
-export function updateUndoRedoState(undoRedoContext) {
-  const undoRedoContextRef = undoRedoContext;
-  undoRedoContextRef.canUndo = undoRedoContext.currentPosition > 0;
-  undoRedoContextRef.canRedo = undoRedoContext.currentPosition < (undoRedoContext.stack.length - 1);
-  return undoRedoContextRef;
+export function updateUndoRedoState (undoRedoContext) {
+  const undoRedoContextRef = undoRedoContext
+  undoRedoContextRef.canUndo = undoRedoContext.currentPosition > 0
+  undoRedoContextRef.canRedo = undoRedoContext.currentPosition < (undoRedoContext.stack.length - 1)
+  return undoRedoContextRef
 }

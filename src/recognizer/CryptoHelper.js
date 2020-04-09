@@ -1,6 +1,6 @@
-import Hex from 'crypto-js/enc-hex';
-import HmacSHA512 from 'crypto-js/hmac-sha512';
-import { recognizerLogger as logger } from '../configuration/LoggerConfig';
+import Hex from 'crypto-js/enc-hex'
+import HmacSHA512 from 'crypto-js/hmac-sha512'
+import { recognizerLogger as logger } from '../configuration/LoggerConfig'
 
 /**
  * Compute HMAC signature for server authentication
@@ -10,8 +10,8 @@ import { recognizerLogger as logger } from '../configuration/LoggerConfig';
  * @param {String} hmacKey Current hmacKey
  * @return {String} Signature
  */
-export function computeHmac(input, applicationKey, hmacKey) {
-  const jsonInput = (typeof input === 'object') ? JSON.stringify(input) : input;
-  logger.debug('The HmacSHA512 function is loaded', HmacSHA512);
-  return new HmacSHA512(jsonInput, applicationKey + hmacKey).toString(Hex);
+export function computeHmac (input, applicationKey, hmacKey) {
+  const jsonInput = (typeof input === 'object') ? JSON.stringify(input) : input
+  logger.debug('The HmacSHA512 function is loaded', HmacSHA512)
+  return new HmacSHA512(jsonInput, applicationKey + hmacKey).toString(Hex)
 }

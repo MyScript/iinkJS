@@ -1,4 +1,4 @@
-import { eventLogger as logger } from '../configuration/LoggerConfig';
+import { eventLogger as logger } from '../configuration/LoggerConfig'
 
 /**
  * Emits an event when the editor state change
@@ -6,9 +6,9 @@ import { eventLogger as logger } from '../configuration/LoggerConfig';
  * @param {Object} data
  * @emits {Event}
  */
-export default function emit(type, data) {
-  logger.info(`emitting ${type} event`, data);
+export default function emit (type, data) {
+  logger.info(`emitting ${type} event`, data)
   // We are making usage of a browser provided class
   // eslint-disable-next-line no-undef
-  this.dispatchEvent(new CustomEvent(type, Object.assign({ bubbles: true, composed: true }, data ? { detail: data } : undefined)));
+  this.dispatchEvent(new CustomEvent(type, Object.assign({ bubbles: true, composed: true }, data ? { detail: data } : undefined)))
 }

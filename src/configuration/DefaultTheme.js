@@ -1,6 +1,6 @@
-import JsonCSS from 'json-css';
-import merge from 'lodash.merge';
-import { editorLogger as logger } from './LoggerConfig';
+import JsonCSS from 'json-css'
+import merge from 'lodash.merge'
+import { editorLogger as logger } from './LoggerConfig'
 
 /**
  * @typedef {PenStyle} InkTheme
@@ -49,26 +49,26 @@ const defaultTheme = {
     'font-family': 'Open Sans',
     'font-size': 10
   }
-};
-const parser = new JsonCSS();
+}
+const parser = new JsonCSS()
 
 /**
  * Generate theme
  * @param {Theme} theme Custom theme to be applied
  * @return {Theme} Overridden theme
  */
-export function overrideDefaultTheme(theme) {
-  const currentTheme = merge({}, defaultTheme, theme === undefined ? {} : theme);
-  logger.debug('Override default theme', currentTheme);
-  return currentTheme;
+export function overrideDefaultTheme (theme) {
+  const currentTheme = merge({}, defaultTheme, theme === undefined ? {} : theme)
+  logger.debug('Override default theme', currentTheme)
+  return currentTheme
 }
 
-export function toCSS(theme) {
-  return parser.toCSS(theme);
+export function toCSS (theme) {
+  return parser.toCSS(theme)
 }
 
-export function toJSON(theme) {
-  return parser.toJSON(theme);
+export function toJSON (theme) {
+  return parser.toJSON(theme)
 }
 
-export default defaultTheme;
+export default defaultTheme

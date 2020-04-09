@@ -1,7 +1,6 @@
-import { recognizerLogger as logger } from '../../configuration/LoggerConfig';
-import * as CryptoHelper from '../CryptoHelper';
-import * as NetworkWSInterface from './networkWSInterface';
-import * as RecognizerContext from '../../model/RecognizerContext';
+import { recognizerLogger as logger } from '../../configuration/LoggerConfig'
+import * as CryptoHelper from '../CryptoHelper'
+import * as NetworkWSInterface from './networkWSInterface'
 
 import {
   buildNewContentPackageInput,
@@ -12,7 +11,7 @@ import {
   buildSetTheme,
   buildSetPenStyle,
   buildSetPenStyleClasses
-} from './IInkWsRecognizer';
+} from './IInkWsRecognizer'
 
 /**
  * A websocket dialog have this sequence :
@@ -26,11 +25,11 @@ import {
  *                                       <=========== update
  */
 
-function buildHmacMessage(configuration, message) {
+function buildHmacMessage (configuration, message) {
   return {
     type: 'hmac',
     hmac: CryptoHelper.computeHmac(message.data.hmacChallenge, configuration.recognitionParams.server.applicationKey, configuration.recognitionParams.server.hmacKey)
-  };
+  }
 }
 
 /**
@@ -39,123 +38,123 @@ function buildHmacMessage(configuration, message) {
  * @param {RecognizerContext} recognizerContext Current recognizer context
  * @return {function} Callback to handle WebSocket results
  */
-export function buildWebSocketCallback(recognizerContext) {
+export function buildWebSocketCallback (recognizerContext) {
   return (message) => {
-    const recognizerContextRef = recognizerContext;
+    const recognizerContextRef = recognizerContext
     // Handle websocket messages
-    logger.trace(`${message.type} websocket callback`, message);
-    const recognitionContext = recognizerContext.recognitionContexts[recognizerContext.recognitionContexts.length - 1];
-    logger.debug('Current recognition context', recognitionContext);
+    logger.trace(`${message.type} websocket callback`, message)
+    const recognitionContext = recognizerContext.recognitionContexts[recognizerContext.recognitionContexts.length - 1]
+    logger.debug('Current recognition context', recognitionContext)
 
     switch (message.type) {
       case 'open':
         if (recognizerContext.sessionId) {
-          NetworkWSInterface.send(recognizerContext, buildRestoreIInkSessionInput(recognizerContext.editor.configuration, recognizerContext.editor.domElement, recognizerContext.sessionId));
+          NetworkWSInterface.send(recognizerContext, buildRestoreIInkSessionInput(recognizerContext.editor.configuration, recognizerContext.editor.domElement, recognizerContext.sessionId))
         } else {
-          NetworkWSInterface.send(recognizerContext, buildNewContentPackageInput(recognizerContext.editor.configuration, recognizerContext.editor.domElement));
+          NetworkWSInterface.send(recognizerContext, buildNewContentPackageInput(recognizerContext.editor.configuration, recognizerContext.editor.domElement))
         }
-        break;
+        break
       case 'message':
-        logger.debug(`Receiving ${message.data.type} message`, message);
+        logger.debug(`Receiving ${message.data.type} message`, message)
         switch (message.data.type) {
           case 'ack':
             if (message.data.hmacChallenge) {
-              NetworkWSInterface.send(recognizerContext, buildHmacMessage(recognizerContext.editor.configuration, message));
+              NetworkWSInterface.send(recognizerContext, buildHmacMessage(recognizerContext.editor.configuration, message))
             }
             if (message.data.iinkSessionId) {
-              recognizerContextRef.sessionId = message.data.iinkSessionId;
+              recognizerContextRef.sessionId = message.data.iinkSessionId
             }
-            break;
+            break
           case 'newPart':
-            break;
+            break
           case 'contentPackageDescription':
-            recognizerContextRef.currentReconnectionCount = 0;
-            recognizerContextRef.contentPartCount = message.data.contentPartCount;
-            NetworkWSInterface.send(recognizerContext, buildConfiguration(recognizerContext.editor.configuration));
+            recognizerContextRef.currentReconnectionCount = 0
+            recognizerContextRef.contentPartCount = message.data.contentPartCount
+            NetworkWSInterface.send(recognizerContext, buildConfiguration(recognizerContext.editor.configuration))
             if (recognizerContextRef.currentPartId) { // FIXME: Ugly hack to resolve init promise after opening part
-              NetworkWSInterface.send(recognizerContext, buildOpenContentPart(recognizerContext.editor.configuration, recognizerContext.currentPartId));
+              NetworkWSInterface.send(recognizerContext, buildOpenContentPart(recognizerContext.editor.configuration, recognizerContext.currentPartId))
             } else {
-              NetworkWSInterface.send(recognizerContext, buildNewContentPart(recognizerContext.editor.configuration));
+              NetworkWSInterface.send(recognizerContext, buildNewContentPart(recognizerContext.editor.configuration))
             }
-            break;
+            break
           case 'partChanged':
             if (message.data.partId) {
-              recognizerContextRef.currentPartId = message.data.partId;
+              recognizerContextRef.currentPartId = message.data.partId
             }
-            recognizerContextRef.initialized = true;
-            NetworkWSInterface.send(recognizerContext, buildSetTheme(recognizerContext.editor.theme));
-            NetworkWSInterface.send(recognizerContext, buildSetPenStyle(recognizerContext.editor.penStyle));
-            NetworkWSInterface.send(recognizerContext, buildSetPenStyleClasses(recognizerContext.editor.penStyleClasses));
-            recognitionContext.partChange.resolve([undefined, message.data]);
-            break;
+            recognizerContextRef.initialized = true
+            NetworkWSInterface.send(recognizerContext, buildSetTheme(recognizerContext.editor.theme))
+            NetworkWSInterface.send(recognizerContext, buildSetPenStyle(recognizerContext.editor.penStyle))
+            NetworkWSInterface.send(recognizerContext, buildSetPenStyleClasses(recognizerContext.editor.penStyleClasses))
+            recognitionContext.partChange.resolve([undefined, message.data])
+            break
           case 'contentChanged':
             if (message.data.canUndo !== undefined) {
-              recognizerContextRef.canUndo = message.data.canUndo;
+              recognizerContextRef.canUndo = message.data.canUndo
             }
             if (message.data.canRedo !== undefined) {
-              recognizerContextRef.canRedo = message.data.canRedo;
+              recognizerContextRef.canRedo = message.data.canRedo
             }
             if (message.data.empty !== undefined) {
-              recognizerContextRef.isEmpty = message.data.empty;
+              recognizerContextRef.isEmpty = message.data.empty
             }
             if (message.data.possibleUndoCount !== undefined) {
-              recognizerContextRef.possibleUndoCount = message.data.possibleUndoCount;
+              recognizerContextRef.possibleUndoCount = message.data.possibleUndoCount
             }
             if (message.data.undoStackIndex !== undefined) {
-              recognizerContextRef.undoStackIndex = message.data.undoStackIndex;
+              recognizerContextRef.undoStackIndex = message.data.undoStackIndex
             }
-            recognitionContext.contentChange.resolve([undefined, message.data]);
-            break;
+            recognitionContext.contentChange.resolve([undefined, message.data])
+            break
           case 'exported':
-            recognitionContext.response.resolve([undefined, message.data]);
-            break;
+            recognitionContext.response.resolve([undefined, message.data])
+            break
           case 'svgPatch':
-            recognitionContext.patch(undefined, message.data);
-            break;
+            recognitionContext.patch(undefined, message.data)
+            break
           case 'supportedImportMimeTypes':
-            recognizerContextRef.supportedImportMimeTypes = message.data.mimeTypes;
-            recognitionContext.response.resolve([undefined, message.data]);
-            break;
+            recognizerContextRef.supportedImportMimeTypes = message.data.mimeTypes
+            recognitionContext.response.resolve([undefined, message.data])
+            break
           case 'fileChunkAck':
-            recognitionContext.response.resolve([undefined, message.data]);
-            break;
+            recognitionContext.response.resolve([undefined, message.data])
+            break
           case 'idle':
-            recognizerContextRef.idle = true;
-            recognitionContext.response.resolve([undefined, message.data]);
-            break;
+            recognizerContextRef.idle = true
+            recognitionContext.response.resolve([undefined, message.data])
+            break
           case 'error':
-            logger.debug('Error detected stopping all recognition', message);
+            logger.debug('Error detected stopping all recognition', message)
             if (recognitionContext) {
-              recognitionContext.patch(message.data);
+              recognitionContext.patch(message.data)
             } else {
-              recognitionContext.initPromise.reject(Object.assign({}, message.data, { recoverable: false }));
+              recognitionContext.initPromise.reject(Object.assign({}, message.data, { recoverable: false }))
             }
-            break;
+            break
           default :
-            logger.warn('This is something unexpected in current recognizer. Not the type of message we should have here.', message);
+            logger.warn('This is something unexpected in current recognizer. Not the type of message we should have here.', message)
         }
-        break;
+        break
       case 'error':
-        logger.debug('Error detected stopping all recognition', message);
+        logger.debug('Error detected stopping all recognition', message)
         if (recognitionContext) {
-          recognitionContext.initPromise.resolve(Object.assign({}, message, { recoverable: false }));
+          recognitionContext.initPromise.resolve(Object.assign({}, message, { recoverable: false }))
         } else {
-          recognitionContext.initPromise.reject(Object.assign({}, message, { recoverable: false }));
+          recognitionContext.initPromise.reject(Object.assign({}, message, { recoverable: false }))
         }
-        break;
+        break
       case 'close':
-        logger.debug('Close detected stopping all recognition', message);
-        recognizerContextRef.initialized = false;
-        recognizerContextRef.canRedo = false;
-        recognizerContextRef.canUndo = false;
+        logger.debug('Close detected stopping all recognition', message)
+        recognizerContextRef.initialized = false
+        recognizerContextRef.canRedo = false
+        recognizerContextRef.canUndo = false
         if (recognitionContext) {
-          recognitionContext.initPromise.resolve(message);
+          recognitionContext.initPromise.resolve(message)
         } else {
-          recognitionContext.initPromise.reject(message);
+          recognitionContext.initPromise.reject(message)
         }
-        break;
+        break
       default :
-        logger.warn('This is something unexpected in current recognizer. Not the type of message we should have here.', message);
+        logger.warn('This is something unexpected in current recognizer. Not the type of message we should have here.', message)
     }
-  };
+  }
 }

@@ -1,4 +1,4 @@
-import { modelLogger as logger } from '../configuration/LoggerConfig';
+import { modelLogger as logger } from '../configuration/LoggerConfig'
 
 /**
  * Stroke symbol
@@ -23,41 +23,41 @@ import { modelLogger as logger } from '../configuration/LoggerConfig';
  * @property {Array<Stroke>} events=[] the events to process
  */
 
-function computeDistance(x, y, xArray, yArray, lastIndexPoint) {
-  const distance = Math.sqrt(Math.pow((y - yArray[lastIndexPoint - 1]), 2) + Math.pow((x - xArray[lastIndexPoint - 1]), 2));
-  return isNaN(distance) ? 0 : distance;
+function computeDistance (x, y, xArray, yArray, lastIndexPoint) {
+  const distance = Math.sqrt(Math.pow((y - yArray[lastIndexPoint - 1]), 2) + Math.pow((x - xArray[lastIndexPoint - 1]), 2))
+  return isNaN(distance) ? 0 : distance
 }
 
-function computeLength(x, y, xArray, yArray, lArray, lastIndexPoint) {
-  const length = lArray[lastIndexPoint - 1] + computeDistance(x, y, xArray, yArray, lastIndexPoint);
-  return isNaN(length) ? 0 : length;
+function computeLength (x, y, xArray, yArray, lArray, lastIndexPoint) {
+  const length = lArray[lastIndexPoint - 1] + computeDistance(x, y, xArray, yArray, lastIndexPoint)
+  return isNaN(length) ? 0 : length
 }
 
-function computePressure(x, y, xArray, yArray, lArray, lastIndexPoint) {
-  let ratio = 1.0;
-  const distance = computeDistance(x, y, xArray, yArray, lastIndexPoint);
-  const length = computeLength(x, y, xArray, yArray, lArray, lastIndexPoint);
+function computePressure (x, y, xArray, yArray, lArray, lastIndexPoint) {
+  let ratio = 1.0
+  const distance = computeDistance(x, y, xArray, yArray, lastIndexPoint)
+  const length = computeLength(x, y, xArray, yArray, lArray, lastIndexPoint)
 
   if (length === 0) {
-    ratio = 0.5;
+    ratio = 0.5
   } else if (distance === length) {
-    ratio = 1.0;
+    ratio = 1.0
   } else if (distance < 10) {
-    ratio = 0.2 + Math.pow(0.1 * distance, 0.4);
+    ratio = 0.2 + Math.pow(0.1 * distance, 0.4)
   } else if (distance > length - 10) {
-    ratio = 0.2 + Math.pow(0.1 * (length - distance), 0.4);
+    ratio = 0.2 + Math.pow(0.1 * (length - distance), 0.4)
   }
-  const pressure = ratio * Math.max(0.1, 1.0 - (0.1 * Math.sqrt(distance)));
-  return isNaN(parseFloat(pressure)) ? 0.5 : pressure;
+  const pressure = ratio * Math.max(0.1, 1.0 - (0.1 * Math.sqrt(distance)))
+  return isNaN(parseFloat(pressure)) ? 0.5 : pressure
 }
 
-function filterPointByAcquisitionDelta(x, y, xArray, yArray, width) {
-  const delta = (2 + (width / 4));
-  let ret = false;
+function filterPointByAcquisitionDelta (x, y, xArray, yArray, width) {
+  const delta = (2 + (width / 4))
+  let ret = false
   if (xArray.length === 0 || yArray.length === 0 || Math.abs(xArray[xArray.length - 1] - x) >= delta || Math.abs(yArray[yArray.length - 1] - y) >= delta) {
-    ret = true;
+    ret = true
   }
-  return ret;
+  return ret
 }
 
 /**
@@ -65,7 +65,7 @@ function filterPointByAcquisitionDelta(x, y, xArray, yArray, width) {
  * @param {Object} properties Properties to be applied to the stroke.
  * @return {Stroke} New stroke with properties for quadratics draw
  */
-export function createStrokeComponent(properties) {
+export function createStrokeComponent (properties) {
   const defaultStroke = {
     type: 'stroke',
     x: [],
@@ -74,8 +74,8 @@ export function createStrokeComponent(properties) {
     p: [],
     l: [],
     width: 0
-  };
-  return Object.assign({}, defaultStroke, properties);
+  }
+  return Object.assign({}, defaultStroke, properties)
 }
 
 /**
@@ -83,8 +83,8 @@ export function createStrokeComponent(properties) {
  * @param {Stroke} stroke Current stroke
  * @return {{x: Array<Number>, y: Array<Number>, t: Array<Number>}} Simplified stroke object
  */
-export function toJSON(stroke) {
-  return { x: stroke.x, y: stroke.y, t: stroke.t };
+export function toJSON (stroke) {
+  return { x: stroke.x, y: stroke.y, t: stroke.t }
 }
 
 /**
@@ -93,18 +93,18 @@ export function toJSON(stroke) {
  * @param {{x: Number, y: Number, t: Number}} point Point to add
  * @return {Stroke} Updated stroke
  */
-export function addPoint(stroke, point) {
-  const strokeReference = stroke;
+export function addPoint (stroke, point) {
+  const strokeReference = stroke
   if (filterPointByAcquisitionDelta(point.x, point.y, strokeReference.x, strokeReference.y, strokeReference.width)) {
-    strokeReference.x.push(point.x);
-    strokeReference.y.push(point.y);
-    strokeReference.t.push(point.t);
-    strokeReference.p.push(computePressure(point.x, point.y, strokeReference.x, strokeReference.y, strokeReference.l, strokeReference.x.length - 1));
-    strokeReference.l.push(computeLength(point.x, point.y, strokeReference.x, strokeReference.y, strokeReference.l, strokeReference.x.length - 1));
+    strokeReference.x.push(point.x)
+    strokeReference.y.push(point.y)
+    strokeReference.t.push(point.t)
+    strokeReference.p.push(computePressure(point.x, point.y, strokeReference.x, strokeReference.y, strokeReference.l, strokeReference.x.length - 1))
+    strokeReference.l.push(computeLength(point.x, point.y, strokeReference.x, strokeReference.y, strokeReference.l, strokeReference.x.length - 1))
   } else {
-    logger.trace('ignore filtered point', point);
+    logger.trace('ignore filtered point', point)
   }
-  return strokeReference;
+  return strokeReference
 }
 
 /**
@@ -114,16 +114,16 @@ export function addPoint(stroke, point) {
  * @param {Number} [end=length] Zero-based index at which to end extraction
  * @return {Stroke} Sliced stroke
  */
-export function slice(stroke, start = 0, end = stroke.x.length) {
-  const slicedStroke = createStrokeComponent({ color: stroke.color, width: stroke.width });
+export function slice (stroke, start = 0, end = stroke.x.length) {
+  const slicedStroke = createStrokeComponent({ color: stroke.color, width: stroke.width })
   for (let i = start; i < end; i++) {
     addPoint(slicedStroke, {
       x: stroke.x[i],
       y: stroke.y[i],
       t: stroke.t[i]
-    });
+    })
   }
-  return slicedStroke;
+  return slicedStroke
 }
 
 /**
@@ -132,8 +132,8 @@ export function slice(stroke, start = 0, end = stroke.x.length) {
  * @param {Number} index Zero-based index
  * @return {{x: Number, y: Number, t: Number, p: Number, l: Number}} Point with properties for quadratics draw
  */
-export function getPointByIndex(stroke, index) {
-  let point;
+export function getPointByIndex (stroke, index) {
+  let point
   if (index !== undefined && index >= 0 && index < stroke.x.length) {
     point = {
       x: stroke.x[index],
@@ -141,7 +141,7 @@ export function getPointByIndex(stroke, index) {
       t: stroke.t[index],
       p: stroke.p[index],
       l: stroke.l[index]
-    };
+    }
   }
-  return point;
+  return point
 }

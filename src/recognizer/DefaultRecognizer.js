@@ -1,8 +1,8 @@
-import { recognizerLogger as logger } from '../configuration/LoggerConfig';
-import * as InkModel from '../model/InkModel';
-import * as RecognizerContext from '../model/RecognizerContext';
-import Constants from '../configuration/Constants';
-import { handleSuccess } from './RecognizerService';
+import { recognizerLogger as logger } from '../configuration/LoggerConfig'
+import * as InkModel from '../model/InkModel'
+import * as RecognizerContext from '../model/RecognizerContext'
+import Constants from '../configuration/Constants'
+import { handleSuccess } from './RecognizerService'
 
 /**
  * Triggers
@@ -62,18 +62,18 @@ import { handleSuccess } from './RecognizerService';
  * @param {Model} model Current model
  * @return {Promise}
  */
-export function init(recognizerContext, model) {
-  const modelRef = InkModel.resetModelPositions(model);
-  logger.debug('Updated model', modelRef);
-  const recognizerContextRef = RecognizerContext.updateRecognitionPositions(recognizerContext, modelRef.lastPositions);
-  recognizerContextRef.initPromise = Promise.resolve(modelRef);
+export function init (recognizerContext, model) {
+  const modelRef = InkModel.resetModelPositions(model)
+  logger.debug('Updated model', modelRef)
+  const recognizerContextRef = RecognizerContext.updateRecognitionPositions(recognizerContext, modelRef.lastPositions)
+  recognizerContextRef.initPromise = Promise.resolve(modelRef)
   return recognizerContextRef.initPromise
     .then((res) => {
-      recognizerContextRef.initialized = true;
-      logger.debug('Updated recognizer context', recognizerContextRef);
-      handleSuccess(recognizerContextRef.editor, res, Constants.EventType.LOADED);
-      return res;
-    });
+      recognizerContextRef.initialized = true
+      logger.debug('Updated recognizer context', recognizerContextRef)
+      handleSuccess(recognizerContextRef.editor, res, Constants.EventType.LOADED)
+      return res
+    })
 }
 
 /**
@@ -82,15 +82,15 @@ export function init(recognizerContext, model) {
  * @param {Model} model Current model
  * @return {Promise}
  */
-export function reset(recognizerContext, model) {
-  const modelRef = InkModel.resetModelPositions(model);
-  logger.debug('Updated model', modelRef);
-  const recognizerContextRef = RecognizerContext.updateRecognitionPositions(recognizerContext, modelRef.lastPositions);
-  delete recognizerContextRef.instanceId;
-  logger.debug('Updated recognizer context', recognizerContextRef);
+export function reset (recognizerContext, model) {
+  const modelRef = InkModel.resetModelPositions(model)
+  logger.debug('Updated model', modelRef)
+  const recognizerContextRef = RecognizerContext.updateRecognitionPositions(recognizerContext, modelRef.lastPositions)
+  delete recognizerContextRef.instanceId
+  logger.debug('Updated recognizer context', recognizerContextRef)
   return Promise.resolve({
-    res: modelRef,
-  });
+    res: modelRef
+  })
 }
 
 /**
@@ -99,17 +99,17 @@ export function reset(recognizerContext, model) {
  * @param {Model} model Current model
  * @return {Promise}
  */
-export function clear(recognizerContext, model) {
-  const modelRef = InkModel.clearModel(model);
-  logger.debug('Updated model', modelRef);
-  const recognizerContextRef = RecognizerContext.updateRecognitionPositions(recognizerContext, modelRef.lastPositions);
-  delete recognizerContextRef.instanceId;
-  logger.debug('Updated recognizer context', recognizerContextRef);
+export function clear (recognizerContext, model) {
+  const modelRef = InkModel.clearModel(model)
+  logger.debug('Updated model', modelRef)
+  const recognizerContextRef = RecognizerContext.updateRecognitionPositions(recognizerContext, modelRef.lastPositions)
+  delete recognizerContextRef.instanceId
+  logger.debug('Updated recognizer context', recognizerContextRef)
   return Promise.resolve({
     err: undefined,
     res: modelRef,
     events: [Constants.EventType.CHANGED, Constants.EventType.EXPORTED, Constants.EventType.RENDERED]
-  });
+  })
 }
 
 /**
@@ -118,9 +118,9 @@ export function clear(recognizerContext, model) {
  * @param {Model} model Current model
  * @return {Promise}
  */
-export function close(recognizerContext, model) {
-  const recognizerContextRef = recognizerContext;
-  recognizerContextRef.initialized = false;
-  delete recognizerContextRef.instanceId;
-  return Promise.resolve(model);
+export function close (recognizerContext, model) {
+  const recognizerContextRef = recognizerContext
+  recognizerContextRef.initialized = false
+  delete recognizerContextRef.instanceId
+  return Promise.resolve(model)
 }

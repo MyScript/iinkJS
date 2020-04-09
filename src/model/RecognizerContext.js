@@ -1,4 +1,4 @@
-import { recognizerLogger as logger } from '../configuration/LoggerConfig';
+import { recognizerLogger as logger } from '../configuration/LoggerConfig'
 
 /**
  * Recognition context
@@ -37,9 +37,9 @@ import { recognizerLogger as logger } from '../configuration/LoggerConfig';
  * @param {Editor} editor
  * @return {RecognizerContext} An object that contains all recognizer context
  */
-export function createEmptyRecognizerContext(editor) {
-  const id = Date.now();
-  logger.info('Create empty recognizer context with ID: ' + id);
+export function createEmptyRecognizerContext (editor) {
+  const id = Date.now()
+  logger.info('Create empty recognizer context with ID: ' + id)
   return {
     id,
     editor,
@@ -67,7 +67,7 @@ export function createEmptyRecognizerContext(editor) {
     possibleUndoCount: 0,
     idle: true,
     initialized: false
-  };
+  }
 }
 
 /**
@@ -76,11 +76,11 @@ export function createEmptyRecognizerContext(editor) {
  * @param {Model} model
  * @return {Boolean}
  */
-export function isResetRequired(recognizerContext, model) {
+export function isResetRequired (recognizerContext, model) {
   if (recognizerContext.lastPositions) {
-    return recognizerContext.lastPositions.lastSentPosition >= model.rawStrokes.length - 1;
+    return recognizerContext.lastPositions.lastSentPosition >= model.rawStrokes.length - 1
   }
-  return false;
+  return false
 }
 
 /**
@@ -89,16 +89,16 @@ export function isResetRequired(recognizerContext, model) {
  * @param {RecognitionPositions} positions Current recognition positions
  * @return {RecognizerContext}
  */
-export function updateRecognitionPositions(recognizerContext, positions) {
-  const recognizerContextRef = recognizerContext;
+export function updateRecognitionPositions (recognizerContext, positions) {
+  const recognizerContextRef = recognizerContext
   if (positions) {
-    recognizerContextRef.lastPositions.lastSentPosition = positions.lastSentPosition;
-    recognizerContextRef.lastPositions.lastReceivedPosition = positions.lastReceivedPosition;
+    recognizerContextRef.lastPositions.lastSentPosition = positions.lastSentPosition
+    recognizerContextRef.lastPositions.lastReceivedPosition = positions.lastReceivedPosition
   }
   if (recognizerContextRef.lastPositions.lastSentPosition === recognizerContextRef.lastPositions.lastReceivedPosition === -1) {
-    delete recognizerContextRef.instanceId;
+    delete recognizerContextRef.instanceId
   }
-  return recognizerContextRef;
+  return recognizerContextRef
 }
 
 /**
@@ -107,20 +107,19 @@ export function updateRecognitionPositions(recognizerContext, positions) {
  * @param {RecognitionContext} recognitionContext
  * @return {RecognizerContext}
  */
-export function setRecognitionContext(recognizerContext, recognitionContext) {
-  const recognizerContextRef = recognizerContext;
-  recognizerContextRef.recognitionContexts[0] = recognitionContext;
-  return recognizerContextRef;
+export function setRecognitionContext (recognizerContext, recognitionContext) {
+  const recognizerContextRef = recognizerContext
+  recognizerContextRef.recognitionContexts[0] = recognitionContext
+  return recognizerContextRef
 }
-
 
 /**
  * Test if it is possible to reconnect
  * @param {RecognizerContext} recognizerContext
  * @return {Boolean} True if possible, false otherwise
  */
-export function canReconnect(recognizerContext) {
-  return recognizerContext.websocket.autoReconnect === true && recognizerContext.currentReconnectionCount <= recognizerContext.websocket.maxRetryCount;
+export function canReconnect (recognizerContext) {
+  return recognizerContext.websocket.autoReconnect === true && recognizerContext.currentReconnectionCount <= recognizerContext.websocket.maxRetryCount
 }
 
 /**
@@ -128,20 +127,19 @@ export function canReconnect(recognizerContext) {
  * @param {RecognizerContext} recognizerContext
  * @return {Boolean} True if should attempt reconnect, false otherwise
  */
-export function shouldAttemptImmediateReconnect(recognizerContext) {
-  const recognizerContextRef = recognizerContext;
-  return recognizerContextRef.websocket.autoReconnect === true && recognizerContextRef.currentReconnectionCount++ <= recognizerContextRef.websocket.maxRetryCount;
+export function shouldAttemptImmediateReconnect (recognizerContext) {
+  const recognizerContextRef = recognizerContext
+  return recognizerContextRef.websocket.autoReconnect === true && recognizerContextRef.currentReconnectionCount++ <= recognizerContextRef.websocket.maxRetryCount
 }
 
 /**
  * Lost connection message
  * @type {{type: string}}
  */
-export const LOST_CONNEXION_MESSAGE = { type: 'LOST_CONNECTION' };
+export const LOST_CONNEXION_MESSAGE = { type: 'LOST_CONNECTION' }
 
 /**
  * Explicit close message
  * @type {String}
  */
-export const CLOSE_RECOGNIZER_MESSAGE = 'CLOSE_RECOGNIZER';
-
+export const CLOSE_RECOGNIZER_MESSAGE = 'CLOSE_RECOGNIZER'
