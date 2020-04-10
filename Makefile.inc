@@ -18,6 +18,8 @@ DEVLOCAL = false
 CURRENT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROJECT_DIR ?= $(CURRENT_DIR)
 GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
+SWITCH_TO_INTERNAL := false
+SWITCH_TO_MASTER := true
 
 MAKE := $(MAKE) PROJECT_DIR=$(PROJECT_DIR)  BUILDID=$(BUILDID) --no-print-directory
 NPM_CACHE = $(HOME)/.npm
@@ -34,14 +36,22 @@ MOCHA_DOCKERREPOSITORY = $(REGISTRY)/myscript-webcomponents-mocha:$(CONFIGURATIO
 WAITTCP_DOCKERREPOSITORY = $(REGISTRY)/myscript-webcomponents-wait-tcp:$(CONFIGURATION_DOCKERTAG)
 PUPPETEER_DOCKERREPOSITORY = $(REGISTRY)/myscript-common-puppeteer:1.0.0
 
+DOC_VERSION := 1.4.0
+MODULES := iink-js
+
 BUILDENV := test
 TEST_DOCKER_NAME_PREFIX := myscriptjs-$(DOCKERTAG)-$(BUILDENV)-$(BUILDID)
 TEST_DOCKER_EXAMPLES_INSTANCE_NAME := $(TEST_DOCKER_NAME_PREFIX)-examples
 
+DEV_APPLICATIONKEY := 12240847-03f1-4f6a-8774-64ad6e51fb82
+DEV_HMACKEY := 104c326a-2b7b-4f4b-8083-9e7f9553a2b6
+
 APPLICATIONKEY := 7d223f9e-a3cb-4213-ba4b-85e930605f8b
 HMACKEY := 5ab1935e-529a-4d48-a695-158450e52b13
 
-APIHOST := cloud-internal-master.corp.myscript.com
+APIHOST := webdemoapi.myscript.com
+SWITCHHOST := cloud-internal-stable.corp.myscript.com
+
 APISCHEME := https
 ifeq ($(CDKAPILOCAL),true)
     APIHOST := localhost:8894
@@ -50,6 +60,21 @@ endif
 ifeq ($(IINKAPILOCAL),true)
    APIHOST := localhost:8897
    APISCHEME := http
+endif
+
+ifeq ($(IINKAPI_TEST_MASTER),true)
+    APIHOST := cloud-internal-master.corp.myscript.com
+    APISCHEME := https
+endif
+
+ifeq ($(SWITCH_TO_STABLE),true)
+    APIHOST := cloud-internal-stable.corp.myscript.com
+    SWITCHHOST := webdemoapi.myscript.com
+endif
+
+ifeq ($(SWITCH_TO_MASTER),true)
+    APIHOST := cloud-internal-master.corp.myscript.com
+    SWITCHHOST := webdemoapi.myscript.com
 endif
 
 

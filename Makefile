@@ -63,3 +63,22 @@ _examples:
 
 help: ## This help.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+prepare-docs:
+	echo "iink-js $${DOC_VERSION} documentation"; \
+    		DOC_PATH="./tmp/docs/iink-js/$${DOC_VERSION}"; \
+    		rm -rf $${DOC_PATH} || exit 1; \
+    		mkdir -p $${DOC_PATH}; \
+    		cp -r * $${DOC_PATH}; \
+    		rm -Rf $${DOC_PATH}/node_modules;\
+    		rm -Rf $${DOC_PATH}/docker;\
+    		cd .. || exit 1;
+
+upload-docs: prepare-docs
+	@scp -r ./tmp/docs/iink-js cloud@cloudtest.corp.myscript.com:/var/www/clouddocs;
+	@$(foreach NAME,$(MODULES), make replace-keys-host-docs-$(NAME); )
+
+replace-keys-host-docs-%:
+	ssh cloud@cloudtest.corp.myscript.com 'find /var/www/clouddocs/$*/ -type f -name '"'"'*.html'"'"' -print0 | xargs -0 sed -i "s/${SWITCHHOST}/${APIHOST}/g"'; \
+	ssh cloud@cloudtest.corp.myscript.com 'find /var/www/clouddocs/$*/ -type f -name '"'"'*.html'"'"' -print0 | xargs -0 sed -i "s/${APPLICATIONKEY}/${DEV_APPLICATIONKEY}/g"'; \
+	ssh cloud@cloudtest.corp.myscript.com 'find /var/www/clouddocs/$*/ -type f -name '"'"'*.html'"'"' -print0 | xargs -0 sed -i "s/${HMACKEY}/${DEV_HMACKEY}/g"';
