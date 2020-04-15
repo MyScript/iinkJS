@@ -11,7 +11,7 @@ import {
   buildSetTheme,
   buildSetPenStyle,
   buildSetPenStyleClasses
-} from './IInkWsRecognizer'
+} from './iinkWsRecognizer'
 
 /**
  * A websocket dialog have this sequence :
