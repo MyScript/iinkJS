@@ -5,7 +5,7 @@ import * as QuadraticCanvasStroker from '../renderer/canvas/stroker/QuadraticCan
 import * as SVGRenderer from '../renderer/svg/SVGRenderer'
 import * as QuadraticSVGStroker from '../renderer/svg/stroker/QuadraticSVGStroker'
 import * as iinkRestRecognizer from '../recognizer/rest/iinkRestRecognizer'
-import * as iinkWsRecognizer from '../recognizer/websocket/IInkWsRecognizer'
+import * as iinkWsRecognizer from '../recognizer/websocket/iinkWsRecognizer'
 import emit from '../event/Event'
 
 /**
