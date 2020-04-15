@@ -39,7 +39,7 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { rendererLogger as logger } from '../../../configuration/LoggerConfig';
+            <pre class="prettyprint source linenums"><code>import { rendererLogger as logger } from '../../../configuration/LoggerConfig'
 
 /**
  * @type {{table: String, shape: String, recognizedShape: String, ellipse: String, line: String}}
@@ -50,86 +50,86 @@ export const ShapeSymbols = {
   recognizedShape: 'recognizedShape',
   ellipse: 'ellipse',
   line: 'line'
-};
-
-function phi(angle) {
-  let returnedAngle = ((angle + Math.PI) % (Math.PI * 2)) - Math.PI;
-  if (returnedAngle &lt; -Math.PI) {
-    returnedAngle += Math.PI * 2;
-  }
-  return returnedAngle;
 }
 
-function drawEllipseArc(context, centerPoint, maxRadius, minRadius, orientation, startAngle, sweepAngle) {
-  const angleStep = 0.02; // angle delta between interpolated
+function phi (angle) {
+  let returnedAngle = ((angle + Math.PI) % (Math.PI * 2)) - Math.PI
+  if (returnedAngle &lt; -Math.PI) {
+    returnedAngle += Math.PI * 2
+  }
+  return returnedAngle
+}
 
-  let z1 = Math.cos(orientation);
-  let z3 = Math.sin(orientation);
-  let z2 = z1;
-  let z4 = z3;
-  z1 *= maxRadius;
-  z2 *= minRadius;
-  z3 *= maxRadius;
-  z4 *= minRadius;
+function drawEllipseArc (context, centerPoint, maxRadius, minRadius, orientation, startAngle, sweepAngle) {
+  const angleStep = 0.02 // angle delta between interpolated
 
-  const n = Math.floor(Math.abs(sweepAngle) / angleStep);
+  let z1 = Math.cos(orientation)
+  let z3 = Math.sin(orientation)
+  let z2 = z1
+  let z4 = z3
+  z1 *= maxRadius
+  z2 *= minRadius
+  z3 *= maxRadius
+  z4 *= minRadius
 
-  const boundariesPoints = [];
+  const n = Math.floor(Math.abs(sweepAngle) / angleStep)
 
-  context.save();
+  const boundariesPoints = []
+
+  context.save()
   try {
-    context.beginPath();
+    context.beginPath()
 
     for (let i = 0; i &lt;= n; i++) {
-      const angle = startAngle + ((i / n) * sweepAngle); // points on the arc, in radian
-      const alpha = Math.atan2(Math.sin(angle) / minRadius, Math.cos(angle) / maxRadius);
+      const angle = startAngle + ((i / n) * sweepAngle) // points on the arc, in radian
+      const alpha = Math.atan2(Math.sin(angle) / minRadius, Math.cos(angle) / maxRadius)
 
-      const cosAlpha = Math.cos(alpha);
-      const sinAlpha = Math.sin(alpha);
+      const cosAlpha = Math.cos(alpha)
+      const sinAlpha = Math.sin(alpha)
 
       // current point
-      const x = (centerPoint.x + (z1 * cosAlpha)) - (z4 * sinAlpha);
-      const y = (centerPoint.y + (z2 * sinAlpha)) + (z3 * cosAlpha);
+      const x = (centerPoint.x + (z1 * cosAlpha)) - (z4 * sinAlpha)
+      const y = (centerPoint.y + (z2 * sinAlpha)) + (z3 * cosAlpha)
       if (i === 0) {
-        context.moveTo(x, y);
+        context.moveTo(x, y)
       } else {
-        context.lineTo(x, y);
+        context.lineTo(x, y)
       }
 
       if (i === 0 || i === n) {
-        boundariesPoints.push({ x, y });
+        boundariesPoints.push({ x, y })
       }
     }
 
-    context.stroke();
+    context.stroke()
   } finally {
-    context.restore();
+    context.restore()
   }
 
-  return boundariesPoints;
+  return boundariesPoints
 }
 
-function drawArrowHead(context, headPoint, angle, length) {
-  const alpha = phi(angle + (Math.PI * (7 / 8)));
-  const beta = phi(angle - (Math.PI * (7 / 8)));
+function drawArrowHead (context, headPoint, angle, length) {
+  const alpha = phi(angle + (Math.PI * (7 / 8)))
+  const beta = phi(angle - (Math.PI * (7 / 8)))
 
-  const contextReference = context;
-  contextReference.save();
+  const contextReference = context
+  contextReference.save()
   try {
-    contextReference.fillStyle = contextReference.strokeStyle;
+    contextReference.fillStyle = contextReference.strokeStyle
 
-    contextReference.moveTo(headPoint.x, headPoint.y);
-    contextReference.beginPath();
-    contextReference.lineTo(headPoint.x + (length * Math.cos(alpha)), headPoint.y + (length * Math.sin(alpha)));
-    contextReference.lineTo(headPoint.x + (length * Math.cos(beta)), headPoint.y + (length * Math.sin(beta)));
-    contextReference.lineTo(headPoint.x, headPoint.y);
-    contextReference.fill();
+    contextReference.moveTo(headPoint.x, headPoint.y)
+    contextReference.beginPath()
+    contextReference.lineTo(headPoint.x + (length * Math.cos(alpha)), headPoint.y + (length * Math.sin(alpha)))
+    contextReference.lineTo(headPoint.x + (length * Math.cos(beta)), headPoint.y + (length * Math.sin(beta)))
+    contextReference.lineTo(headPoint.x, headPoint.y)
+    contextReference.fill()
   } finally {
-    contextReference.restore();
+    contextReference.restore()
   }
 }
 
-function drawShapeEllipse(context, shapeEllipse) {
+function drawShapeEllipse (context, shapeEllipse) {
   const points = drawEllipseArc(
     context,
     shapeEllipse.center,
@@ -137,13 +137,13 @@ function drawShapeEllipse(context, shapeEllipse) {
     shapeEllipse.minRadius,
     shapeEllipse.orientation,
     shapeEllipse.startAngle,
-    shapeEllipse.sweepAngle);
+    shapeEllipse.sweepAngle)
 
   if (shapeEllipse.beginDecoration &amp;&amp; shapeEllipse.beginDecoration === 'ARROW_HEAD') {
-    drawArrowHead(context, points[0], shapeEllipse.beginTangentAngle, 12.0);
+    drawArrowHead(context, points[0], shapeEllipse.beginTangentAngle, 12.0)
   }
   if (shapeEllipse.endDecoration &amp;&amp; shapeEllipse.endDecoration === 'ARROW_HEAD') {
-    drawArrowHead(context, points[1], shapeEllipse.endTangentAngle, 12.0);
+    drawArrowHead(context, points[1], shapeEllipse.endTangentAngle, 12.0)
   }
 }
 
@@ -153,25 +153,25 @@ function drawShapeEllipse(context, shapeEllipse) {
  * @param {{x: Number, y: Number}} p1 Origin point
  * @param {{x: Number, y: Number}} p2 Destination point
  */
-export function drawLine(context, p1, p2) {
-  context.save();
+export function drawLine (context, p1, p2) {
+  context.save()
   try {
-    context.beginPath();
-    context.moveTo(p1.x, p1.y);
-    context.lineTo(p2.x, p2.y);
-    context.stroke();
+    context.beginPath()
+    context.moveTo(p1.x, p1.y)
+    context.lineTo(p2.x, p2.y)
+    context.stroke()
   } finally {
-    context.restore();
+    context.restore()
   }
 }
 
-function drawShapeLine(context, shapeLine) {
-  drawLine(context, shapeLine.firstPoint, shapeLine.lastPoint);
+function drawShapeLine (context, shapeLine) {
+  drawLine(context, shapeLine.firstPoint, shapeLine.lastPoint)
   if (shapeLine.beginDecoration === 'ARROW_HEAD') {
-    drawArrowHead(context, shapeLine.firstPoint, shapeLine.beginTangentAngle, 12.0);
+    drawArrowHead(context, shapeLine.firstPoint, shapeLine.beginTangentAngle, 12.0)
   }
   if (shapeLine.endDecoration === 'ARROW_HEAD') {
-    drawArrowHead(context, shapeLine.lastPoint, shapeLine.endTangentAngle, 12.0);
+    drawArrowHead(context, shapeLine.lastPoint, shapeLine.endTangentAngle, 12.0)
   }
 }
 
@@ -180,47 +180,47 @@ function drawShapeLine(context, shapeLine) {
  * @param {Object} context Current rendering context
  * @param {Object} symbol Symbol to draw
  */
-export function drawShapeSymbol(context, symbol) {
-  logger.debug(`draw ${symbol.type} symbol`);
-  const contextReference = context;
-  contextReference.save();
+export function drawShapeSymbol (context, symbol) {
+  logger.debug(`draw ${symbol.type} symbol`)
+  const contextReference = context
+  contextReference.save()
   try {
-    contextReference.lineWidth = symbol.width;
-    contextReference.strokeStyle = symbol.color;
+    contextReference.lineWidth = symbol.width
+    contextReference.strokeStyle = symbol.color
 
     if (symbol.elementType) {
       switch (symbol.elementType) {
         case ShapeSymbols.shape:
-          drawShapeSymbol(contextReference, symbol.candidates[symbol.selectedCandidateIndex]);
-          break;
+          drawShapeSymbol(contextReference, symbol.candidates[symbol.selectedCandidateIndex])
+          break
         case ShapeSymbols.table:
-          symbol.lines.forEach(line => drawShapeSymbol(contextReference, line));
-          break;
+          symbol.lines.forEach(line => drawShapeSymbol(contextReference, line))
+          break
         case ShapeSymbols.line:
-          drawLine(contextReference, symbol.data.p1, symbol.data.p2);
-          break;
+          drawLine(contextReference, symbol.data.p1, symbol.data.p2)
+          break
         default:
-          logger.error(`${symbol.elementType} not implemented`);
-          break;
+          logger.error(`${symbol.elementType} not implemented`)
+          break
       }
     } else {
       switch (symbol.type) {
         case ShapeSymbols.ellipse:
-          drawShapeEllipse(contextReference, symbol);
-          break;
+          drawShapeEllipse(contextReference, symbol)
+          break
         case ShapeSymbols.line:
-          drawShapeLine(contextReference, symbol);
-          break;
+          drawShapeLine(contextReference, symbol)
+          break
         case ShapeSymbols.recognizedShape:
-          symbol.primitives.forEach(primitive => drawShapeSymbol(contextReference, primitive));
-          break;
+          symbol.primitives.forEach(primitive => drawShapeSymbol(contextReference, primitive))
+          break
         default:
-          logger.error(`${symbol.type} not implemented`);
-          break;
+          logger.error(`${symbol.type} not implemented`)
+          break
       }
     }
   } finally {
-    contextReference.restore();
+    contextReference.restore()
   }
 }
 </code></pre>
@@ -235,7 +235,7 @@ export function drawShapeSymbol(context, symbol) {
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Mon Apr 06 2020 15:54:10 GMT+0200 (Central European Summer Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a> on Wed Apr 15 2020 16:24:15 GMT+0200 (Central European Summer Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

@@ -39,9 +39,9 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import PerfectScrollbar from 'perfect-scrollbar';
-import Clipboard from 'clipboard';
-import Constants from '../configuration/Constants';
+            <pre class="prettyprint source linenums"><code>import PerfectScrollbar from 'perfect-scrollbar'
+import Clipboard from 'clipboard'
+import Constants from '../configuration/Constants'
 
 /**
  * Smart guide
@@ -59,93 +59,93 @@ import Constants from '../configuration/Constants';
 /**
  * Create all the smart guide HTML elements.
  */
-function createHTMLElements(randomString) {
+function createHTMLElements (randomString) {
   /**
    * The smart guide element.
    * @type {HTMLDivElement}
    */
-  const smartGuideElement = document.createElement('div');
-  smartGuideElement.id = 'smartguide' + randomString;
-  smartGuideElement.classList.add('smartguide');
+  const smartGuideElement = document.createElement('div')
+  smartGuideElement.id = 'smartguide' + randomString
+  smartGuideElement.classList.add('smartguide')
 
   /**
    * The prompter text element that contains the text to get the overflow working.
    * @type {HTMLDivElement}
    */
-  const textElement = document.createElement('div');
-  textElement.id = 'prompter-text' + randomString;
-  textElement.classList.add('prompter-text');
-  textElement.setAttribute('touch-action', 'none');
+  const textElement = document.createElement('div')
+  textElement.id = 'prompter-text' + randomString
+  textElement.classList.add('prompter-text')
+  textElement.setAttribute('touch-action', 'none')
 
   /**
    * The text container element that contains the text element.
    * @type {HTMLDivElement}
    */
-  const textContainer = document.createElement('div');
-  textContainer.id = 'prompter-text-container' + randomString;
-  textContainer.classList.add('prompter-text-container');
-  textContainer.appendChild(textElement);
+  const textContainer = document.createElement('div')
+  textContainer.id = 'prompter-text-container' + randomString
+  textContainer.classList.add('prompter-text-container')
+  textContainer.appendChild(textElement)
 
   /**
    * The actions menu represented by the ellipsis character.
    * @type {HTMLDivElement}
    */
-  const ellipsisElement = document.createElement('div');
-  ellipsisElement.id = 'ellipsis' + randomString;
-  ellipsisElement.classList.add('ellipsis');
-  ellipsisElement.innerHTML = '...';
+  const ellipsisElement = document.createElement('div')
+  ellipsisElement.id = 'ellipsis' + randomString
+  ellipsisElement.classList.add('ellipsis')
+  ellipsisElement.innerHTML = '...'
 
   /**
    * The tag element.
    * @type {HTMLDivElement}
    */
-  const tagElement = document.createElement('div');
-  tagElement.id = 'tag-icon' + randomString;
-  tagElement.classList.add('tag-icon');
-  tagElement.innerHTML = '&amp;#182;';
+  const tagElement = document.createElement('div')
+  tagElement.id = 'tag-icon' + randomString
+  tagElement.classList.add('tag-icon')
+  tagElement.innerHTML = '&amp;#182;'
 
   /**
    * The candidates element that contains the candidates for a word.
    * @type {HTMLDivElement}
    */
-  const candidatesElement = document.createElement('div');
-  candidatesElement.id = 'candidates' + randomString;
-  candidatesElement.classList.add('candidates');
+  const candidatesElement = document.createElement('div')
+  candidatesElement.id = 'candidates' + randomString
+  candidatesElement.classList.add('candidates')
 
   /**
    * The menu element that contains the actions.
    * @type {HTMLDivElement}
    */
-  const menuElement = document.createElement('div');
-  menuElement.id = 'more-menu' + randomString;
-  menuElement.classList.add('more-menu');
+  const menuElement = document.createElement('div')
+  menuElement.id = 'more-menu' + randomString
+  menuElement.classList.add('more-menu')
 
   /**
    * The convert button from actions menu.
    * @type {HTMLButtonElement}
    */
-  const convertElement = document.createElement('button');
-  convertElement.classList.add('options-label-button');
-  convertElement.id = 'convert' + randomString;
-  convertElement.innerHTML = 'Convert';
+  const convertElement = document.createElement('button')
+  convertElement.classList.add('options-label-button')
+  convertElement.id = 'convert' + randomString
+  convertElement.innerHTML = 'Convert'
 
   /**
    * The copy button from actions menu.
    * @type {HTMLButtonElement}
    */
-  const copyElement = document.createElement('button');
-  copyElement.classList.add('options-label-button');
-  copyElement.id = 'copy' + randomString;
-  copyElement.innerHTML = 'Copy';
+  const copyElement = document.createElement('button')
+  copyElement.classList.add('options-label-button')
+  copyElement.id = 'copy' + randomString
+  copyElement.innerHTML = 'Copy'
 
   /**
    * The delete button from actions menu.
    * @type {HTMLButtonElement}
    */
-  const deleteElement = document.createElement('button');
-  deleteElement.classList.add('options-label-button');
-  deleteElement.id = 'delete' + randomString;
-  deleteElement.innerHTML = 'Delete';
+  const deleteElement = document.createElement('button')
+  deleteElement.classList.add('options-label-button')
+  deleteElement.id = 'delete' + randomString
+  deleteElement.innerHTML = 'Delete'
 
   return {
     smartGuideElement,
@@ -157,8 +157,8 @@ function createHTMLElements(randomString) {
     ellipsisElement,
     convertElement,
     copyElement,
-    deleteElement,
-  };
+    deleteElement
+  }
 }
 
 /**
@@ -166,15 +166,15 @@ function createHTMLElements(randomString) {
  * @param {Node} node - A node element.
  * @returns {boolean} true if is in shadow dom, false otherwise.
  */
-function isInShadow(node) {
-  let parent = (node &amp;&amp; node.parentNode);
+function isInShadow (node) {
+  let parent = (node &amp;&amp; node.parentNode)
   while (parent) {
     if (parent.toString() === '[object ShadowRoot]') {
-      return true;
+      return true
     }
-    parent = parent.parentNode;
+    parent = parent.parentNode
   }
-  return false;
+  return false
 }
 
 /**
@@ -183,32 +183,32 @@ function isInShadow(node) {
  * @param {Object} elements - All the elements of the smart guide.
  * @param {SmartGuide} smartGuide
  */
-function showActions(evt, elements) {
-  const elementsRef = elements;
+function showActions (evt, elements) {
+  const elementsRef = elements
 
   const insertActions = () => {
-    elementsRef.menuElement.appendChild(elementsRef.convertElement);
-    elementsRef.menuElement.appendChild(elementsRef.copyElement);
-    elementsRef.menuElement.appendChild(elementsRef.deleteElement);
+    elementsRef.menuElement.appendChild(elementsRef.convertElement)
+    elementsRef.menuElement.appendChild(elementsRef.copyElement)
+    elementsRef.menuElement.appendChild(elementsRef.deleteElement)
 
-    const parent = evt.target.parentNode;
-    parent.insertBefore(elementsRef.menuElement, evt.target);
-  };
+    const parent = evt.target.parentNode
+    parent.insertBefore(elementsRef.menuElement, evt.target)
+  }
 
   const positionActions = () => {
     // 48 to get the boundary of smart guide element.
-    const left = evt.target.offsetLeft - 68;
-    elementsRef.menuElement.style.left = `${left}px`;
-  };
+    const left = evt.target.offsetLeft - 68
+    elementsRef.menuElement.style.left = `${left}px`
+  }
 
-  const isMenuInDocument = document.contains(elementsRef.menuElement);
+  const isMenuInDocument = document.contains(elementsRef.menuElement)
   if (!isInShadow(elementsRef.menuElement) &amp;&amp; !isMenuInDocument) {
-    elementsRef.menuElement.style.display = 'flex';
-    positionActions();
-    insertActions();
+    elementsRef.menuElement.style.display = 'flex'
+    positionActions()
+    insertActions()
   } else if (elementsRef.menuElement.style.display === 'none') {
-    positionActions();
-    elementsRef.menuElement.style.display = 'flex';
+    positionActions()
+    elementsRef.menuElement.style.display = 'flex'
   }
 }
 
@@ -218,33 +218,33 @@ function showActions(evt, elements) {
  * @param {Editor} editor - A reference to the editor.
  * @param {SmartGuide} smartGuide - A reference to the smart guide.
  */
-function showCandidates(evt, editor, smartGuide) {
-  const smartGuideRef = smartGuide;
-  const elementsRef = smartGuide.elements;
+function showCandidates (evt, editor, smartGuide) {
+  const smartGuideRef = smartGuide
+  const elementsRef = smartGuide.elements
 
   if (evt.target.id !== `prompter-text${smartGuide.randomString}`) {
-    const id = evt.target.id.replace('word-', '').replace(smartGuide.randomString, '');
-    const words = JSON.parse(editor.exports[Constants.Exports.JIIX]).words;
-    smartGuideRef.wordToChange = words[id];
-    smartGuideRef.wordToChange.id = id;
-    elementsRef.candidatesElement.innerHTML = '';
+    const id = evt.target.id.replace('word-', '').replace(smartGuide.randomString, '')
+    const words = JSON.parse(editor.exports[Constants.Exports.JIIX]).words
+    smartGuideRef.wordToChange = words[id]
+    smartGuideRef.wordToChange.id = id
+    elementsRef.candidatesElement.innerHTML = ''
     if (smartGuideRef.wordToChange &amp;&amp; smartGuideRef.wordToChange.candidates) {
-      elementsRef.candidatesElement.style.display = 'flex';
+      elementsRef.candidatesElement.style.display = 'flex'
       smartGuideRef.wordToChange.candidates.forEach((word, index) => {
         if (smartGuideRef.wordToChange.label === word) {
-          elementsRef.candidatesElement.innerHTML += `&lt;span id="cdt-${index}${smartGuide.randomString}" class="selected-word">${word}&lt;/span>`;
+          elementsRef.candidatesElement.innerHTML += `&lt;span id="cdt-${index}${smartGuide.randomString}" class="selected-word">${word}&lt;/span>`
         } else {
-          elementsRef.candidatesElement.innerHTML += `&lt;span id="cdt-${index}${smartGuide.randomString}">${word}&lt;/span>`;
+          elementsRef.candidatesElement.innerHTML += `&lt;span id="cdt-${index}${smartGuide.randomString}">${word}&lt;/span>`
         }
-      });
+      })
       // get the parent parent of word to insert just before smart guide, 48 to get the boundary of smart guide element.
-      const top = 48;
-      const left = evt.target.getBoundingClientRect().left - 60;
-      elementsRef.candidatesElement.style.top = `${top}px`;
-      elementsRef.candidatesElement.style.left = `${left}px`;
+      const top = 48
+      const left = evt.target.getBoundingClientRect().left - 60
+      elementsRef.candidatesElement.style.top = `${top}px`
+      elementsRef.candidatesElement.style.left = `${left}px`
 
-      const parent = evt.target.parentNode.parentNode.parentNode;
-      parent.insertBefore(elementsRef.candidatesElement, evt.target.parentNode.parentNode);
+      const parent = evt.target.parentNode.parentNode.parentNode
+      parent.insertBefore(elementsRef.candidatesElement, evt.target.parentNode.parentNode)
     }
   }
 }
@@ -255,18 +255,18 @@ function showCandidates(evt, editor, smartGuide) {
  * @param {Editor} editor - A reference to the editor.
  * @param {SmartGuide} smartGuide - A reference to the smart guide.
  */
-function clickCandidate(evt, editor, smartGuide) {
-  const smartGuideRef = smartGuide;
-  const elementsRef = smartGuide.elements;
-  const candidate = evt.target.innerText;
+function clickCandidate (evt, editor, smartGuide) {
+  const smartGuideRef = smartGuide
+  const elementsRef = smartGuide.elements
+  const candidate = evt.target.innerText
 
   if (candidate !== smartGuideRef.wordToChange.label &amp;&amp; smartGuideRef.wordToChange.candidates.includes(candidate)) {
-    const jiixToImport = JSON.parse(editor.exports[Constants.Exports.JIIX]);
-    jiixToImport.words[smartGuideRef.wordToChange.id].label = candidate;
+    const jiixToImport = JSON.parse(editor.exports[Constants.Exports.JIIX])
+    jiixToImport.words[smartGuideRef.wordToChange.id].label = candidate
     // eslint-disable-next-line no-underscore-dangle
-    editor.import_(JSON.stringify(jiixToImport), Constants.Exports.JIIX);
+    editor.import_(JSON.stringify(jiixToImport), Constants.Exports.JIIX)
   }
-  elementsRef.candidatesElement.style.display = 'none';
+  elementsRef.candidatesElement.style.display = 'none'
 }
 
 /**
@@ -274,23 +274,23 @@ function clickCandidate(evt, editor, smartGuide) {
  * @param {Editor} editor - A reference to the editor.
  * @param {SmartGuide} smartGuide - A reference to the smart guide.
  */
-function addListeners(editor, smartGuide) {
-  const elementsRef = smartGuide.elements;
+function addListeners (editor, smartGuide) {
+  const elementsRef = smartGuide.elements
 
-  elementsRef.textElement.addEventListener('click', evt => showCandidates(evt, editor, smartGuide));
-  elementsRef.candidatesElement.addEventListener('click', evt => clickCandidate(evt, editor, smartGuide));
-  elementsRef.ellipsisElement.addEventListener('click', evt => showActions(evt, elementsRef));
+  elementsRef.textElement.addEventListener('click', evt => showCandidates(evt, editor, smartGuide))
+  elementsRef.candidatesElement.addEventListener('click', evt => clickCandidate(evt, editor, smartGuide))
+  elementsRef.ellipsisElement.addEventListener('click', evt => showActions(evt, elementsRef))
   elementsRef.copyElement.addEventListener('click', () => {
-    elementsRef.menuElement.style.display = 'none';
-  });
+    elementsRef.menuElement.style.display = 'none'
+  })
   elementsRef.convertElement.addEventListener('click', () => {
-    elementsRef.menuElement.style.display = 'none';
-    editor.convert();
-  });
+    elementsRef.menuElement.style.display = 'none'
+    editor.convert()
+  })
   elementsRef.deleteElement.addEventListener('click', () => {
-    elementsRef.menuElement.style.display = 'none';
-    editor.clear();
-  });
+    elementsRef.menuElement.style.display = 'none'
+    editor.clear()
+  })
 }
 
 /**
@@ -298,29 +298,29 @@ function addListeners(editor, smartGuide) {
  * @param {number} [duration=10000] - the duration in milliseconds before calling the fade out animation.
  * @param {SmartGuide} smartGuide - A reference to the smart guide.
  */
-function callFadeOutObserver(duration = 10000, smartGuide) {
-  const smartGuideRef = smartGuide;
-  const elementsRef = smartGuide.elements;
+function callFadeOutObserver (duration = 10000, smartGuide) {
+  const smartGuideRef = smartGuide
+  const elementsRef = smartGuide.elements
   // eslint-disable-next-line no-undef
   const observer = new MutationObserver((mutations) => {
     mutations.forEach(() => {
       if (smartGuideRef.smartGuideTimeOutId) {
-        clearTimeout(smartGuideRef.smartGuideTimeOutId);
+        clearTimeout(smartGuideRef.smartGuideTimeOutId)
       }
       if (elementsRef.candidatesElement.style.display === 'none' &amp;&amp; elementsRef.menuElement.style.display === 'none') {
         smartGuideRef.smartGuideTimeOutId = setTimeout(() => {
-          elementsRef.smartGuideElement.classList.add('smartguide-out');
-          elementsRef.smartGuideElement.classList.remove('smartguide-in');
-        }, duration);
+          elementsRef.smartGuideElement.classList.add('smartguide-out')
+          elementsRef.smartGuideElement.classList.remove('smartguide-in')
+        }, duration)
       } else if (!document.contains(elementsRef.candidatesElement) &amp;&amp; !document.contains(elementsRef.menuElement)) {
         smartGuideRef.smartGuideTimeOutId = setTimeout(() => {
-          elementsRef.smartGuideElement.classList.add('smartguide-out');
-          elementsRef.smartGuideElement.classList.remove('smartguide-in');
-        }, duration);
+          elementsRef.smartGuideElement.classList.add('smartguide-out')
+          elementsRef.smartGuideElement.classList.remove('smartguide-in')
+        }, duration)
       }
-    });
-  });
-  observer.observe(elementsRef.smartGuideElement, { childList: true, subtree: true, attributes: true });
+    })
+  })
+  observer.observe(elementsRef.smartGuideElement, { childList: true, subtree: true, attributes: true })
 }
 
 /**
@@ -328,16 +328,17 @@ function callFadeOutObserver(duration = 10000, smartGuide) {
  * @param {Editor} editor - A reference to the editor.
  * @returns {SmartGuide} New smart guide
  */
-export function createSmartGuide(editor) {
-  const randomString = '-' + Math.random().toString(10).substring(2, 12);
-  const elements = createHTMLElements(randomString);
+export function createSmartGuide (editor) {
+  const randomString = '-' + Math.random().toString(10).substring(2, 12)
+  const elements = createHTMLElements(randomString)
 
   /**
    * Clipboard from clipboard.js used to get copy across all browsers.
    * @type {Clipboard}
    */
-  const clipboard = new Clipboard(elements.copyElement);
-  const perfectScrollbar = new PerfectScrollbar(elements.textContainer, { suppressScrollY: true, scrollXMarginOffset: 1 });
+  // eslint-disable-next-line no-unused-vars
+  const clipboard = new Clipboard(elements.copyElement)
+  const perfectScrollbar = new PerfectScrollbar(elements.textContainer, { suppressScrollY: true, scrollXMarginOffset: 1 })
 
   const smartGuide = {
     editor,
@@ -348,107 +349,106 @@ export function createSmartGuide(editor) {
     elements,
     smartGuideTimeOutId: 0,
     randomString
-  };
-  addListeners(editor, smartGuide);
+  }
+  addListeners(editor, smartGuide)
 
   if (editor.configuration.recognitionParams.iink.text.smartGuideFadeOut.enable) {
-    callFadeOutObserver(editor.configuration.recognitionParams.iink.text.smartGuideFadeOut.duration, smartGuide);
+    callFadeOutObserver(editor.configuration.recognitionParams.iink.text.smartGuideFadeOut.duration, smartGuide)
   }
 
-  return smartGuide;
+  return smartGuide
 }
 
-export function resize(smartGuide) {
-  const smartGuideRef = smartGuide;
-  const elementsRef = smartGuide.elements;
+export function resize (smartGuide) {
+  const smartGuideRef = smartGuide
+  const elementsRef = smartGuide.elements
 
-  const mmToPixels = 3.779527559;
-  let left = smartGuideRef.editor.configuration.recognitionParams.iink.text.margin.left * mmToPixels;
+  const mmToPixels = 3.779527559
+  let left = smartGuideRef.editor.configuration.recognitionParams.iink.text.margin.left * mmToPixels
 
-  const maxWidthTextContainer = smartGuideRef.editor.domElement.clientWidth - left - elementsRef.tagElement.offsetWidth - 35 - left;
+  const maxWidthTextContainer = smartGuideRef.editor.domElement.clientWidth - left - elementsRef.tagElement.offsetWidth - 35 - left
 
   // Assign a max width to the smartguide based on the editor width, the left position and a small margin for the ellipsis (48px)
-  elementsRef.textContainer.style.width = `${maxWidthTextContainer}px`;
-  elementsRef.textContainer.style.maxWidth = `${maxWidthTextContainer}px`;
+  elementsRef.textContainer.style.width = `${maxWidthTextContainer}px`
+  elementsRef.textContainer.style.maxWidth = `${maxWidthTextContainer}px`
 
-  left = elementsRef.tagElement.offsetWidth;
-  left += maxWidthTextContainer;
-  elementsRef.ellipsisElement.style.left = `${left}px`;
+  left = elementsRef.tagElement.offsetWidth
+  left += maxWidthTextContainer
+  elementsRef.ellipsisElement.style.left = `${left}px`
 
-  elementsRef.smartGuideElement.style.width = `${elementsRef.tagElement.offsetWidth + elementsRef.textContainer.offsetWidth + elementsRef.ellipsisElement.offsetWidth}px`;
-  smartGuideRef.perfectScrollbar.update();
+  elementsRef.smartGuideElement.style.width = `${elementsRef.tagElement.offsetWidth + elementsRef.textContainer.offsetWidth + elementsRef.ellipsisElement.offsetWidth}px`
+  smartGuideRef.perfectScrollbar.update()
 }
 
 /**
  * Insert the smart guide HTML elements in the DOM.
  * @param {SmartGuide} smartGuide - A reference to the smart guide.
  */
-export function insertSmartGuide(smartGuide) {
-  const smartGuideRef = smartGuide;
-  const elementsRef = smartGuide.elements;
+export function insertSmartGuide (smartGuide) {
+  const smartGuideRef = smartGuide
+  const elementsRef = smartGuide.elements
 
   const insertSmartGuideElement = (left, top) => {
-    elementsRef.smartGuideElement.style.top = `${top}px`;
-    elementsRef.smartGuideElement.style.left = `${left}px`;
-    elementsRef.smartGuideElement.style.visibility = 'hidden';
+    elementsRef.smartGuideElement.style.top = `${top}px`
+    elementsRef.smartGuideElement.style.left = `${left}px`
+    elementsRef.smartGuideElement.style.visibility = 'hidden'
 
-    const parent = smartGuideRef.editor.domElement;
-    parent.insertBefore(elementsRef.smartGuideElement, smartGuideRef.editor.loader);
-  };
+    const parent = smartGuideRef.editor.domElement
+    parent.insertBefore(elementsRef.smartGuideElement, smartGuideRef.editor.loader)
+  }
   const insertTag = () => {
-    elementsRef.smartGuideElement.appendChild(elementsRef.tagElement);
-  };
+    elementsRef.smartGuideElement.appendChild(elementsRef.tagElement)
+  }
   const insertTextContainer = (left, maxWidth) => {
-    elementsRef.textContainer.style.left = `${left}px`;
+    elementsRef.textContainer.style.left = `${left}px`
 
     // Assign a max width to the smartguide based on the editor width, the left position and a small margin for the ellipsis (48px)
-    elementsRef.textContainer.style.width = `${maxWidth}px`;
-    elementsRef.textContainer.style.maxWidth = `${maxWidth}px`;
+    elementsRef.textContainer.style.width = `${maxWidth}px`
+    elementsRef.textContainer.style.maxWidth = `${maxWidth}px`
 
-    elementsRef.smartGuideElement.appendChild(elementsRef.textContainer);
-  };
+    elementsRef.smartGuideElement.appendChild(elementsRef.textContainer)
+  }
   const insertEllipsis = (left) => {
-    elementsRef.ellipsisElement.style.left = `${left}px`;
+    elementsRef.ellipsisElement.style.left = `${left}px`
 
-    elementsRef.smartGuideElement.appendChild(elementsRef.ellipsisElement);
-  };
-
+    elementsRef.smartGuideElement.appendChild(elementsRef.ellipsisElement)
+  }
 
   // FIXME Use value from contentChanged when available
 
-  const mmToPixels = 3.779527559;
+  const mmToPixels = 3.779527559
 
-  const marginTop = smartGuideRef.editor.configuration.recognitionParams.iink.text.margin.top * mmToPixels;
-  const marginLeft = smartGuideRef.editor.configuration.recognitionParams.iink.text.margin.left * mmToPixels;
+  const marginTop = smartGuideRef.editor.configuration.recognitionParams.iink.text.margin.top * mmToPixels
+  const marginLeft = smartGuideRef.editor.configuration.recognitionParams.iink.text.margin.left * mmToPixels
 
   // 12 is the space between line in mm
-  const top = marginTop - (12 * mmToPixels);
-  let left = marginLeft;
+  const top = marginTop - (12 * mmToPixels)
+  let left = marginLeft
 
-  insertSmartGuideElement(left, top);
-  insertTag();
+  insertSmartGuideElement(left, top)
+  insertTag()
 
   // 35 is the ellipsis element width
-  const maxWidthTextContainer = smartGuideRef.editor.domElement.clientWidth - left - elementsRef.tagElement.offsetWidth - 35 - left;
-  left = elementsRef.tagElement.offsetWidth;
-  insertTextContainer(left, maxWidthTextContainer);
+  const maxWidthTextContainer = smartGuideRef.editor.domElement.clientWidth - left - elementsRef.tagElement.offsetWidth - 35 - left
+  left = elementsRef.tagElement.offsetWidth
+  insertTextContainer(left, maxWidthTextContainer)
 
-  left += maxWidthTextContainer;
-  insertEllipsis(left);
+  left += maxWidthTextContainer
+  insertEllipsis(left)
 
-  elementsRef.menuElement.style.display = 'none';
-  elementsRef.menuElement.appendChild(elementsRef.convertElement);
-  elementsRef.menuElement.appendChild(elementsRef.copyElement);
-  elementsRef.menuElement.appendChild(elementsRef.deleteElement);
-  elementsRef.smartGuideElement.appendChild(elementsRef.menuElement);
+  elementsRef.menuElement.style.display = 'none'
+  elementsRef.menuElement.appendChild(elementsRef.convertElement)
+  elementsRef.menuElement.appendChild(elementsRef.copyElement)
+  elementsRef.menuElement.appendChild(elementsRef.deleteElement)
+  elementsRef.smartGuideElement.appendChild(elementsRef.menuElement)
 
-  elementsRef.candidatesElement.style.display = 'none';
-  elementsRef.smartGuideElement.appendChild(elementsRef.candidatesElement);
+  elementsRef.candidatesElement.style.display = 'none'
+  elementsRef.smartGuideElement.appendChild(elementsRef.candidatesElement)
 
   // 48px as set in css
-  elementsRef.smartGuideElement.style.height = '48px';
-  elementsRef.smartGuideElement.style.width = `${elementsRef.tagElement.offsetWidth + elementsRef.textContainer.offsetWidth + elementsRef.ellipsisElement.offsetWidth}px`;
-  smartGuideRef.perfectScrollbar.update();
+  elementsRef.smartGuideElement.style.height = '48px'
+  elementsRef.smartGuideElement.style.width = `${elementsRef.tagElement.offsetWidth + elementsRef.textContainer.offsetWidth + elementsRef.ellipsisElement.offsetWidth}px`
+  smartGuideRef.perfectScrollbar.update()
 }
 
 /**
@@ -456,90 +456,90 @@ export function insertSmartGuide(smartGuide) {
  * @param {SmartGuide} smartGuide - A reference to the smart guide.
  * @param {Object} exports -  The export from the editor.
  */
-export function launchSmartGuide(smartGuide, exports) {
-  const smartGuideRef = smartGuide;
-  const elementsRef = smartGuide.elements;
+export function launchSmartGuide (smartGuide, exports) {
+  const smartGuideRef = smartGuide
+  const elementsRef = smartGuide.elements
 
-  const isSmartGuideInDocument = document.contains(elementsRef.smartGuideElement);
+  const isSmartGuideInDocument = document.contains(elementsRef.smartGuideElement)
 
   if (!isInShadow(elementsRef.smartGuideElement) &amp;&amp; !isSmartGuideInDocument) {
-    insertSmartGuide(smartGuide);
+    insertSmartGuide(smartGuide)
   }
 
   const addAnimationToModifiedWord = (words) => {
     if (smartGuideRef.tempWords &amp;&amp; smartGuideRef.tempWords.length === words.length) {
-      const labelWordsArray = words.map(word => word.label);
-      const tempLabelWordsArray = smartGuideRef.tempWords.map(word => word.label);
-      const wordChangedId = labelWordsArray.indexOf(labelWordsArray.filter(a => tempLabelWordsArray.indexOf(a) === -1)[0]);
+      const labelWordsArray = words.map(word => word.label)
+      const tempLabelWordsArray = smartGuideRef.tempWords.map(word => word.label)
+      const wordChangedId = labelWordsArray.indexOf(labelWordsArray.filter(a => tempLabelWordsArray.indexOf(a) === -1)[0])
       if (document.getElementById(`word-${wordChangedId}${smartGuide.randomString}`) &amp;&amp; wordChangedId > -1) {
-        document.getElementById(`word-${wordChangedId}${smartGuide.randomString}`).classList.add('modified-word');
-        elementsRef.textContainer.scrollLeft = document.getElementById(`word-${wordChangedId}${smartGuide.randomString}`).offsetLeft - 10;
+        document.getElementById(`word-${wordChangedId}${smartGuide.randomString}`).classList.add('modified-word')
+        elementsRef.textContainer.scrollLeft = document.getElementById(`word-${wordChangedId}${smartGuide.randomString}`).offsetLeft - 10
       }
     }
-    smartGuideRef.tempWords = JSON.parse(exports[Constants.Exports.JIIX]).words;
-  };
+    smartGuideRef.tempWords = JSON.parse(exports[Constants.Exports.JIIX]).words
+  }
 
   const createWordSpan = (empty, index, word) => {
-    const span = document.createElement('span');
-    span.id = `word-${index}${smartGuide.randomString}`;
+    const span = document.createElement('span')
+    span.id = `word-${index}${smartGuide.randomString}`
     if (empty) {
-      span.innerHTML = '&amp;nbsp;';
+      span.innerHTML = '&amp;nbsp;'
     } else {
-      span.textContent = word.label;
+      span.textContent = word.label
     }
-    return span;
-  };
+    return span
+  }
 
   // Possible optimisation ? Check if we can find a way to not repopulate the smartguide every time even if we now use Document fragment
   const populatePrompter = (words) => {
-    elementsRef.textElement.innerHTML = '';
+    elementsRef.textElement.innerHTML = ''
     // We use a DocumentFragment to reflow the DOM only one time as it is not part of the DOM
-    const myFragment = document.createDocumentFragment();
+    const myFragment = document.createDocumentFragment()
     words.forEach((word, index) => {
       if (word.label === ' ' || word.label.includes('\n')) {
-        myFragment.appendChild(createWordSpan(true, index));
+        myFragment.appendChild(createWordSpan(true, index))
       } else if (index !== words.length - 1) {
-        myFragment.appendChild(createWordSpan(false, index, word));
+        myFragment.appendChild(createWordSpan(false, index, word))
       } else {
-        elementsRef.textElement.appendChild(myFragment);
-        smartGuideRef.perfectScrollbar.update();
+        elementsRef.textElement.appendChild(myFragment)
+        smartGuideRef.perfectScrollbar.update()
         if (smartGuideRef.lastWord === '') {
-          smartGuideRef.lastWord = word;
+          smartGuideRef.lastWord = word
         }
-        const span = createWordSpan(false, index, word);
+        const span = createWordSpan(false, index, word)
         // This is used to scroll to last word if last word is modified
         if ((smartGuideRef.lastWord.candidates !== word.candidates) &amp;&amp; (smartGuideRef.lastWord.label !== word.label)) {
-          span.classList.add('added-word');
-          elementsRef.textElement.appendChild(span);
-          elementsRef.textContainer.scrollLeft = span.offsetLeft;
-          smartGuideRef.lastWord = word;
+          span.classList.add('added-word')
+          elementsRef.textElement.appendChild(span)
+          elementsRef.textContainer.scrollLeft = span.offsetLeft
+          smartGuideRef.lastWord = word
         } else {
-          elementsRef.textElement.appendChild(span);
-          elementsRef.textContainer.scrollLeft = span.offsetLeft;
+          elementsRef.textElement.appendChild(span)
+          elementsRef.textContainer.scrollLeft = span.offsetLeft
         }
       }
-    });
-  };
-
-  if (exports &amp;&amp; JSON.parse(exports[Constants.Exports.JIIX]).words.length > 0) {
-    elementsRef.smartGuideElement.classList.add('smartguide-in');
-    elementsRef.smartGuideElement.classList.remove('smartguide-out');
-    elementsRef.candidatesElement.style.display = 'none';
-    elementsRef.menuElement.style.display = 'none';
-    if (smartGuideRef.previousLabelExport &amp;&amp; smartGuideRef.previousLabelExport !== JSON.parse(exports[Constants.Exports.JIIX]).label) {
-      const words = JSON.parse(exports[Constants.Exports.JIIX]).words;
-      populatePrompter(words);
-      addAnimationToModifiedWord(words);
-    }
-    smartGuideRef.previousLabelExport = JSON.parse(exports[Constants.Exports.JIIX]).label;
-    // This is required by clipboard.js to get the text to be copied.
-    elementsRef.copyElement.setAttribute('data-clipboard-text', JSON.parse(exports[Constants.Exports.JIIX]).label);
-  } else {
-    elementsRef.smartGuideElement.classList.add('smartguide-out');
-    elementsRef.smartGuideElement.classList.remove('smartguide-in');
+    })
   }
 
-  return smartGuideRef;
+  if (exports &amp;&amp; JSON.parse(exports[Constants.Exports.JIIX]).words.length > 0) {
+    elementsRef.smartGuideElement.classList.add('smartguide-in')
+    elementsRef.smartGuideElement.classList.remove('smartguide-out')
+    elementsRef.candidatesElement.style.display = 'none'
+    elementsRef.menuElement.style.display = 'none'
+    if (smartGuideRef.previousLabelExport &amp;&amp; smartGuideRef.previousLabelExport !== JSON.parse(exports[Constants.Exports.JIIX]).label) {
+      const words = JSON.parse(exports[Constants.Exports.JIIX]).words
+      populatePrompter(words)
+      addAnimationToModifiedWord(words)
+    }
+    smartGuideRef.previousLabelExport = JSON.parse(exports[Constants.Exports.JIIX]).label
+    // This is required by clipboard.js to get the text to be copied.
+    elementsRef.copyElement.setAttribute('data-clipboard-text', JSON.parse(exports[Constants.Exports.JIIX]).label)
+  } else {
+    elementsRef.smartGuideElement.classList.add('smartguide-out')
+    elementsRef.smartGuideElement.classList.remove('smartguide-in')
+  }
+
+  return smartGuideRef
 }
 </code></pre>
         </article>
@@ -553,7 +553,7 @@ export function launchSmartGuide(smartGuide, exports) {
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Mon Apr 06 2020 15:54:10 GMT+0200 (Central European Summer Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a> on Wed Apr 15 2020 16:24:15 GMT+0200 (Central European Summer Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
