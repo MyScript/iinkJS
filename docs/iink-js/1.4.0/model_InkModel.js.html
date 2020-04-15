@@ -39,9 +39,9 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { modelLogger as logger } from '../configuration/LoggerConfig';
-import * as StrokeComponent from './StrokeComponent';
-import { getSymbolsBounds } from './Symbol';
+            <pre class="prettyprint source linenums"><code>import { modelLogger as logger } from '../configuration/LoggerConfig'
+import * as StrokeComponent from './StrokeComponent'
+import { getSymbolsBounds } from './Symbol'
 
 /**
  * Recognition positions
@@ -87,7 +87,7 @@ import { getSymbolsBounds } from './Symbol';
  * @param {Configuration} [configuration] Parameters to use to populate default recognition symbols
  * @return {Model} New model
  */
-export function createModel(configuration) {
+export function createModel (configuration) {
   // see @typedef documentation on top
   return {
     currentStroke: undefined,
@@ -107,7 +107,7 @@ export function createModel(configuration) {
     },
     creationTime: new Date().getTime(),
     modificationTime: undefined
-  };
+  }
 }
 
 /**
@@ -115,19 +115,19 @@ export function createModel(configuration) {
  * @param {Model} model Current model
  * @return {Model} Cleared model
  */
-export function clearModel(model) {
-  const modelReference = model;
-  modelReference.currentStroke = undefined;
-  modelReference.rawStrokes = [];
-  modelReference.strokeGroups = [];
-  modelReference.lastPositions.lastSentPosition = -1;
-  modelReference.lastPositions.lastReceivedPosition = -1;
-  modelReference.lastPositions.lastRenderedPosition = -1;
-  modelReference.recognizedSymbols = undefined;
-  modelReference.exports = undefined;
-  modelReference.rawResults.convert = undefined;
-  modelReference.rawResults.exports = undefined;
-  return modelReference;
+export function clearModel (model) {
+  const modelReference = model
+  modelReference.currentStroke = undefined
+  modelReference.rawStrokes = []
+  modelReference.strokeGroups = []
+  modelReference.lastPositions.lastSentPosition = -1
+  modelReference.lastPositions.lastReceivedPosition = -1
+  modelReference.lastPositions.lastRenderedPosition = -1
+  modelReference.recognizedSymbols = undefined
+  modelReference.exports = undefined
+  modelReference.rawResults.convert = undefined
+  modelReference.rawResults.exports = undefined
+  return modelReference
 }
 
 /**
@@ -135,8 +135,8 @@ export function clearModel(model) {
  * @param {Model} model Current model
  * @return {Boolean} True if the model needs to be redrawn, false otherwise
  */
-export function needRedraw(model) {
-  return model.recognizedSymbols ? (model.rawStrokes.length !== model.recognizedSymbols.filter(symbol => symbol.type === 'stroke').length) : false;
+export function needRedraw (model) {
+  return model.recognizedSymbols ? (model.rawStrokes.length !== model.recognizedSymbols.filter(symbol => symbol.type === 'stroke').length) : false
 }
 
 /**
@@ -145,12 +145,12 @@ export function needRedraw(model) {
  * @param {Stroke} stroke Stroke to be added to pending ones
  * @return {Model} Updated model
  */
-export function addStroke(model, stroke) {
+export function addStroke (model, stroke) {
   // We use a reference to the model. The purpose here is to update the pending stroke only.
-  const modelReference = model;
-  logger.debug('addStroke', stroke);
-  modelReference.rawStrokes.push(stroke);
-  return modelReference;
+  const modelReference = model
+  logger.debug('addStroke', stroke)
+  modelReference.rawStrokes.push(stroke)
+  return modelReference
 }
 
 /**
@@ -160,24 +160,24 @@ export function addStroke(model, stroke) {
  * @param {PenStyle} strokePenStyle
  * @return {Model} Updated model
  */
-export function addStrokeToGroup(model, stroke, strokePenStyle) {
+export function addStrokeToGroup (model, stroke, strokePenStyle) {
   // We use a reference to the model. The purpose here is to update the pending stroke only.
-  const modelReference = model;
-  logger.debug('addStroke', stroke);
-  const lastGroup = modelReference.strokeGroups.length - 1;
+  const modelReference = model
+  logger.debug('addStroke', stroke)
+  const lastGroup = modelReference.strokeGroups.length - 1
   if (modelReference.strokeGroups[lastGroup] &amp;&amp; modelReference.strokeGroups[lastGroup].penStyle === strokePenStyle) {
-    modelReference.strokeGroups[lastGroup].strokes.push(stroke);
+    modelReference.strokeGroups[lastGroup].strokes.push(stroke)
   } else {
     const newStrokeGroup = {
       penStyle: strokePenStyle,
       strokes: []
-    };
-    const strokeCopy = {};
-    Object.assign(strokeCopy, stroke);
-    newStrokeGroup.strokes.push(strokeCopy);
-    modelReference.strokeGroups.push(newStrokeGroup);
+    }
+    const strokeCopy = {}
+    Object.assign(strokeCopy, stroke)
+    newStrokeGroup.strokes.push(strokeCopy)
+    modelReference.strokeGroups.push(newStrokeGroup)
   }
-  return modelReference;
+  return modelReference
 }
 
 /**
@@ -186,8 +186,8 @@ export function addStrokeToGroup(model, stroke, strokePenStyle) {
  * @param {Number} [position=lastReceived] Index from where to extract strokes
  * @return {Array&lt;Stroke>} Pending strokes
  */
-export function extractPendingStrokes(model, position = model.lastPositions.lastReceivedPosition + 1) {
-  return model.rawStrokes.slice(position);
+export function extractPendingStrokes (model, position = model.lastPositions.lastReceivedPosition + 1) {
+  return model.rawStrokes.slice(position)
 }
 
 /**
@@ -198,17 +198,17 @@ export function extractPendingStrokes(model, position = model.lastPositions.last
  * @param {Number} [dpi=96] The screen dpi resolution
  * @return {Model} Updated model
  */
-export function initPendingStroke(model, point, properties, dpi = 96) {
+export function initPendingStroke (model, point, properties, dpi = 96) {
   if (properties &amp;&amp; properties['-myscript-pen-width']) {
-    const pxWidth = (properties['-myscript-pen-width'] * dpi) / 25.4;
-    Object.assign(properties, { width: pxWidth / 2 }); // FIXME hack to get better render
+    const pxWidth = (properties['-myscript-pen-width'] * dpi) / 25.4
+    Object.assign(properties, { width: pxWidth / 2 }) // FIXME hack to get better render
   }
-  const modelReference = model;
-  logger.trace('initPendingStroke', point);
+  const modelReference = model
+  logger.trace('initPendingStroke', point)
   // Setting the current stroke to an empty one
-  modelReference.currentStroke = StrokeComponent.createStrokeComponent(properties);
-  modelReference.currentStroke = StrokeComponent.addPoint(modelReference.currentStroke, point);
-  return modelReference;
+  modelReference.currentStroke = StrokeComponent.createStrokeComponent(properties)
+  modelReference.currentStroke = StrokeComponent.addPoint(modelReference.currentStroke, point)
+  return modelReference
 }
 
 /**
@@ -217,13 +217,13 @@ export function initPendingStroke(model, point, properties, dpi = 96) {
  * @param {{x: Number, y: Number, t: Number}} point Captured point to be append to the current stroke
  * @return {Model} Updated model
  */
-export function appendToPendingStroke(model, point) {
-  const modelReference = model;
+export function appendToPendingStroke (model, point) {
+  const modelReference = model
   if (modelReference.currentStroke) {
-    logger.trace('appendToPendingStroke', point);
-    modelReference.currentStroke = StrokeComponent.addPoint(modelReference.currentStroke, point);
+    logger.trace('appendToPendingStroke', point)
+    modelReference.currentStroke = StrokeComponent.addPoint(modelReference.currentStroke, point)
   }
-  return modelReference;
+  return modelReference
 }
 
 /**
@@ -233,18 +233,18 @@ export function appendToPendingStroke(model, point) {
  * @param {PenStyle} penStyle
  * @return {Model} Updated model
  */
-export function endPendingStroke(model, point, penStyle) {
-  const modelReference = model;
+export function endPendingStroke (model, point, penStyle) {
+  const modelReference = model
   if (modelReference.currentStroke) {
-    logger.trace('endPendingStroke', point);
-    const currentStroke = StrokeComponent.addPoint(modelReference.currentStroke, point);
+    logger.trace('endPendingStroke', point)
+    const currentStroke = StrokeComponent.addPoint(modelReference.currentStroke, point)
     // Mutating pending strokes
-    addStroke(modelReference, currentStroke);
-    addStrokeToGroup(modelReference, currentStroke, penStyle);
+    addStroke(modelReference, currentStroke)
+    addStrokeToGroup(modelReference, currentStroke, penStyle)
     // Resetting the current stroke to an undefined one
-    delete modelReference.currentStroke;
+    delete modelReference.currentStroke
   }
-  return modelReference;
+  return modelReference
 }
 
 /**
@@ -252,22 +252,22 @@ export function endPendingStroke(model, point, penStyle) {
  * @param {Model} model Current model
  * @return {Bounds} Bounding box enclosing the current drawn model
  */
-export function getBorderCoordinates(model) {
-  let modelBounds = { minX: Number.MAX_VALUE, maxX: Number.MIN_VALUE, minY: Number.MAX_VALUE, maxY: Number.MIN_VALUE };
+export function getBorderCoordinates (model) {
+  let modelBounds = { minX: Number.MAX_VALUE, maxX: Number.MIN_VALUE, minY: Number.MAX_VALUE, maxY: Number.MIN_VALUE }
 
   // Default symbols
   if (model.defaultSymbols &amp;&amp; model.defaultSymbols.length > 0) {
-    modelBounds = getSymbolsBounds(model.defaultSymbols, modelBounds);
+    modelBounds = getSymbolsBounds(model.defaultSymbols, modelBounds)
   }
   // Recognized symbols
   if (model.recognizedSymbols &amp;&amp; model.recognizedSymbols.length > 0) {
-    modelBounds = getSymbolsBounds(model.recognizedSymbols, modelBounds);
+    modelBounds = getSymbolsBounds(model.recognizedSymbols, modelBounds)
     // Pending strokes
-    modelBounds = getSymbolsBounds(extractPendingStrokes(model), modelBounds);
+    modelBounds = getSymbolsBounds(extractPendingStrokes(model), modelBounds)
   } else {
-    modelBounds = getSymbolsBounds(model.rawStrokes, modelBounds);
+    modelBounds = getSymbolsBounds(model.rawStrokes, modelBounds)
   }
-  return modelBounds;
+  return modelBounds
 }
 
 /**
@@ -279,19 +279,19 @@ export function getBorderCoordinates(model) {
  * @param {Number} lastPoint Last point index to extract
  * @return {Array&lt;Stroke>} The extracted strokes
  */
-export function extractStrokesFromInkRange(model, firstStroke, lastStroke, firstPoint, lastPoint) {
+export function extractStrokesFromInkRange (model, firstStroke, lastStroke, firstPoint, lastPoint) {
   return model.rawStrokes.slice(firstStroke, lastStroke + 1).map((stroke, index, slicedStrokes) => {
     if (slicedStrokes.length &lt; 2) {
-      return StrokeComponent.slice(stroke, firstPoint, lastPoint + 1);
+      return StrokeComponent.slice(stroke, firstPoint, lastPoint + 1)
     }
     if (index === 0) {
-      return StrokeComponent.slice(stroke, firstPoint);
+      return StrokeComponent.slice(stroke, firstPoint)
     }
     if (index === (slicedStrokes.length - 1)) {
-      return StrokeComponent.slice(stroke, 0, lastPoint + 1);
+      return StrokeComponent.slice(stroke, 0, lastPoint + 1)
     }
-    return stroke;
-  });
+    return stroke
+  })
 }
 
 /**
@@ -300,10 +300,10 @@ export function extractStrokesFromInkRange(model, firstStroke, lastStroke, first
  * @param {Number} [position]
  * @return {Model}
  */
-export function updateModelSentPosition(model, position = model.rawStrokes.length - 1) {
-  const modelReference = model;
-  modelReference.lastPositions.lastSentPosition = position;
-  return modelReference;
+export function updateModelSentPosition (model, position = model.rawStrokes.length - 1) {
+  const modelReference = model
+  modelReference.lastPositions.lastSentPosition = position
+  return modelReference
 }
 
 /**
@@ -311,10 +311,10 @@ export function updateModelSentPosition(model, position = model.rawStrokes.lengt
  * @param {Model} model
  * @return {Model}
  */
-export function updateModelReceivedPosition(model) {
-  const modelReference = model;
-  modelReference.lastPositions.lastReceivedPosition = modelReference.lastPositions.lastSentPosition;
-  return modelReference;
+export function updateModelReceivedPosition (model) {
+  const modelReference = model
+  modelReference.lastPositions.lastReceivedPosition = modelReference.lastPositions.lastSentPosition
+  return modelReference
 }
 
 /**
@@ -322,11 +322,11 @@ export function updateModelReceivedPosition(model) {
  * @param {Model} model
  * @return {Model}
  */
-export function resetModelPositions(model) {
-  const modelReference = model;
-  modelReference.lastPositions.lastSentPosition = -1;
-  modelReference.lastPositions.lastReceivedPosition = -1;
-  return modelReference;
+export function resetModelPositions (model) {
+  const modelReference = model
+  modelReference.lastPositions.lastSentPosition = -1
+  modelReference.lastPositions.lastReceivedPosition = -1
+  return modelReference
 }
 
 /**
@@ -334,10 +334,10 @@ export function resetModelPositions(model) {
  * @param {Model} model
  * @return {Model}
  */
-export function resetModelRendererPosition(model) {
-  const modelReference = model;
-  modelReference.lastPositions.lastRenderedPosition = -1;
-  return modelReference;
+export function resetModelRendererPosition (model) {
+  const modelReference = model
+  modelReference.lastPositions.lastRenderedPosition = -1
+  return modelReference
 }
 
 /**
@@ -346,10 +346,10 @@ export function resetModelRendererPosition(model) {
  * @param {Number} [position]
  * @return {Model}
  */
-export function updateModelRenderedPosition(model, position = model.recognizedSymbols ? model.recognizedSymbols.length - 1 : -1) {
-  const modelReference = model;
-  modelReference.lastPositions.lastRenderedPosition = position;
-  return modelReference;
+export function updateModelRenderedPosition (model, position = model.recognizedSymbols ? model.recognizedSymbols.length - 1 : -1) {
+  const modelReference = model
+  modelReference.lastPositions.lastRenderedPosition = position
+  return modelReference
 }
 
 /**
@@ -358,8 +358,8 @@ export function updateModelRenderedPosition(model, position = model.recognizedSy
  * @param {Number} [position=lastRendered] Index from where to extract symbols
  * @return {Array&lt;Object>}
  */
-export function extractPendingRecognizedSymbols(model, position = model.lastPositions.lastRenderedPosition + 1) {
-  return model.recognizedSymbols ? model.recognizedSymbols.slice(position) : [];
+export function extractPendingRecognizedSymbols (model, position = model.lastPositions.lastRenderedPosition + 1) {
+  return model.recognizedSymbols ? model.recognizedSymbols.slice(position) : []
 }
 
 /**
@@ -367,18 +367,18 @@ export function extractPendingRecognizedSymbols(model, position = model.lastPosi
  * @param {Model} model Current model
  * @return {Model} Clone of the current model
  */
-export function cloneModel(model) {
-  const clonedModel = Object.assign({}, model);
+export function cloneModel (model) {
+  const clonedModel = Object.assign({}, model)
   // We clone the properties that need to be. Take care of arrays.
-  clonedModel.defaultSymbols = [...model.defaultSymbols];
-  clonedModel.currentStroke = model.currentStroke ? Object.assign({}, model.currentStroke) : undefined;
-  clonedModel.rawStrokes = [...model.rawStrokes];
-  clonedModel.strokeGroups = JSON.parse(JSON.stringify(model.strokeGroups));
-  clonedModel.lastPositions = Object.assign({}, model.lastPositions);
-  clonedModel.exports = model.exports ? Object.assign({}, model.exports) : undefined;
-  clonedModel.rawResults = Object.assign({}, model.rawResults);
-  clonedModel.recognizedSymbols = model.recognizedSymbols ? [...model.recognizedSymbols] : undefined;
-  return clonedModel;
+  clonedModel.defaultSymbols = [...model.defaultSymbols]
+  clonedModel.currentStroke = model.currentStroke ? Object.assign({}, model.currentStroke) : undefined
+  clonedModel.rawStrokes = [...model.rawStrokes]
+  clonedModel.strokeGroups = JSON.parse(JSON.stringify(model.strokeGroups))
+  clonedModel.lastPositions = Object.assign({}, model.lastPositions)
+  clonedModel.exports = model.exports ? Object.assign({}, model.exports) : undefined
+  clonedModel.rawResults = Object.assign({}, model.rawResults)
+  clonedModel.recognizedSymbols = model.recognizedSymbols ? [...model.recognizedSymbols] : undefined
+  return clonedModel
 }
 
 /**
@@ -386,17 +386,17 @@ export function cloneModel(model) {
  * @param {...Model} models Models to merge (ordered)
  * @return {Model} Updated model
  */
-export function mergeModels(...models) {
+export function mergeModels (...models) {
   return models.reduce((a, b) => {
-    const modelRef = a;
-    modelRef.recognizedSymbols = b.recognizedSymbols;
-    modelRef.lastPositions.lastSentPosition = b.lastPositions.lastSentPosition;
-    modelRef.lastPositions.lastReceivedPosition = b.lastPositions.lastReceivedPosition;
-    modelRef.lastPositions.lastRenderedPosition = b.lastPositions.lastRenderedPosition;
-    modelRef.rawResults = b.rawResults;
-    modelRef.exports = b.exports;
-    return modelRef;
-  });
+    const modelRef = a
+    modelRef.recognizedSymbols = b.recognizedSymbols
+    modelRef.lastPositions.lastSentPosition = b.lastPositions.lastSentPosition
+    modelRef.lastPositions.lastReceivedPosition = b.lastPositions.lastReceivedPosition
+    modelRef.lastPositions.lastRenderedPosition = b.lastPositions.lastRenderedPosition
+    modelRef.rawResults = b.rawResults
+    modelRef.exports = b.exports
+    return modelRef
+  })
 }
 </code></pre>
         </article>
@@ -410,7 +410,7 @@ export function mergeModels(...models) {
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Mon Apr 06 2020 15:54:10 GMT+0200 (Central European Summer Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a> on Wed Apr 15 2020 16:24:15 GMT+0200 (Central European Summer Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
