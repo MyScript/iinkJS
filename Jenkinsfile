@@ -38,7 +38,7 @@ pipeline {
 
       stage ('audit'){
           steps {
-            sh "npm audit"
+            sh "npm audit --production"
           }
       }
     }
