@@ -114,7 +114,7 @@ describe('[WS][Math]', () => {
     }
   })
 
-  it('should test undo/redo with reconnect', async () => {
+  it.skip('should test undo/redo with reconnect', async () => {
     const editorEl = await init()
 
     await playStrokes(page, equation[0].strokes, 100, 100)
