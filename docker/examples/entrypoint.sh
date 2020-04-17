@@ -77,8 +77,6 @@ for filename in /usr/share/nginx/html/examples/v4/*.html; do
 done
 
 for filename in /usr/share/nginx/html/examples/v4/rest/*.html; do
-    sed -i "s/scheme: 'https'/scheme: '${APISCHEME}'/g" "${filename}"
-
     sed -i "s/webdemoapi.myscript.com/${APIHOST}/g" "${filename}"
     sed -i "s/newcloud.myscript.com/${APIHOST}/g" "${filename}"
 
