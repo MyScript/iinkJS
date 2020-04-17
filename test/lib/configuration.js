@@ -1,28 +1,28 @@
-const path = require('path');
-const fs = require('fs');
+const path = require('path')
+const fs = require('fs')
 
-const system = require('./inks/system.json');
-const one = require('./inks/one.json');
-const equation = require('./inks/equation.json');
-const equation2 = require('./inks/equation2.json');
-const equation3 = require('./inks/equation3.json');
-const threetimes2 = require('./inks/3times2.json');
-const rabText = require('./inks/rabText.json');
-const hello = require('./inks/hello.json');
-const helloHow = require('./inks/helloHowAreYou.json');
-const helloHowHighlighted = require('./inks/highlighted.json');
-const helloHowEmphasized = require('./inks/emphasized.json');
-const shape = require('./inks/shape.json');
-const fourSquare = require('./inks/fourSquare.json');
-const music = require('./inks/music.json');
-const rc_es = require('./inks/rc_es_233.json');
-const rc_fr = require('./inks/rc_fr_187.json');
-const rc_it = require('./inks/rc_it_216.json');
-const rc_ko = require('./inks/rc_ko_262.json');
+const system = require('./inks/system.json')
+const one = require('./inks/one.json')
+const equation = require('./inks/equation.json')
+const equation2 = require('./inks/equation2.json')
+const equation3 = require('./inks/equation3.json')
+const threetimes2 = require('./inks/3times2.json')
+const rabText = require('./inks/rabText.json')
+const hello = require('./inks/hello.json')
+const helloHow = require('./inks/helloHowAreYou.json')
+const helloHowHighlighted = require('./inks/highlighted.json')
+const helloHowEmphasized = require('./inks/emphasized.json')
+const shape = require('./inks/shape.json')
+const fourSquare = require('./inks/fourSquare.json')
+const music = require('./inks/music.json')
+const rc_es = require('./inks/rc_es_233.json')
+const rc_fr = require('./inks/rc_fr_187.json')
+const rc_it = require('./inks/rc_it_216.json')
+const rc_ko = require('./inks/rc_ko_262.json')
 
-const backendHost = process.env.BACKEND_URL || 'http://localhost:8080';
-const resourcesFolder = path.resolve(__dirname, '../files');
-const timeoutAmplificator = process.env.NIGHTWATCH_TIMEOUT_FACTOR || 1;
+const backendHost = process.env.BACKEND_URL || 'http://localhost:8080'
+const resourcesFolder = path.resolve(__dirname, '../files')
+const timeoutAmplificator = process.env.NIGHTWATCH_TIMEOUT_FACTOR || 1
 
 const inks = [{
   name: 'one',
@@ -201,69 +201,69 @@ const inks = [{
   apiVersion: 'V4',
   exports: {
   }
-}];
+}]
 
 const configurations = [{
   type: 'MATH',
   protocol: 'WEBSOCKET',
   apiVersion: 'V4',
-  examples: ['/examples/v4/websocket_math_iink.html'],
+  examples: ['/examples/v4/websocket_math_iink.html']
 }, {
   type: 'MATH',
   protocol: 'WEBSOCKET',
   apiVersion: 'V4',
   alternate: 'Import',
-  examples: ['/examples/v4/import_math_jiix.html'],
+  examples: ['/examples/v4/import_math_jiix.html']
 }, {
   type: 'MATH',
   protocol: 'WEBSOCKET',
   apiVersion: 'V4',
   alternate: 'RAB',
-  examples: ['/examples/v4/custom_resources_content_math.html'],
+  examples: ['/examples/v4/custom_resources_content_math.html']
 }, {
   type: 'TEXT',
   protocol: 'WEBSOCKET',
   apiVersion: 'V4',
-  examples: ['/examples/v4/websocket_text_iink.html'],
+  examples: ['/examples/v4/websocket_text_iink.html']
 }, {
   type: 'TEXT',
   protocol: 'WEBSOCKET',
   apiVersion: 'V4',
   alternate: 'RAB',
-  examples: ['/examples/v4/custom_lexicon_text.html'],
+  examples: ['/examples/v4/custom_lexicon_text.html']
 }, {
   type: 'TEXT',
   protocol: 'WEBSOCKET',
   apiVersion: 'V4',
   alternate: 'Decoration',
-  examples: ['/examples/v4/highlight_words.html'],
+  examples: ['/examples/v4/highlight_words.html']
 }, {
   type: 'TEXT',
   protocol: 'REST',
   apiVersion: 'V4',
-  examples: ['/examples/v4/rest/rest_text_iink.html'],
+  examples: ['/examples/v4/rest/rest_text_iink.html']
 }, {
   type: 'Raw Content',
   protocol: 'REST',
   apiVersion: 'V4',
-  examples: ['/examples/v4/rest/rest_raw_content_iink.html'],
-}];
+  examples: ['/examples/v4/rest/rest_raw_content_iink.html']
+}]
 
 const walkSync = (dir, fileList) => {
-  let fileListRef = fileList || [];
+  let fileListRef = fileList || []
   fs.readdirSync(dir).forEach((file) => {
-    const filename = `${dir}/${file}`;
+    const filename = `${dir}/${file}`
     if (fs.statSync(filename).isDirectory()) {
-      fileListRef = walkSync(filename, fileListRef);
+      fileListRef = walkSync(filename, fileListRef)
     } else {
-      fileListRef.push(filename);
+      fileListRef.push(filename)
     }
-  });
-  return fileListRef;
-};
+  })
+  return fileListRef
+}
 
-function getConfiguration(type, protocol, apiVersion = 'V3', inputMode, alternate) {
-  const subPath = inputMode ? [type, inputMode].join('_').toLowerCase() : type.toLowerCase();
+function getConfiguration (type, protocol, apiVersion = 'V3', inputMode, alternate) {
+  const subPath = inputMode ? [type, inputMode].join('_').toLowerCase() : type.toLowerCase()
   return {
     type,
     protocol,
@@ -282,7 +282,7 @@ function getConfiguration(type, protocol, apiVersion = 'V3', inputMode, alternat
     inks: inks
       .filter(ink => ((ink.type === type) && ((ink.apiVersion === apiVersion) || (ink.apiVersion === '')))),
     getFiles: () => walkSync(path.resolve(resourcesFolder, subPath))
-  };
+  }
 }
 
 module.exports = {
@@ -291,4 +291,4 @@ module.exports = {
   resourcesFolder,
   timeoutAmplificator,
   getConfiguration
-};
+}

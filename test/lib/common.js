@@ -1,5 +1,5 @@
-function noop() {
-  return {};
+function noop () {
+  return {}
 }
 
-require.extensions['.css'] = noop;
+require.extensions['.css'] = noop

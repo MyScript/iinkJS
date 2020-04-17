@@ -1,33 +1,33 @@
-import { describe, it } from 'mocha';
-import { expect } from 'chai';
-import Constants from '../../../../src/configuration/Constants';
-import { testLogger } from '../../../../src/configuration/LoggerConfig';
+import { describe, it } from 'mocha'
+import { expect } from 'chai'
+import Constants from '../../../../src/configuration/Constants'
+import { testLogger } from '../../../../src/configuration/LoggerConfig'
 
 describe('Check constants', () => {
-  testLogger.debug(Constants);
+  testLogger.debug(Constants)
 
-  const recognitionTypes = ['TEXT', 'MATH', 'DIAGRAM', 'RAWCONTENT'];
+  const recognitionTypes = ['TEXT', 'MATH', 'DIAGRAM', 'RAWCONTENT']
   recognitionTypes.forEach((recognitionType) => {
     it(`Should have ${recognitionType} recognition type declared`, () => {
-      let result = recognitionType;
+      let result = recognitionType
       if (recognitionType === 'RAWCONTENT') {
-        result = 'Raw Content';
+        result = 'Raw Content'
       }
-      expect(Constants.RecognitionType[recognitionType]).to.equal(result);
-    });
-  });
+      expect(Constants.RecognitionType[recognitionType]).to.equal(result)
+    })
+  })
 
-  const protocols = ['REST', 'WEBSOCKET'];
+  const protocols = ['REST', 'WEBSOCKET']
   protocols.forEach((protocol) => {
     it(`Should have ${protocol} protocol declared`, () => {
-      expect(Constants.Protocol[protocol]).to.equal(protocol);
-    });
-  });
+      expect(Constants.Protocol[protocol]).to.equal(protocol)
+    })
+  })
 
-  const triggers = ['QUIET_PERIOD', 'POINTER_UP', 'DEMAND'];
+  const triggers = ['QUIET_PERIOD', 'POINTER_UP', 'DEMAND']
   triggers.forEach((trigger) => {
     it(`Should have ${trigger} trigger declared`, () => {
-      expect(Constants.Trigger[trigger]).to.equal(trigger);
-    });
-  });
-});
+      expect(Constants.Trigger[trigger]).to.equal(trigger)
+    })
+  })
+})
