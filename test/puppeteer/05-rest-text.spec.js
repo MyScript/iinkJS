@@ -1,6 +1,6 @@
 import { after, before, beforeEach, describe, it } from 'mocha'
 import { expect } from 'chai'
-import { getStrokesFromJIIX, playStrokes } from './helper'
+import { playStrokes } from './helper'
 import config from '../lib/configuration'
 
 describe('[REST][Text]', () => {
