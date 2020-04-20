@@ -358,10 +358,12 @@ async function _prepareMessage (recognizerContext, model, buildFunction, ...para
       WsRecognizerUtil.retry(_prepareMessage, recognizerContext, model, buildFunction, ...params)
     })
 
-  const resp = await recognizerContextRef.recognitionContexts[0].response.promise
+  if (recognizerContext.editor.configuration.triggers.exportContent !== Constants.Trigger.DEMAND) {
+    const resp = await recognizerContextRef.recognitionContexts[0].response.promise
 
-  if (resp) {
-    responseCallback(model, resp[0], resp[1], recognizerContextRef)
+    if (resp) {
+      responseCallback(model, resp[0], resp[1], recognizerContextRef)
+    }
   }
 
   const contentChanged = await recognizerContextRef.recognitionContexts[0].contentChange.promise
