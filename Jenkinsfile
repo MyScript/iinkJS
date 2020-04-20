@@ -29,18 +29,6 @@ pipeline {
           sh "make ${env.MAKE_ARGS} docker"
         }
       }
-
-      stage ('test'){
-        steps {
-          sh "make ${env.MAKE_ARGS} test-e2e"
-        }
-      }
-
-      stage ('audit'){
-          steps {
-            sh "npm audit --production"
-          }
-      }
     }
 
     post {
