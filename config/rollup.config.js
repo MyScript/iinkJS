@@ -26,7 +26,9 @@ const plugins = [
       '@babel/external-helpers'
     ]
   }),
-  terser(),
+  terser({
+    keep_fnames: true
+  }),
   postcss({
     plugins: [toImport],
     inject: false

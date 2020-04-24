@@ -361,7 +361,8 @@ async function _prepareMessage (recognizerContext, model, buildFunction, ...para
       WsRecognizerUtil.retry(_prepareMessage, recognizerContext, model, buildFunction, ...params)
     })
 
-  if (recognizerContext.editor.configuration.triggers.exportContent !== Constants.Trigger.DEMAND) {
+  const onDemand = recognizerContext.editor.configuration.triggers.exportContent === Constants.Trigger.DEMAND
+  if (!onDemand || (onDemand && buildFunction.name === 'buildExport')) {
     const resp = await recognizerContextRef.recognitionContexts[0].response.promise
 
     if (resp) {
@@ -469,12 +470,13 @@ export async function clear (recognizerContext, model) {
   WsRecognizerUtil.sendMessage(recognizerContextRef, buildClear)
     .catch(exception => WsRecognizerUtil.retry(clear, recognizerContext, model))
 
-  const resp = await recognizerContextRef.recognitionContexts[0].response.promise
-  const contentChanged = await recognizerContextRef.recognitionContexts[0].contentChange.promise
-
-  if (resp) {
-    responseCallback(model, resp[0], resp[1], recognizerContextRef)
+  if (recognizerContext.editor.configuration.triggers.exportContent !== Constants.Trigger.DEMAND) {
+    const resp = await recognizerContextRef.recognitionContexts[0].response.promise
+    if (resp) {
+      responseCallback(model, resp[0], resp[1], recognizerContextRef)
+    }
   }
+  const contentChanged = await recognizerContextRef.recognitionContexts[0].contentChange.promise
 
   if (contentChanged) {
     responseCallback(model, contentChanged[0], contentChanged[1], recognizerContextRef)
