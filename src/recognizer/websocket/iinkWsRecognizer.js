@@ -228,7 +228,7 @@ export function buildSetTheme (theme) {
   }
 }
 
-const responseCallback = (model, err, res, recognizerContext) => {
+export const responseCallback = (model, err, res, recognizerContext) => {
   const modelReference = InkModel.updateModelReceivedPosition(model)
   if (res) {
     let event = ''
@@ -283,6 +283,7 @@ const responseCallback = (model, err, res, recognizerContext) => {
 export async function init (recognizerContext, model) {
   const contentChange = PromiseHelper.destructurePromise()
   const partChange = PromiseHelper.destructurePromise()
+  const response = PromiseHelper.destructurePromise()
   const initPromise = PromiseHelper.destructurePromise()
 
   let recognizerContextRef
@@ -301,8 +302,10 @@ export async function init (recognizerContext, model) {
       model: InkModel.updateModelSentPosition(model, model.lastPositions.lastReceivedPosition),
       contentChange,
       partChange,
+      response,
       initPromise,
-      patch: (err, res) => responseCallback(model, err, res, recognizerContextRef)
+      patch: (err, res) => responseCallback(model, err, res, recognizerContextRef),
+      error: (err, res) => responseCallback(model, err, res, recognizerContextRef)
     })
     contentChanged = recognizerContextRef.recognitionContexts[0].contentChange.promise
   }

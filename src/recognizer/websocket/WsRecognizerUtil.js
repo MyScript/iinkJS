@@ -3,6 +3,7 @@ import * as NetworkWSInterface from './networkWSInterface'
 import * as PromiseHelper from '../../util/PromiseHelper'
 import * as InkModel from '../../model/InkModel'
 import * as RecognizerContext from '../../model/RecognizerContext'
+import { responseCallback } from './iinkWsRecognizer'
 
 function buildUrl (configuration, suffixUrl) {
   const scheme = (configuration.recognitionParams.server.scheme === 'https') ? 'wss' : 'ws'
@@ -52,8 +53,7 @@ export function retry (func, recognizerContext, model, buildFunc, ...params) {
       }
     })
   } else {
-    // FIXME to watch
-    throw new Error(`Unable to reconnect ${model}`)
+    responseCallback(model, 'Unable to reconnect')
   }
 }
 
@@ -111,11 +111,12 @@ export function clear (recognizerContext, model, callback) {
  */
 export function close (recognizerContext, model) {
   const initPromise = PromiseHelper.destructurePromise()
+  const recognizerContextRef = recognizerContext
   const recognitionContext = {
     model,
-    initPromise
+    initPromise,
+    error: (err, res) => responseCallback(model, err, res, recognizerContextRef)
   }
-  const recognizerContextRef = recognizerContext
 
   return recognizerContext.initPromise
     .then(() => {

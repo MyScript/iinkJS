@@ -125,7 +125,13 @@ export function buildWebSocketCallback (recognizerContext) {
           case 'error':
             logger.debug('Error detected stopping all recognition', message)
             if (recognitionContext) {
-              recognitionContext.patch(message.data)
+              let func = () => {}
+              if (recognitionContext.patch) {
+                func = recognitionContext.patch
+              } else if (recognitionContext.response) {
+                func = recognitionContext.response
+              }
+              func(message.data)
             } else {
               recognitionContext.initPromise.reject(Object.assign({}, message.data, { recoverable: false }))
             }
@@ -137,7 +143,13 @@ export function buildWebSocketCallback (recognizerContext) {
       case 'error':
         logger.debug('Error detected stopping all recognition', message)
         if (recognitionContext) {
-          recognitionContext.initPromise.resolve(Object.assign({}, message, { recoverable: false }))
+          let func = () => {}
+          if (recognitionContext.patch) {
+            func = recognitionContext.patch
+          } else if (recognitionContext.response) {
+            func = recognitionContext.response
+          }
+          func(Object.assign({}, message, { recoverable: false }))
         } else {
           recognitionContext.initPromise.reject(Object.assign({}, message, { recoverable: false }))
         }
@@ -148,7 +160,7 @@ export function buildWebSocketCallback (recognizerContext) {
         recognizerContextRef.canRedo = false
         recognizerContextRef.canUndo = false
         if (recognitionContext) {
-          recognitionContext.initPromise.resolve(message)
+          recognitionContext.error(message)
         } else {
           recognitionContext.initPromise.reject(message)
         }
