@@ -1,18 +1,17 @@
-/* eslint-disable object-shorthand */
-import json from '@rollup/plugin-json';
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
-import babel from 'rollup-plugin-babel';
-import { terser } from 'rollup-plugin-terser';
-import postcss from 'rollup-plugin-postcss';
-import toImport from 'postcss-import';
+import json from '@rollup/plugin-json'
+import resolve from '@rollup/plugin-node-resolve'
+import commonjs from 'rollup-plugin-commonjs'
+import babel from 'rollup-plugin-babel'
+import { terser } from 'rollup-plugin-terser'
+import postcss from 'rollup-plugin-postcss'
+import toImport from 'postcss-import'
 
 const plugins = [
   json(),
   resolve(),
   commonjs({
     namedExports: {
-      'node_modules/loglevel/lib/loglevel.js': ['noConflict'],
+      'node_modules/loglevel/lib/loglevel.js': ['noConflict']
     }
   }),
   babel({
@@ -32,7 +31,7 @@ const plugins = [
     plugins: [toImport],
     inject: false
   })
-];
+]
 
 export default [{
   input: 'src/iink.js',
@@ -54,4 +53,4 @@ export default [{
     }
   ],
   plugins
-}];
+}]
