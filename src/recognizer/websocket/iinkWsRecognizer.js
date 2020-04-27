@@ -295,7 +295,8 @@ export async function init (recognizerContext, model) {
       model: InkModel.updateModelSentPosition(model, model.lastPositions.lastReceivedPosition),
       partChange,
       initPromise,
-      patch: (err, res) => responseCallback(model, err, res, recognizerContextRef)
+      patch: (err, res) => responseCallback(model, err, res, recognizerContextRef),
+      error: (err, res) => responseCallback(model, err, res, recognizerContextRef)
     })
   } else {
     recognizerContextRef = RecognizerContext.setRecognitionContext(recognizerContext, {
@@ -353,7 +354,8 @@ async function _prepareMessage (recognizerContext, model, buildFunction, ...para
     model,
     response,
     contentChange,
-    patch: (err, res) => responseCallback(model, err, res, recognizerContextRef)
+    patch: (err, res) => responseCallback(model, err, res, recognizerContextRef),
+    error: (err, res) => responseCallback(model, err, res, recognizerContextRef)
   })
   WsRecognizerUtil.sendMessage(recognizerContextRef, buildFunction, ...params)
     .catch((err) => {
