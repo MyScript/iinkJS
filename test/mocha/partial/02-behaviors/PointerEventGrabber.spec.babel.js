@@ -5,6 +5,14 @@ import { testLogger as logger } from '../../../../src/configuration/LoggerConfig
 import * as grabber from '../../../../src/grabber/PointerEventGrabber'
 
 describe('Testing the Grabber', () => {
+  beforeEach(() => {
+    global.document = { documentElement: { addEventListener: () => {} } }
+  })
+
+  after(() => {
+    global.document = undefined
+  })
+
   it('Test event registration', () => {
     const spiedEditor = { pointerUp: sinon.spy(), configuration: { capture: true } }
     const spiedDomDocument = { addEventListener: sinon.spy() }

@@ -190,6 +190,9 @@ export function attach (element, editor, offsetTop = 0, offsetLeft = 0) {
   context.listeners.forEach((item) => {
     item.types.forEach(type => element.addEventListener(type, item.listener, context.options))
   })
+
+  // FIXME investigate why this is needed for iOS devices
+  document.documentElement.addEventListener('pointerdown', () => {})
   return context
 }
 
@@ -198,4 +201,5 @@ export function detach (element, context) {
   context.listeners.forEach((item) => {
     item.types.forEach(type => element.removeEventListener(type, item.listener, context.options))
   })
+  document.documentElement.removeEventListener('pointerdown', () => {})
 }

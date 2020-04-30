@@ -236,9 +236,9 @@ function clickCandidate (evt, editor, smartGuide) {
 function addListeners (editor, smartGuide) {
   const elementsRef = smartGuide.elements
 
-  elementsRef.textElement.addEventListener('pointerdown', evt => showCandidates(evt, editor, smartGuide))
+  elementsRef.textElement.addEventListener('click', evt => showCandidates(evt, editor, smartGuide))
   elementsRef.candidatesElement.addEventListener('click', evt => clickCandidate(evt, editor, smartGuide))
-  elementsRef.ellipsisElement.addEventListener('pointerdown', evt => showActions(evt, elementsRef))
+  elementsRef.ellipsisElement.addEventListener('click', evt => showActions(evt, elementsRef))
   elementsRef.copyElement.addEventListener('click', () => {
     elementsRef.menuElement.style.display = 'none'
   })
