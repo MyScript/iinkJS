@@ -120,7 +120,7 @@ export function buildWebSocketCallback (recognizerContext) {
             break
           case 'idle':
             recognizerContextRef.idle = true
-            recognitionContext.response.resolve([undefined, message.data])
+            recognitionContext.patch(undefined, message.data)
             break
           case 'error':
             logger.debug('Error detected stopping all recognition', message)

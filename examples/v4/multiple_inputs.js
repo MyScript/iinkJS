@@ -93,16 +93,12 @@ function addIdleListeners(editors) {
         if (editor.editor.exports) {
           inputValues.set(oldInput.id, editor.editor.exports['text/plain']);
         }
-        const childModel = editor.querySelector('svg:nth-child(3)')
-          .cloneNode(true);
-        const childBackground = editor.querySelector('svg:nth-child(4)')
+        const childModel = editor.querySelector('svg[data-layer="MODEL"]')
           .cloneNode(true);
         childModel.style.zIndex = '10';
-        childBackground.style.zIndex = '10';
         while (oldInput.firstChild) {
           oldInput.removeChild(oldInput.firstChild);
         }
-        oldInput.appendChild(childBackground);
         oldInput.appendChild(childModel);
         editor.style.display = 'none';
         editor.editor.clear();
