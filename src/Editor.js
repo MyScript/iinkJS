@@ -225,6 +225,22 @@ async function launchWaitForIdle (editor, model) {
 }
 
 /**
+ * Launch websocket close
+ * @param {Editor} editor
+ * @param {Model} model
+ * @return {Promise<*>}
+ */
+async function launchClose (editor, model) {
+  if (editor.recognizer && editor.recognizer.close) {
+    const init = await editor.recognizerContext.initPromise
+    if (init) {
+      return editor.recognizer.close(editor.recognizerContext, model)
+    }
+  }
+  return Promise.reject(new Error('Cannot launch close'))
+}
+
+/**
  * Set pen style.
  * @param {Editor} editor
  * @param {Model} model
@@ -934,6 +950,17 @@ export class Editor {
     if (this.innerRenderer) {
       this.innerRenderer.detach(this.domElement, this.rendererContext)
     }
+  }
+
+  /**
+   * Close websocket connection
+   * @return {Promise<*>}
+   */
+  close () {
+    if (this.configuration.recognitionParams.protocol === Constants.Protocol.WEBSOCKET) {
+      return launchClose(this, this.model)
+    }
+    return null
   }
 
   /**
