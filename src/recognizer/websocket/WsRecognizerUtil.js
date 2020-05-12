@@ -41,17 +41,15 @@ export function init (suffixUrl, recognizerContext, buildWebSocketCallback, reco
   return recognizerContextReference.initPromise
 }
 
-export function retry (func, recognizerContext, model, buildFunc, ...params) {
+export async function retry (func, recognizerContext, model, buildFunc, ...params) {
   if (RecognizerContext.shouldAttemptImmediateReconnect(recognizerContext) && recognizerContext.reconnect) {
     logger.info('Attempting a retry', recognizerContext.currentReconnectionCount)
-    recognizerContext.reconnect(recognizerContext, model, (err, res) => {
-      if (!err) {
-        func(recognizerContext, res, buildFunc, ...params)
-      } else {
+    await recognizerContext.reconnect(recognizerContext, model)
+      .catch((err) => {
         logger.error('Failed retry', err)
         retry(func, recognizerContext, model, buildFunc, ...params)
-      }
-    })
+      })
+    return func(recognizerContext, model, buildFunc, ...params)
   } else {
     responseCallback(model, 'Unable to reconnect')
   }

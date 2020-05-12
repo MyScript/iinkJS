@@ -789,7 +789,7 @@ export class Editor {
    * @return {Boolean}
    */
   get canClear () {
-    return this.canUndo && !this.isEmpty
+    return !this.isEmpty
   }
 
   /**

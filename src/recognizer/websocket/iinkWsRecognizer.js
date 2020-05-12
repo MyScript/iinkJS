@@ -312,10 +312,10 @@ export async function init (recognizerContext, model) {
   }
 
   WsRecognizerUtil.init('/api/v4.0/iink/document', recognizerContextRef, WsBuilder.buildWebSocketCallback, init)
-    .catch((err) => {
+    .catch(async (err) => {
       if (RecognizerContext.shouldAttemptImmediateReconnect(recognizerContext) && recognizerContext.reconnect) {
         logger.info('Attempting a reconnect', recognizerContext.currentReconnectionCount)
-        recognizerContext.reconnect(recognizerContext, model)
+        await recognizerContext.reconnect(recognizerContext, model)
       } else {
         logger.error('Unable to reconnect', err)
         responseCallback(model, err, undefined, recognizerContext)

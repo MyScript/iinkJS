@@ -157,8 +157,6 @@ export function buildWebSocketCallback (recognizerContext) {
       case 'close':
         logger.debug('Close detected stopping all recognition', message)
         recognizerContextRef.initialized = false
-        recognizerContextRef.canRedo = false
-        recognizerContextRef.canUndo = false
         if (recognitionContext) {
           recognitionContext.error(message)
         } else {
