@@ -29,7 +29,7 @@ docker: build ## Build the docker image containing last version of myscript-js a
 	@cd docker/examples/ && docker build --build-arg applicationkey=${DEV_APPLICATIONKEY} --build-arg hmackey=${DEV_HMACKEY} $(DOCKER_PARAMETERS) -t $(EXAMPLES_DOCKERREPOSITORY) .
 
 killdocker:
-	@docker ps -a | grep "myscriptjs-$(DOCKERTAG)-$(BUILDENV)-" | awk '{print $$1}' | xargs -r docker rm -f 2>/dev/null 1>/dev/null || true
+	@docker ps -a | grep "iinkjs-$(DOCKERTAG)-$(BUILDENV)-" | awk '{print $$1}' | xargs -r docker rm -f 2>/dev/null 1>/dev/null || true
 
 test-e2e: killdocker _examples
 	docker pull $(PUPPETEER_DOCKERREPOSITORY)
