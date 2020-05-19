@@ -92,7 +92,7 @@ export function send (recognizerContext, message) {
   recognizerContextRef.idle = false
 
   const websocket = recognizerContextRef.websocket
-  if (websocket.readyState <= 1) {
+  if (websocket.readyState === 1) {
     websocket.send(JSON.stringify(message))
     logger.debug(`${message.type} message sent`, message)
   } else {

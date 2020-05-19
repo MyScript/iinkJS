@@ -85,7 +85,11 @@ export function buildWebSocketCallback (recognizerContext) {
             NetworkWSInterface.send(recognizerContext, buildSetTheme(recognizerContext.editor.theme))
             NetworkWSInterface.send(recognizerContext, buildSetPenStyle(recognizerContext.editor.penStyle))
             NetworkWSInterface.send(recognizerContext, buildSetPenStyleClasses(recognizerContext.editor.penStyleClasses))
-            recognitionContext.partChange.resolve([undefined, message.data])
+            if (recognitionContext.partChange) {
+              recognitionContext.partChange.resolve([undefined, message.data])
+            } else {
+              recognitionContext.error(message)
+            }
             break
           case 'contentChanged':
             if (message.data.canUndo !== undefined) {
