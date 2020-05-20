@@ -1,7 +1,7 @@
 import json from '@rollup/plugin-json'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
-import babel from 'rollup-plugin-babel'
+import babel from '@rollup/plugin-babel'
 import { terser } from 'rollup-plugin-terser'
 import postcss from 'rollup-plugin-postcss'
 import toImport from 'postcss-import'
@@ -17,13 +17,12 @@ const plugins = [
   babel({
     exclude: 'node_modules/**',
     babelrc: false,
-    runtimeHelpers: true,
+    babelHelpers: 'runtime',
     presets: [
       ['@babel/env']
     ],
     plugins: [
-      '@babel/transform-runtime',
-      '@babel/external-helpers'
+      '@babel/transform-runtime'
     ]
   }),
   terser({
