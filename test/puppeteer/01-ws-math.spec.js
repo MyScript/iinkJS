@@ -99,6 +99,10 @@ describe('[WS][Math]', () => {
     expect(latex).to.equal(equation[0].exports.LATEX[equation[0].exports.LATEX.length - 1])
 
     await page.click('#convert')
+    await page.evaluate(exported)
+
+    const latexConv = await editorEl.evaluate(node => node.editor.model.exports['application/x-latex'])
+    expect(latexConv).to.equal(equation[0].exports.LATEX[equation[0].exports.LATEX.length - 1])
   })
 
   it('should test each label of strokes', async () => {
@@ -114,7 +118,7 @@ describe('[WS][Math]', () => {
     }
   })
 
-  it.skip('should test undo/redo with reconnect', async () => {
+  it('should test undo/redo with reconnect', async () => {
     const editorEl = await init()
 
     await playStrokes(page, equation[0].strokes, 100, 100)
@@ -139,9 +143,10 @@ describe('[WS][Math]', () => {
         .then(() => console.log('socket closed'))
     })
 
-    await playStrokes(page, equation[0].strokes, 100, 100)
-
-    await page.evaluate(exported)
+    for (const [index, strokes] of equation[0].strokes.entries()) {
+      await playStrokes(page, [strokes], 100, 100)
+      await page.evaluate(exported)
+    }
 
     jiix = await editorEl.evaluate(node => node.editor.model.exports['application/vnd.myscript.jiix'])
     expect(getStrokesFromJIIX(jiix).length).to.equal(equation[0].strokes.length)
@@ -160,6 +165,7 @@ describe('[WS][Math]', () => {
 
         jiix = await editorEl.evaluate(node => node.editor.model.exports['application/vnd.myscript.jiix'])
         latex = await editorEl.evaluate(node => node.editor.model.exports['application/x-latex'])
+        console.log('index= ' + index + ' latex = ' + latex)
         expect(getStrokesFromJIIX(jiix).length).to.equal(equation[0].strokes.length - index - 1)
       }
     }
