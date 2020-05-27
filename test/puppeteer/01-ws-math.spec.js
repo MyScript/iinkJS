@@ -165,7 +165,6 @@ describe('[WS][Math]', () => {
 
         jiix = await editorEl.evaluate(node => node.editor.model.exports['application/vnd.myscript.jiix'])
         latex = await editorEl.evaluate(node => node.editor.model.exports['application/x-latex'])
-        console.log('index= ' + index + ' latex = ' + latex)
         expect(getStrokesFromJIIX(jiix).length).to.equal(equation[0].strokes.length - index - 1)
       }
     }
