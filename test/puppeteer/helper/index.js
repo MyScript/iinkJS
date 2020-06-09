@@ -81,8 +81,8 @@ async function playStrokes (page, strokesParam, offsetX, offsetY) {
       for (let p = 0; p < strokes[0].length; p++) {
         await page.mouse.move(offsetXRef + strokes[0][p], offsetYRef + strokes[1][p])
       }
-      await page.waitFor(100)
       await page.mouse.up()
+      await page.waitFor(100)
     }
   }
 }

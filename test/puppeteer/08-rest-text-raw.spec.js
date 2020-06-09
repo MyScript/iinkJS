@@ -3,12 +3,13 @@ import { expect } from 'chai'
 import { playStrokes } from './helper'
 import config from '../lib/configuration'
 
-describe.skip('[REST][Text]', () => {
+describe('[REST][Text]', () => {
   let page
   let init
+  let changeLanguage
   const textConfig = config.getConfiguration('Raw Content', 'REST', 'V4')
   const text = textConfig.inks
-    .filter(ink => ['rawContentFr'].includes(ink.name))
+    .filter(ink => ['rawContent_fr_FR'].includes(ink.name))
 
   const exported = `(async () => {
     return new Promise((resolve, reject) => {
@@ -47,7 +48,7 @@ describe.skip('[REST][Text]', () => {
     await page.evaluate(exported)
 
     const jiix = await editorEl.evaluate(node => node.editor.model.exports['application/vnd.myscript.jiix'])
-    const parsed = JSON.parse(jiix)
+    const parsed = JSON.parse(JSON.stringify(jiix))
     expect(parsed.type).to.equal('Raw Content')
     expect(parsed.elements.length > 0).to.be.true
 

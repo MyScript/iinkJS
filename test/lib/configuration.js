@@ -16,7 +16,7 @@ const shape = require('./inks/shape.json')
 const fourSquare = require('./inks/fourSquare.json')
 const music = require('./inks/music.json')
 const rc_es = require('./inks/rc_es_233.json')
-const rc_fr = require('./inks/rc_fr_187.json')
+const rc_fr = require('./inks/rc_fr_simple.json')
 const rc_it = require('./inks/rc_it_216.json')
 const rc_ko = require('./inks/rc_ko_262.json')
 
@@ -111,7 +111,7 @@ const inks = [{
   strokes: hello,
   apiVersion: 'V4',
   exports: {
-    TEXT: ['h', 'he', 'hee', 'hell', 'hello']
+    TEXT: ['h', 'he', 'hel', 'hell', 'hello']
   }
 }, {
   name: 'helloHow',
@@ -174,28 +174,28 @@ const inks = [{
     MUSICXML: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '<step>F</step>', '<step>C</step>']
   }
 }, {
-  name: 'rawContentEs',
+  name: 'rawContent_es_ES',
   type: 'Raw Content',
   strokes: rc_es,
   apiVersion: 'V4',
   exports: {
   }
 }, {
-  name: 'rawContentFr',
+  name: 'rawContent_fr_FR',
   type: 'Raw Content',
   strokes: rc_fr,
   apiVersion: 'V4',
   exports: {
   }
 }, {
-  name: 'rawContentIt',
+  name: 'rawContent_it_IT',
   type: 'Raw Content',
   strokes: rc_it,
   apiVersion: 'V4',
   exports: {
   }
 }, {
-  name: 'rawContentKo',
+  name: 'rawContent_ko_KR',
   type: 'Raw Content',
   strokes: rc_ko,
   apiVersion: 'V4',

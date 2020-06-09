@@ -70,7 +70,7 @@
     "minify-css": "cleancss -o dist/iink.min.css src/*.css",
     "test:mocha": "mocha --require @babel/register,./test/lib/common.js --recursive test/mocha/ --reporter progress",
     "test:mocha-xunit": "mocha --require @babel/register --recursive test/mocha/ --reporter xunit --reporter-options output=./test/mocha/results/xunit.xml",
-    "test:e2e": "mocha --require @babel/register --recursive test/puppeteer --timeout 30000",
+    "test:e2e": "mocha --require @babel/register --recursive test/puppeteer --timeout 30000 --retries 2",
     "build:js": "rollup -c config/rollup.config.build.js --sourcemap",
     "build": "npm-run-all test:mocha lint build:js minify-css docs",
     "dev:js": "rollup -c config/rollup.config.dev.js -w --sourcemap",
