@@ -111,7 +111,7 @@ const inks = [{
   strokes: hello,
   apiVersion: 'V4',
   exports: {
-    TEXT: ['h', 'he', 'hel', 'hell', 'hello']
+    TEXT: ['h', 'he', 'hee', 'hell', 'hello']
   }
 }, {
   name: 'helloHow',
