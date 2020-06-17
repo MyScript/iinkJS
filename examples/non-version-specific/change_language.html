@@ -50,14 +50,16 @@
        * @param {Object} The editor recognition parameters
        */
       const currentLanguage = 'en_US';
-      const res = iink.getAvailableLanguageList();
-
-      if (languageElement.options.length === 0) {
-        Object.keys(res.result).forEach((key) => {
-          const selected = currentLanguage === key;
-          languageElement.options[languageElement.options.length] = new Option(res.result[key], key, selected, selected);
-        });
-      }
+      iink.getAvailableLanguageList(configuration)
+        .then((res) => {
+          if (languageElement.options.length === 0) {
+            Object.keys(res.result).forEach((key) => {
+              const selected = currentLanguage === key;
+              languageElement.options[languageElement.options.length] = new Option(res.result[key], key, selected, selected);
+            });
+          }
+        })
+        .catch(error => console.error(error))
 
       iink.register(editorElement, configuration);
     </script>

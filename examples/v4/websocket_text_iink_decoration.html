@@ -43,13 +43,13 @@
     redoElement.disabled = !event.detail.canRedo;
   });
 
-  editorElement.addEventListener('loaded', (evt) => {
+  editorElement.addEventListener('loaded', async (evt) => {
     /**
      * Retrieve the list of available recognition languages
      * @param {Object} The editor recognition parameters
      */
     const currentLanguage = evt.target.editor.configuration.recognitionParams.iink.lang;
-    const res = iink.getAvailableLanguageList();
+    const res = await iink.getAvailableLanguageList(evt.target.editor.configuration);
 
     if (languageElement.options.length === 0) {
       Object.keys(res.result).forEach((key) => {

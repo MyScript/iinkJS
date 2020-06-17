@@ -1,4 +1,3 @@
-import * as languagesJson from './configuration/languages.json'
 import { editorLogger as logger } from './configuration/LoggerConfig'
 import { Editor } from './Editor'
 
@@ -21,6 +20,19 @@ export function register (element, configuration, penStyle, theme, behaviors) {
  * @param {Configuration} [configuration] Configuration to get the languages
  * @return {JSON} A list of available languages
  */
-export function getAvailableLanguageList (configuration) {
-  return languagesJson
+export async function getAvailableLanguageList (configuration) {
+  try {
+    if (configuration && configuration.recognitionParams &&
+      configuration.recognitionParams.server && configuration.recognitionParams.server.host) {
+      const serverConfig = configuration.recognitionParams.server
+      const response = await fetch(`${serverConfig.scheme}://${serverConfig.host}/api/v4.0/iink/availableLanguageList`)
+      if (response && response.ok) {
+        return response.json()
+      }
+    } else {
+      console.error('Cannot get languages ! Please check your configuration!')
+    }
+  } catch (error) {
+    console.error(error)
+  }
 }
