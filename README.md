@@ -1,13 +1,13 @@
 # iinkJS
 
-[![npm version](https://badge.fury.io/js/myscript.svg)](https://badge.fury.io/js/myscript)
-[![Examples](https://img.shields.io/badge/Link%20to-examples-blue.svg)](https://myscript.github.io/MyScriptJS/examples/)
-[![Documentation](https://img.shields.io/badge/Link%20to-documentation-green.svg)](https://developer.myscript.com/docs/interactive-ink/latest/web/myscriptjs/)
+[![npm version](https://badge.fury.io/js/myscript.svg)](https://badge.fury.io/js/iink-js)
+[![Examples](https://img.shields.io/badge/Link%20to-examples-blue.svg)](https://myscript.github.io/iinkJS/examples/)
+[![Documentation](https://img.shields.io/badge/Link%20to-documentation-green.svg)](https://developer.myscript.com/docs/interactive-ink/latest/web/iinkjs/)
 
 > The fastest way to integrate rich **handwriting** features in your webapp.
 
 <div align="center">
-  <img src="https://myscript.github.io/MyScriptJS/preview.gif">
+  <img src="https://myscript.github.io/iinkJS/preview.gif">
 </div>
 
 iinkJS is a JavaScript library that can be used in every web application to bring handwriting recognition.
@@ -20,33 +20,33 @@ It integrates all you need:
 
 ## Table of contents
 
-* [Examples](https://github.com/MyScript/MyScriptJS#examples)
-* [Features](https://github.com/MyScript/MyScriptJS#features)
-* [Requirements](https://github.com/MyScript/MyScriptJS#requirements)
-* [Installation](https://github.com/MyScript/MyScriptJS#installation)
-* [Usage](https://github.com/MyScript/MyScriptJS#usage)
-* [Documentation](https://github.com/MyScript/MyScriptJS#documentation)
-* [Development](https://github.com/MyScript/MyScriptJS#development)
-* [Support](https://github.com/MyScript/MyScriptJS#support)
-* [Feedback](https://github.com/MyScript/MyScriptJS#sharing-your-feedback)
-* [Contributing](https://github.com/MyScript/MyScriptJS#contributing)
+* [Examples](https://github.com/MyScript/iinkJS#examples)
+* [Features](https://github.com/MyScript/iinkJS#features)
+* [Requirements](https://github.com/MyScript/iinkJS#requirements)
+* [Installation](https://github.com/MyScript/iinkJS#installation)
+* [Usage](https://github.com/MyScript/iinkJS#usage)
+* [Documentation](https://github.com/MyScript/iinkJS#documentation)
+* [Development](https://github.com/MyScript/iinkJS#development)
+* [Support](https://github.com/MyScript/iinkJS#support)
+* [Feedback](https://github.com/MyScript/iinkJS#sharing-your-feedback)
+* [Contributing](https://github.com/MyScript/iinkJS#contributing)
 
 
 ## Examples
 
 Discover Interactive Ink with iinkJS and its major features with our [text demo and tutorial](http://webdemo.myscript.com/views/text.html).
 
-Try our two basic examples featuring [the text recognition](https://myscript.github.io/MyScriptJS//examples/v4/websocket_text_iink.html) and [the math recognition](https://myscript.github.io/MyScriptJS/examples/v4/websocket_math_iink.html).
+Try our two basic examples featuring [the text recognition](https://myscript.github.io/iinkJS/examples/v4/websocket_text_iink.html) and [the math recognition](https://myscript.github.io/iinkJS/examples/v4/websocket_math_iink.html).
 
-[All our examples](https://myscript.github.io/MyScriptJS/examples/) with the source codes in [this directory](https://github.com/MyScript/MyScriptJS/tree/master/examples).
+[All our examples](https://myscript.github.io/iinkJS/examples/) with the source codes in [this directory](https://github.com/MyScript/iinkJS/tree/master/examples).
 
 We also provide examples of integration with the major JavaScript frameworks:
 
 | Framework | Link |
 | --- | --- |
-|   <div align="center"><img src="https://myscript.github.io/MyScriptJS/assets/react.svg" height="50"></div> | [Example of React integration](https://github.com/MyScript/web-integration-samples/tree/master/react-integration-examples) |
-|   <div align="center"><img src="https://myscript.github.io/MyScriptJS/assets/angular.svg" height="50"></div> | [Example of Angular integration](https://github.com/MyScript/web-integration-samples/tree/master/angular-integration-examples) |
-|   <div align="center"><img src="https://myscript.github.io/MyScriptJS/assets/vue.svg" height="50"></div> | [Example of Vue integration](https://github.com/MyScript/web-integration-samples/tree/master/vue-integration-examples) |
+|   <div align="center"><img src="https://myscript.github.io/iinkJS/assets/react.svg" height="50"></div> | [Example of React integration](https://github.com/MyScript/web-integration-samples/tree/master/react-integration-examples) |
+|   <div align="center"><img src="https://myscript.github.io/iinkJS/assets/angular.svg" height="50"></div> | [Example of Angular integration](https://github.com/MyScript/web-integration-samples/tree/master/angular-integration-examples) |
+|   <div align="center"><img src="https://myscript.github.io/iinkJS/assets/vue.svg" height="50"></div> | [Example of Vue integration](https://github.com/MyScript/web-integration-samples/tree/master/vue-integration-examples) |
 
 ## Features
 
@@ -64,7 +64,7 @@ You can discover all the features on our Developer website for [Text](https://de
 
 ## Requirements
 
-1. Have [npm](https://www.npmjs.com/get-npm), [yarn](https://yarnpkg.com/en/docs/install) or [bower](https://bower.io/#install-bower) installed.
+1. Have [npm](https://www.npmjs.com/get-npm), [yarn](https://yarnpkg.com/en/docs/install).
 2. Have a MyScript developer account. You can create one [here](https://developer.myscript.com/support/account/registering-myscript-cloud/).
 3. Get your keys and the free monthly quota to access MyScript Cloud at [developer.myscript.com](https://developer.myscript.com/getting-started/web)
 
@@ -80,7 +80,7 @@ OR
 yarn init 
 ```
 
-You can then install iinkJS and use it as showed in the [Usage](https://github.com/MyScript/MyScriptJS#usage) section.
+You can then install iinkJS and use it as showed in the [Usage](https://github.com/MyScript/iinkJS#usage) section.
 
 ```shell
 npm install myscript
@@ -88,7 +88,7 @@ OR
 yarn add myscript
 ```
 
-You can also install iinkJS using bower (with or without an existing project) and use it as showed in the [Usage](https://github.com/MyScript/MyScriptJS#usage) section replacing `node_modules` by `bower_components`.
+You can also install iinkJS using bower (with or without an existing project) and use it as showed in the [Usage](https://github.com/MyScript/iinkJS#usage) section replacing `node_modules` by `bower_components`.
 
 ```shell
 bower install myscript
@@ -171,25 +171,25 @@ bower install myscript
 
 7. Open `index.html` in your browser or serve your folder content using any web server.
 
-You can find this guide and a more complete example on the [MyScript Developer website](https://developer.myscript.com/docs/interactive-ink/latest/web/myscriptjs/).
+You can find this guide and a more complete example on the [MyScript Developer website](https://developer.myscript.com/docs/interactive-ink/latest/web/iinkjs/).
 
 ## Documentation
 
 You can find a complete documentation with the following sections on our Developer website:
 
-* **Get Started**: [how to use iinkJS with a full example](https://developer.myscript.com/docs/interactive-ink/latest/web/myscriptjs/get-started/),
-* **Editing**: [how to interact with content](https://developer.myscript.com/docs/interactive-ink/latest/web/myscriptjs/editing/),
-* **Conversion**: [how to convert your handwritten content](https://developer.myscript.com/docs/interactive-ink/latest/web/myscriptjs/conversion/),
-* **Import and Export**: [how to import and export your content](https://developer.myscript.com/docs/interactive-ink/latest/web/myscriptjs/import-and-export/),
-* **Styling**: [how to style content](https://developer.myscript.com/docs/interactive-ink/latest/web/myscriptjs/styling/).
+* **Get Started**: [how to use iinkJS with a full example](https://developer.myscript.com/docs/interactive-ink/latest/web/iinkjs/get-started/),
+* **Editing**: [how to interact with content](https://developer.myscript.com/docs/interactive-ink/latest/web/iinkjs/editing/),
+* **Conversion**: [how to convert your handwritten content](https://developer.myscript.com/docs/interactive-ink/latest/web/iinkjs/conversion/),
+* **Import and Export**: [how to import and export your content](https://developer.myscript.com/docs/interactive-ink/latest/web/iinkjs/import-and-export/),
+* **Styling**: [how to style content](https://developer.myscript.com/docs/interactive-ink/latest/web/iinkjs/styling/).
 
 As well as a global [Configuration page](https://developer.myscript.com/docs/interactive-ink/latest/reference/web/configuration/).
 
-We also provide a complete [API Reference](https://myscript.github.io/MyScriptJS/docs).
+We also provide a complete [API Reference](https://myscript.github.io/iinkJS/docs/iink-js/1.4.0).
 
 ## Development
 
-Instructions to help you build the project and develop are available in the [SETUP.md](https://github.com/MyScript/MyScriptJS/blob/master/SETUP.md) file.
+Instructions to help you build the project and develop are available in the [SETUP.md](https://github.com/MyScript/iinkJS/blob/master/SETUP.md) file.
 
 
 ## Getting support
@@ -205,7 +205,7 @@ We’re planning to showcase apps using it so let us know by sending a quick mai
 
 We welcome your contributions: if you would like to extend iinkJS for your needs, feel free to fork it! 
 
-Please take a look at our [contributing](https://github.com/MyScript/MyScriptJS/blob/master/CONTRIBUTING.md) guidelines before submitting your pull request.
+Please take a look at our [contributing](https://github.com/MyScript/iinkJS/blob/master/CONTRIBUTING.md) guidelines before submitting your pull request.
 
 ## License
 This library is licensed under the [Apache 2.0](http://opensource.org/licenses/Apache-2.0).

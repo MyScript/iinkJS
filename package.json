@@ -17,10 +17,10 @@
     "dist"
   ],
   "license": "Apache-2.0",
-  "homepage": "https://myscript.github.io/MyScriptJS/",
+  "homepage": "https://myscript.github.io/iinkJS/",
   "repository": {
     "type": "git",
-    "url": "git://github.com/MyScript/MyScriptJS.git"
+    "url": "git://github.com/MyScript/iinkJS.git"
   },
   "dependencies": {
     "@babel/runtime": "^7.9.2",

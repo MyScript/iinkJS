@@ -1,6 +1,6 @@
 # Contributing
 
-We gladly welcome pull requests to MyScriptJS. If you have any questions, or need help to solve a problem, feel free to stop by the [MyScript forum](https://developer-support.myscript.com/support/discussions/forums/16000096021).
+We gladly welcome pull requests to iinkJS. If you have any questions, or need help to solve a problem, feel free to stop by the [MyScript forum](https://developer-support.myscript.com/support/discussions/forums/16000096021).
 
 ## CLA
 
