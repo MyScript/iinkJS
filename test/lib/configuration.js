@@ -7,6 +7,7 @@ const equation = require('./inks/equation.json')
 const equation2 = require('./inks/equation2.json')
 const equation3 = require('./inks/equation3.json')
 const threetimes2 = require('./inks/3times2.json')
+const fence = require('./inks/fence.json')
 const rabText = require('./inks/rabText.json')
 const hello = require('./inks/hello.json')
 const helloHow = require('./inks/helloHowAreYou.json')
@@ -96,6 +97,66 @@ const inks = [{
   apiVersion: 'V4',
   exports: {
     LATEX: ['3', '31', '311', '3112']
+  }
+}, {
+  name: 'fence',
+  type: 'MATH',
+  strokes: fence,
+  apiVersion: 'V4',
+  exports: {
+    MATHML: {
+      STANDARD: ['\<math xmlns=\'http://www.w3.org/1998/Math/MathML\'>\n' +
+      '    <mrow>\n' +
+      '        <mo> { </mo>\n' +
+      '        <mtable columnalign=\'left\'>\n' +
+      '            <mtr>\n' +
+      '                <mtd>\n' +
+      '                    <msqrt>\n' +
+      '                        <mn> 3 </mn>\n' +
+      '                    </msqrt>\n' +
+      '                </mtd>\n' +
+      '            </mtr>\n' +
+      '            <mtr>\n' +
+      '                <mtd>\n' +
+      '                    <msqrt>\n' +
+      '                        <mn> 6 </mn>\n' +
+      '                    </msqrt>\n' +
+      '                </mtd>\n' +
+      '            </mtr>\n' +
+      '            <mtr>\n' +
+      '                <mtd>\n' +
+      '                    <mi> x </mi>\n' +
+      '                </mtd>\n' +
+      '            </mtr>\n' +
+      '        </mtable>\n' +
+      '    </mrow>\n' +
+      '</math>'],
+      MSOFFICE: ['<math xmlns=\'http://www.w3.org/1998/Math/MathML\'>\n' +
+      '    <mfenced open="{" close="">\n' +
+      '        <mtable columnalign=\'left\'>\n' +
+      '            <mtr>\n' +
+      '                <mtd>\n' +
+      '                    <msqrt>\n' +
+      '                        <mn> 3 </mn>\n' +
+      '                    </msqrt>\n' +
+      '                </mtd>\n' +
+      '            </mtr>\n' +
+      '            <mtr>\n' +
+      '                <mtd>\n' +
+      '                    <msqrt>\n' +
+      '                        <mn> 6 </mn>\n' +
+      '                    </msqrt>\n' +
+      '                </mtd>\n' +
+      '            </mtr>\n' +
+      '            <mtr>\n' +
+      '                <mtd>\n' +
+      '                    <mi> x </mi>\n' +
+      '                </mtd>\n' +
+      '            </mtr>\n' +
+      '        </mtable>\n' +
+      '    </mfenced>\n' +
+      '</math>']
+    }
   }
 }, {
   name: 'hello',

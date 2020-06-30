@@ -9,6 +9,8 @@ describe('[WS][Math]', () => {
   const mathConfig = config.getConfiguration('MATH', 'WEBSOCKET', 'V4')
   const equation = mathConfig.inks
     .filter(ink => ['equation3'].includes(ink.name))
+  const fence = mathConfig.inks
+    .filter(ink => ['fence'].includes(ink.name))
 
   // use template literals because of babel
   // https://github.com/puppeteer/puppeteer/blob/master/docs/troubleshooting.md#code-transpilation-issues
@@ -103,6 +105,55 @@ describe('[WS][Math]', () => {
 
     const latexConv = await editorEl.evaluate(node => node.editor.model.exports['application/x-latex'])
     expect(latexConv).to.equal(equation[0].exports.LATEX[equation[0].exports.LATEX.length - 1])
+  })
+
+  it('should test math flavor with fences', async () => {
+    const editorEl = await init()
+    await editorEl.evaluate(node => {
+      node.editor.close()
+        .then(() => {
+          console.log('editor close')
+        })
+        .catch((e) => console.error(e))
+      node.editor.configuration.recognitionParams.iink.math.mimeTypes.push('application/mathml+xml')
+      node.editor.configuration.recognitionParams.iink.export.mathml = { flavor: 'standard' }
+    })
+
+    let initialized = await editorEl.evaluate(node => node.editor.initialized)
+    expect(initialized).to.be.true
+
+    await playStrokes(page, fence[0].strokes, 100, 175)
+
+    await page.evaluate(exported)
+
+    let jiix = await editorEl.evaluate(node => node.editor.model.exports['application/vnd.myscript.jiix'])
+    expect(getStrokesFromJIIX(jiix).length).to.equal(fence[0].strokes.length)
+    let mathml = await editorEl.evaluate(node => node.editor.model.exports['application/mathml+xml'])
+    expect(mathml.trim().replace(/ /g,'')).to.equal(fence[0].exports.MATHML.STANDARD[fence[0].exports.MATHML.STANDARD.length - 1].trim().replace(/ /g,''))
+
+    await page.click('#clear')
+    await page.evaluate(exported)
+
+    // now flavor is "ms-office"
+    await editorEl.evaluate(node => {
+      node.editor.close()
+        .then(() => {
+          console.log('editor close')
+        })
+        .catch((e) => console.error(e))
+      node.editor.configuration.recognitionParams.iink.export.mathml = { flavor: 'ms-office' }
+    })
+    initialized = await editorEl.evaluate(node => node.editor.initialized)
+    expect(initialized).to.be.true
+
+    await playStrokes(page, fence[0].strokes, 100, 175)
+
+    await page.evaluate(exported)
+
+    jiix = await editorEl.evaluate(node => node.editor.model.exports['application/vnd.myscript.jiix'])
+    expect(getStrokesFromJIIX(jiix).length).to.equal(fence[0].strokes.length)
+    mathml = await editorEl.evaluate(node => node.editor.model.exports['application/mathml+xml'])
+    expect(mathml.trim().replace(/ /g,'')).to.equal(fence[0].exports.MATHML.MSOFFICE[fence[0].exports.MATHML.MSOFFICE.length - 1].trim().replace(/ /g,''))
   })
 
   it('should test each label of strokes', async () => {
