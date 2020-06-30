@@ -138,9 +138,7 @@ export function drawModel (context, model, stroker) {
               context.select(`#${update.id}`).remove()
             } else {
               context.select(`#${update.id}`).attr('class', 'removed-stroke')
-              setTimeout(() => {
-                context.select(`#${update.id}`).remove()
-              }, 100)
+              context.select(`#${update.id}`).remove()
             }
             break
           }
