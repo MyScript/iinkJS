@@ -52,14 +52,12 @@ describe('[WS][Math]', () => {
         })
         .catch((e) => console.error(e))
       node.editor.configuration.recognitionParams.iink.math = {'undo-redo': {mode: 'stroke'}}
-    */})
+    })*/
 
     let initialized = await editorEl.evaluate(node => node.editor.initialized)
     expect(initialized).to.be.true
-    console.log('initialized= ' + initialized)
 
     await playStrokes(page, equation[0].strokes, 100, 100)
-    console.log('after play strokes')
 
     await page.evaluate(exported)
 
@@ -67,7 +65,7 @@ describe('[WS][Math]', () => {
     expect(getStrokesFromJIIX(jiix).length).to.equal(equation[0].strokes.length)
     let latex = await editorEl.evaluate(node => node.editor.model.exports['application/x-latex'])
     expect(latex).to.equal(equation[0].exports.LATEX[equation[0].exports.LATEX.length - 1])
-    console.log('before first clear')
+
     let clearClick = page.click('#clear')
     let exportedEvent = page.evaluate(exported)
 
@@ -115,11 +113,10 @@ describe('[WS][Math]', () => {
         })
         .catch((e) => console.error(e))
       node.editor.configuration.recognitionParams.iink.math = {'undo-redo': {mode: 'session'}}
-    */})
+    })*/
 
     initialized = await editorEl.evaluate(node => node.editor.initialized)
     expect(initialized).to.be.true
-    console.log('initialized2= ' + initialized)
 
     await playStrokes(page, equation[0].strokes, 100, 100)
 
@@ -135,8 +132,13 @@ describe('[WS][Math]', () => {
 
     await Promise.all([clearClick, exportedEvent])
 
-    jiix = await editorEl.evaluate(node => node.editor.model.exports['application/vnd.myscript.jiix'])
-    expect(getStrokesFromJIIX(jiix).length).to.equal(0)
+    exports = await editorEl.evaluate(node => node.editor.model.exports)
+    if(exports !== undefined) {
+      jiix = await editorEl.evaluate(node => node.editor.model.exports['application/vnd.myscript.jiix'])
+      expect(getStrokesFromJIIX(jiix).length).to.equal(0)
+    } else {
+      expect(exports).to.be.undefined
+    }
 
     await page.click('#undo')
     await page.evaluate(exported)
