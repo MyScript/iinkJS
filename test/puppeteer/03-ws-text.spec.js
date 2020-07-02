@@ -9,6 +9,8 @@ describe('[WS][Text]', () => {
   const textConfig = config.getConfiguration('TEXT', 'WEBSOCKET', 'V4')
   const text = textConfig.inks
     .filter(ink => ['hello', 'helloHow'].includes(ink.name))
+  const textScrathOut = textConfig.inks
+    .filter(ink => ['helloScratchOut'].includes(ink.name))
 
   const exported = `(async () => {
     return new Promise((resolve, reject) => {
@@ -18,8 +20,9 @@ describe('[WS][Text]', () => {
     });
   })()`
 
-  before(async () => {
+  beforeEach(async () => {
     page = await browser.newPage()
+    await page.goto(`${process.env.LAUNCH_URL}/${textConfig.componentPath}`)
 
     init = async () => {
       await page.waitFor('#editor')
@@ -31,12 +34,8 @@ describe('[WS][Text]', () => {
     }
   })
 
-  after(async () => {
+  afterEach(async () => {
     await page.close()
-  })
-
-  beforeEach(async () => {
-    await page.goto(`${process.env.LAUNCH_URL}/${textConfig.componentPath}`)
   })
 
   it('should check smartguide', async () => {
@@ -82,5 +81,37 @@ describe('[WS][Text]', () => {
 
     textContent = await prompterText.evaluate(node => node.textContent)
     expect(textContent).to.equal(candidateTextContent)
+  })
+
+  it('should check gesture works when enabled', async () => {
+    await page.waitFor('#editor')
+    const editorEl = await page.$('#editor')
+    await editorEl.evaluate(node => node.editor.configuration.recognitionParams.iink.gesture = {enable: true})
+    await editorEl.evaluate(node => node.editor.recognizerContext.initPromise)
+    const initialized = await editorEl.evaluate(node => node.editor.initialized)
+    expect(initialized).to.be.true
+
+    await playStrokes(page, textScrathOut[0].strokes, 100, 100)
+    await page.evaluate(exported)
+
+    let result = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
+    console.log('result= ' + result.toString())
+    expect(result).to.equal('')
+  })
+
+  it('should check gesture does not work when disabled', async () => {
+    await page.waitFor('#editor')
+    const editorEl = await page.$('#editor')
+    await editorEl.evaluate(node => node.editor.configuration.recognitionParams.iink.gesture = {enable: false})
+    await editorEl.evaluate(node => node.editor.recognizerContext.initPromise)
+    const initialized = await editorEl.evaluate(node => node.editor.initialized)
+    expect(initialized).to.be.true
+
+    await playStrokes(page, textScrathOut[0].strokes, 100, 100)
+    await page.evaluate(exported)
+
+    let result = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
+    console.log('result= ' + result.toString())
+    expect(result).not.to.equal('')
   })
 })
