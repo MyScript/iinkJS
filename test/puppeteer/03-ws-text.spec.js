@@ -9,8 +9,8 @@ describe('[WS][Text]', () => {
   const textConfig = config.getConfiguration('TEXT', 'WEBSOCKET', 'V4')
   const text = textConfig.inks
     .filter(ink => ['hello', 'helloHow'].includes(ink.name))
-  const textScrathOut = textConfig.inks
-    .filter(ink => ['helloScratchOut'].includes(ink.name))
+  const textStrike = textConfig.inks
+    .filter(ink => ['helloStrike'].includes(ink.name))
 
   const exported = `(async () => {
     return new Promise((resolve, reject) => {
@@ -91,7 +91,7 @@ describe('[WS][Text]', () => {
     const initialized = await editorEl.evaluate(node => node.editor.initialized)
     expect(initialized).to.be.true
 
-    await playStrokes(page, textScrathOut[0].strokes, 100, 100)
+    await playStrokes(page, textStrike[0].strokes, 100, 100)
     await page.evaluate(exported)
 
     let result = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
@@ -107,7 +107,7 @@ describe('[WS][Text]', () => {
     const initialized = await editorEl.evaluate(node => node.editor.initialized)
     expect(initialized).to.be.true
 
-    await playStrokes(page, textScrathOut[0].strokes, 100, 100)
+    await playStrokes(page, textStrike[0].strokes, 100, 100)
     await page.evaluate(exported)
 
     let result = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
