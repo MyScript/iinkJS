@@ -70,7 +70,7 @@ You can discover all the features on our Developer website for [Text](https://de
 
 ## Installation
 
-iinkJS can be installed with the well known package managers `npm`, `yarn` and `bower`. 
+iinkJS can be installed with the well known package managers `npm`, `yarn`. 
 
 If you want to use `npm` or `yarn` you first have to init a project (or use an existing one). 
 
@@ -83,17 +83,10 @@ yarn init
 You can then install iinkJS and use it as showed in the [Usage](https://github.com/MyScript/iinkJS#usage) section.
 
 ```shell
-npm install myscript
+npm install iink-js
 OR
-yarn add myscript
+yarn add iink-js
 ```
-
-You can also install iinkJS using bower (with or without an existing project) and use it as showed in the [Usage](https://github.com/MyScript/iinkJS#usage) section replacing `node_modules` by `bower_components`.
-
-```shell
-bower install myscript
-```
-
 
 ## Usage
 
@@ -125,7 +118,7 @@ bower install myscript
 ```javascript
   const editorElement = document.getElementById('editor');
 
-  Iink.register(editorElement, {
+  iink.register(editorElement, {
     recognitionParams: {
       type: 'TEXT',
       server: {
@@ -155,7 +148,7 @@ bower install myscript
     <script>
         const editorElement = document.getElementById('editor');
 
-        Iink.register(editorElement, {
+        iink.register(editorElement, {
             recognitionParams: {
                 type: 'TEXT',
                 server: {
@@ -171,7 +164,7 @@ bower install myscript
 
 7. Open `index.html` in your browser or serve your folder content using any web server.
 
-You can find this guide and a more complete example on the [MyScript Developer website](https://developer.myscript.com/docs/interactive-ink/latest/web/iinkjs/).
+You can find this guide, and a more complete example on the [MyScript Developer website](https://developer.myscript.com/docs/interactive-ink/latest/web/iinkjs/).
 
 ## Documentation
 
