@@ -44,15 +44,8 @@ describe('[WS][Math]', () => {
   })
 
   it('should test undo/redo with equation3', async () => {
+    //undo redo default mode (stroke one), then session mode, then stroke mode
     const editorEl = await init()
-    /*await editorEl.evaluate(node => {
-      node.editor.close()
-        .then(() => {
-          console.log('editor close')
-        })
-        .catch((e) => console.error(e))
-      node.editor.configuration.recognitionParams.iink.math = {'undo-redo': {mode: 'stroke'}}
-    })*/
 
     let initialized = await editorEl.evaluate(node => node.editor.initialized)
     expect(initialized).to.be.true
@@ -71,7 +64,7 @@ describe('[WS][Math]', () => {
 
     await Promise.all([clearClick, exportedEvent])
 
-    const exports = await editorEl.evaluate(node => node.editor.model.exports)
+    let exports = await editorEl.evaluate(node => node.editor.model.exports)
     if (exports !== undefined) {
       expect(exports['application/x-latex']).to.equal('')
     } else {
@@ -106,14 +99,14 @@ describe('[WS][Math]', () => {
     exportedEvent = page.evaluate(exported)
     await Promise.all([clearClick, exportedEvent])
 
-    /*await editorEl.evaluate(node => {
+    await editorEl.evaluate(node => {
       node.editor.close()
         .then(() => {
           console.log('editor close')
         })
         .catch((e) => console.error(e))
-      node.editor.configuration.recognitionParams.iink.math = {'undo-redo': {mode: 'session'}}
-    })*/
+      node.editor.configuration.recognitionParams.iink.math['undo-redo'] = {mode: 'session'}
+    })
 
     initialized = await editorEl.evaluate(node => node.editor.initialized)
     expect(initialized).to.be.true
@@ -159,6 +152,69 @@ describe('[WS][Math]', () => {
     expect(getStrokesFromJIIX(jiix).length).to.equal(equation[0].strokes.length)
     latex = await editorEl.evaluate(node => node.editor.model.exports['application/x-latex'])
     expect(latex).to.equal(equation[0].exports.LATEX[equation[0].exports.LATEX.length - 1])
+
+    clearClick = page.click('#clear')
+    exportedEvent = page.evaluate(exported)
+
+    await Promise.all([clearClick, exportedEvent])
+
+    await editorEl.evaluate(node => {
+      node.editor.close()
+        .then(() => {
+          console.log('editor close')
+        })
+        .catch((e) => console.error(e))
+      node.editor.configuration.recognitionParams.iink.math['undo-redo'] = {mode: 'stroke'}
+    })
+
+    initialized = await editorEl.evaluate(node => node.editor.initialized)
+    expect(initialized).to.be.true
+
+    await playStrokes(page, equation[0].strokes, 100, 100)
+
+    await page.evaluate(exported)
+
+    jiix = await editorEl.evaluate(node => node.editor.model.exports['application/vnd.myscript.jiix'])
+    expect(getStrokesFromJIIX(jiix).length).to.equal(equation[0].strokes.length)
+    latex = await editorEl.evaluate(node => node.editor.model.exports['application/x-latex'])
+    expect(latex).to.equal(equation[0].exports.LATEX[equation[0].exports.LATEX.length - 1])
+
+    clearClick = page.click('#clear')
+    exportedEvent = page.evaluate(exported)
+
+    await Promise.all([clearClick, exportedEvent])
+
+    exports = await editorEl.evaluate(node => node.editor.model.exports)
+    if (exports !== undefined) {
+      expect(exports['application/x-latex']).to.equal('')
+    } else {
+      expect(exports).to.be.undefined
+    }
+
+    await page.click('#undo')
+    await page.evaluate(exported)
+
+    jiix = await editorEl.evaluate(node => node.editor.model.exports['application/vnd.myscript.jiix'])
+    expect(getStrokesFromJIIX(jiix).length).to.equal(equation[0].strokes.length)
+
+    await page.click('#undo')
+    await page.evaluate(exported)
+
+    jiix = await editorEl.evaluate(node => node.editor.model.exports['application/vnd.myscript.jiix'])
+    expect(getStrokesFromJIIX(jiix).length).to.equal(equation[0].strokes.length - 1)
+
+    await page.click('#undo')
+    await page.evaluate(exported)
+
+    jiix = await editorEl.evaluate(node => node.editor.model.exports['application/vnd.myscript.jiix'])
+    expect(getStrokesFromJIIX(jiix).length).to.equal(equation[0].strokes.length - 2)
+
+    await page.click('#redo')
+    await page.evaluate(exported)
+
+    jiix = await editorEl.evaluate(node => node.editor.model.exports['application/vnd.myscript.jiix'])
+    expect(getStrokesFromJIIX(jiix).length).to.equal(equation[0].strokes.length - 1)
+
   })
 
   it('should test convert with equation3', async () => {
