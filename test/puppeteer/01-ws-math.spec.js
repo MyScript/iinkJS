@@ -46,7 +46,6 @@ describe('[WS][Math]', () => {
   it('should test undo/redo with equation3', async () => {
     //undo redo default mode (stroke one), then session mode, then stroke mode
     const editorEl = await init()
-
     let initialized = await editorEl.evaluate(node => node.editor.initialized)
     expect(initialized).to.be.true
 
