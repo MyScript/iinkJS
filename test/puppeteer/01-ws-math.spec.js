@@ -61,7 +61,11 @@ describe('[WS][Math]', () => {
     await Promise.all([clearClick, exportedEvent])
 
     const exports = await editorEl.evaluate(node => node.editor.model.exports)
-    expect(exports).to.be.undefined
+    if (exports !== undefined) {
+      expect(exports['application/x-latex']).to.equal('')
+    } else {
+      expect(exports).to.be.undefined
+    }
 
     await page.click('#undo')
     await page.evaluate(exported)
@@ -187,7 +191,11 @@ describe('[WS][Math]', () => {
     await Promise.all([clearClick, exportedEvent])
 
     const exports = await editorEl.evaluate(node => node.editor.model.exports)
-    expect(exports).to.be.undefined
+    if (exports !== undefined) {
+      expect(exports['application/x-latex']).to.equal('')
+    } else {
+      expect(exports).to.be.undefined
+    }
 
     await editorEl.evaluate((node) => {
       node.editor.recognizer.close(node.editor.recognizerContext, node.editor.model)
