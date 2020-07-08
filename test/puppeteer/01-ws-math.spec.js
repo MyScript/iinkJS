@@ -46,8 +46,6 @@ describe('[WS][Math]', () => {
   it('should test undo/redo with equation3', async () => {
     //undo redo default mode (stroke one), then session mode, then stroke mode
     const editorEl = await init()
-    let initialized = await editorEl.evaluate(node => node.editor.initialized)
-    expect(initialized).to.be.true
 
     await playStrokes(page, equation[0].strokes, 100, 100)
 
@@ -107,7 +105,7 @@ describe('[WS][Math]', () => {
       node.editor.configuration.recognitionParams.iink.math['undo-redo'] = {mode: 'session'}
     })
 
-    initialized = await editorEl.evaluate(node => node.editor.initialized)
+    let initialized = await editorEl.evaluate(node => node.editor.initialized)
     expect(initialized).to.be.true
 
     await playStrokes(page, equation[0].strokes, 100, 100)
