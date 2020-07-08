@@ -34,7 +34,7 @@ describe('[WS][Text]', () => {
     }
   })
 
-  after(async () => {
+  afterEach(async () => {
     await page.close()
   })
 
@@ -104,13 +104,6 @@ describe('[WS][Text]', () => {
     let result = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
     expect(result).to.equal('')
 
-    /*await page.waitFor('.smartguide')
-    const smartguide = await page.$('.smartguide')
-    const randomString = await smartguide.evaluate(node => node.id.replace('smartguide', ''))
-    await page.click(`#ellipsis${randomString}`)
-    await page.click(`#delete${randomString}`)
-*/
-    //await page.evaluate(exported)
     await editorEl.evaluate(node => {
       node.editor.close()
         .then(() => {
@@ -130,6 +123,6 @@ describe('[WS][Text]', () => {
 
     result = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
     console.log('result= ' + result.toString())
-    expect(result).not.to.equal('')
+    expect(result).to.equal('')
   })
 })
