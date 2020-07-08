@@ -34,7 +34,7 @@ describe('[WS][Text]', () => {
     }
   })
 
-  afterEach(async () => {
+  after(async () => {
     await page.close()
   })
 
@@ -83,34 +83,52 @@ describe('[WS][Text]', () => {
     expect(textContent).to.equal(candidateTextContent)
   })
 
-  it('should check gesture works when enabled', async () => {
-    await page.waitFor('#editor')
-    const editorEl = await page.$('#editor')
-    await editorEl.evaluate(node => node.editor.configuration.recognitionParams.iink.gesture = {enable: true})
-    await editorEl.evaluate(node => node.editor.recognizerContext.initPromise)
-    const initialized = await editorEl.evaluate(node => node.editor.initialized)
+  it('should check gesture works', async () => {
+    const editorEl = await init()
+
+    await editorEl.evaluate(node => {
+      node.editor.close()
+        .then(() => {
+          console.log('editor close')
+        })
+        .catch((e) => console.error(e))
+      node.editor.configuration.recognitionParams.iink.gesture = {enable: true}
+    })
+
+    let initialized = await editorEl.evaluate(node => node.editor.initialized)
     expect(initialized).to.be.true
 
     await playStrokes(page, textStrike[0].strokes, 100, 100)
     await page.evaluate(exported)
 
     let result = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
-    console.log('result= ' + result.toString())
     expect(result).to.equal('')
-  })
 
-  it('should check gesture does not work when disabled', async () => {
-    await page.waitFor('#editor')
-    const editorEl = await page.$('#editor')
-    await editorEl.evaluate(node => node.editor.configuration.recognitionParams.iink.gesture = {enable: false})
-    await editorEl.evaluate(node => node.editor.recognizerContext.initPromise)
-    const initialized = await editorEl.evaluate(node => node.editor.initialized)
+    /*await page.waitFor('.smartguide')
+    const smartguide = await page.$('.smartguide')
+    const randomString = await smartguide.evaluate(node => node.id.replace('smartguide', ''))
+    await page.click(`#ellipsis${randomString}`)
+    await page.click(`#delete${randomString}`)
+*/
+    //await page.evaluate(exported)
+    await editorEl.evaluate(node => {
+      node.editor.close()
+        .then(() => {
+          console.log('editor close')
+        })
+        .catch((e) => console.error(e))
+      node.editor.configuration.recognitionParams.iink.gesture = {enable: false}
+    })
+
+    initialized = await editorEl.evaluate(node => node.editor.initialized)
     expect(initialized).to.be.true
 
     await playStrokes(page, textStrike[0].strokes, 100, 100)
+    console.log('before exported2')
     await page.evaluate(exported)
+    console.log('after exported2')
 
-    let result = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
+    result = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
     console.log('result= ' + result.toString())
     expect(result).not.to.equal('')
   })
