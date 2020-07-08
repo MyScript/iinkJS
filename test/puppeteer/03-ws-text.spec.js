@@ -116,13 +116,11 @@ describe('[WS][Text]', () => {
     initialized = await editorEl.evaluate(node => node.editor.initialized)
     expect(initialized).to.be.true
 
+    const exportedEvent = page.evaluate(exported)
     await playStrokes(page, textStrike[0].strokes, 100, 100)
-    console.log('before exported2')
-    await page.evaluate(exported)
-    console.log('after exported2')
+    await exportedEvent
 
     result = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
-    console.log('result= ' + result.toString())
-    expect(result).to.equal('')
+    expect(result).not.equal('')
   })
 })
