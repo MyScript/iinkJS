@@ -20,9 +20,8 @@ describe('[WS][Text]', () => {
     });
   })()`
 
-  beforeEach(async () => {
+  before(async () => {
     page = await browser.newPage()
-    await page.goto(`${process.env.LAUNCH_URL}/${textConfig.componentPath}`)
 
     init = async () => {
       await page.waitFor('#editor')
@@ -34,7 +33,11 @@ describe('[WS][Text]', () => {
     }
   })
 
-  afterEach(async () => {
+  beforeEach(async () => {
+    await page.goto(`${process.env.LAUNCH_URL}/${textConfig.componentPath}`)
+  })
+
+  after(async () => {
     await page.close()
   })
 
