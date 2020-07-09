@@ -9,6 +9,8 @@ describe('[WS][Text]', () => {
   const textConfig = config.getConfiguration('TEXT', 'WEBSOCKET', 'V4')
   const text = textConfig.inks
     .filter(ink => ['hello', 'helloHow'].includes(ink.name))
+  const textStrike = textConfig.inks
+    .filter(ink => ['helloStrike'].includes(ink.name))
 
   const exported = `(async () => {
     return new Promise((resolve, reject) => {
@@ -31,12 +33,12 @@ describe('[WS][Text]', () => {
     }
   })
 
-  after(async () => {
-    await page.close()
-  })
-
   beforeEach(async () => {
     await page.goto(`${process.env.LAUNCH_URL}/${textConfig.componentPath}`)
+  })
+
+  after(async () => {
+    await page.close()
   })
 
   it('should check smartguide', async () => {
@@ -82,5 +84,46 @@ describe('[WS][Text]', () => {
 
     textContent = await prompterText.evaluate(node => node.textContent)
     expect(textContent).to.equal(candidateTextContent)
+  })
+
+  it('should check gesture works', async () => {
+    const editorEl = await init()
+
+    await editorEl.evaluate(node => {
+      node.editor.close()
+        .then(() => {
+          console.log('editor close')
+        })
+        .catch((e) => console.error(e))
+      node.editor.configuration.recognitionParams.iink.gesture = {enable: true}
+    })
+
+    let initialized = await editorEl.evaluate(node => node.editor.initialized)
+    expect(initialized).to.be.true
+
+    await playStrokes(page, textStrike[0].strokes, 100, 100)
+    await page.evaluate(exported)
+
+    let result = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
+    expect(result).to.equal('')
+
+    await editorEl.evaluate(node => {
+      node.editor.close()
+        .then(() => {
+          console.log('editor close')
+        })
+        .catch((e) => console.error(e))
+      node.editor.configuration.recognitionParams.iink.gesture = {enable: false}
+    })
+
+    initialized = await editorEl.evaluate(node => node.editor.initialized)
+    expect(initialized).to.be.true
+
+    const exportedEvent = page.evaluate(exported)
+    await playStrokes(page, textStrike[0].strokes, 100, 100)
+    await exportedEvent
+
+    result = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
+    expect(result).not.equal('')
   })
 })

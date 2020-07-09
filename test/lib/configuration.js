@@ -9,6 +9,7 @@ const equation3 = require('./inks/equation3.json')
 const threetimes2 = require('./inks/3times2.json')
 const fence = require('./inks/fence.json')
 const rabText = require('./inks/rabText.json')
+const helloStrike = require('./inks/helloStrike.json')
 const hello = require('./inks/hello.json')
 const helloHow = require('./inks/helloHowAreYou.json')
 const helloHowHighlighted = require('./inks/highlighted.json')
@@ -197,6 +198,14 @@ const inks = [{
   apiVersion: 'V4',
   exports: {
     TEXT: ['hello', 'hello how', 'hello how']
+  }
+}, {
+  name: 'helloStrike',
+  type: 'TEXT',
+  strokes: helloStrike,
+  apiVersion: 'V4',
+  exports: {
+    TEXT: ['hello', '']
   }
 }, {
   name: 'rabText',
