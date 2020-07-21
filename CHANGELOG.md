@@ -1,4 +1,4 @@
-# [v1.4.0](https://github.com/MyScript/iinkJS/tree/v1.4.0)
+# [v1.4.1](https://github.com/MyScript/iinkJS/tree/v1.4.1)
 
 ## Breaking changes
 
