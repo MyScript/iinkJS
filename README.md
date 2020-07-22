@@ -1,6 +1,6 @@
 # iinkJS
 
-[![npm version](https://badge.fury.io/js/myscript.svg)](https://badge.fury.io/js/iink-js)
+[![npm version](https://badge.fury.io/js/iink-js.svg)](https://badge.fury.io/js/iink-js)
 [![Examples](https://img.shields.io/badge/Link%20to-examples-blue.svg)](https://myscript.github.io/iinkJS/examples/)
 [![Documentation](https://img.shields.io/badge/Link%20to-documentation-green.svg)](https://developer.myscript.com/docs/interactive-ink/latest/web/iinkjs/)
 
@@ -92,9 +92,8 @@ yarn add iink-js
 
 1. Create an `index.html` file in the same directory.
 
-2. Add the following lines in the `head` section of your file to use iinkJS and the css. We use [PEP](https://github.com/jquery/PEP) to ensure better browsers compatibilities. Note that you can also use it using dependencies from `node_modules` or `bower_components`:
+2. Add the following lines in the `head` section of your file to use iinkJS and the css. We use [PEP](https://github.com/jquery/PEP) to ensure better browsers compatibilities. Note that you can also use it using dependencies from `node_modules`:
 ```html
-<link rel="stylesheet" href="node_modules/myscript/dist/myscript.min.css"/>
 <script src="node_modules/myscript/dist/myscript.min.js"></script>
 <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
 ```
@@ -133,7 +132,6 @@ yarn add iink-js
 ```html
 <html>
     <head>
-        <link rel="stylesheet" href="node_modules/myscript/dist/myscript.min.css"/>
         <script src="node_modules/myscript/dist/myscript.min.js"></script>
         <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
         <style>
