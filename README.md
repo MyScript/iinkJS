@@ -132,7 +132,7 @@ yarn add iink-js
 ```html
 <html>
     <head>
-        <script src="node_modules/iink-kjs/dist/iink.min.js"></script>
+        <script src="node_modules/iink-js/dist/iink.min.js"></script>
         <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
         <style>
             #editor {
