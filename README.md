@@ -94,7 +94,7 @@ yarn add iink-js
 
 2. Add the following lines in the `head` section of your file to use iinkJS and the css. We use [PEP](https://github.com/jquery/PEP) to ensure better browsers compatibilities. Note that you can also use it using dependencies from `node_modules`:
 ```html
-<script src="node_modules/myscript/dist/myscript.min.js"></script>
+<script src="node_modules/iink-js/dist/iink.min.js"></script>
 <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
 ```
 
@@ -132,7 +132,7 @@ yarn add iink-js
 ```html
 <html>
     <head>
-        <script src="node_modules/myscript/dist/myscript.min.js"></script>
+        <script src="node_modules/iink-kjs/dist/iink.min.js"></script>
         <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
         <style>
             #editor {
