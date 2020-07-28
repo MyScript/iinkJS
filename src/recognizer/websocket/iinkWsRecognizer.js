@@ -348,11 +348,15 @@ export async function init (recognizerContext, model) {
 // eslint-disable-next-line no-underscore-dangle
 async function _prepareMessage (recognizerContext, model, buildFunction, ...params) {
   logger.info(`-- Prepare message for ${buildFunction.name} --`)
-  const response = PromiseHelper.destructurePromise()
   const contentChange = PromiseHelper.destructurePromise()
   const recognizerContextRef = RecognizerContext.setRecognitionContext(recognizerContext, {
     model,
-    response,
+    response: (err, res) => {
+      const onDemand = recognizerContext.editor.configuration.triggers.exportContent === Constants.Trigger.DEMAND
+      if (!onDemand || (onDemand && buildFunction.name === 'buildExport')) {
+        responseCallback(model, err, res, recognizerContextRef)
+      }
+    },
     contentChange,
     patch: (err, res) => responseCallback(model, err, res, recognizerContextRef),
     error: (err, res) => responseCallback(model, err, res, recognizerContextRef)
@@ -362,15 +366,6 @@ async function _prepareMessage (recognizerContext, model, buildFunction, ...para
       logger.error(err)
       WsRecognizerUtil.retry(_prepareMessage, recognizerContext, model, buildFunction, ...params)
     })
-
-  const onDemand = recognizerContext.editor.configuration.triggers.exportContent === Constants.Trigger.DEMAND
-  if (!onDemand || (onDemand && buildFunction.name === 'buildExport')) {
-    const resp = await recognizerContextRef.recognitionContexts[0].response.promise
-
-    if (resp) {
-      responseCallback(model, resp[0], resp[1], recognizerContextRef)
-    }
-  }
 
   const contentChanged = await recognizerContextRef.recognitionContexts[0].contentChange.promise
 
@@ -457,11 +452,14 @@ export function redo (recognizerContext, model) {
  * @param {Model} model Current model
  */
 export async function clear (recognizerContext, model) {
-  const response = PromiseHelper.destructurePromise()
   const contentChange = PromiseHelper.destructurePromise()
   const recognizerContextRef = RecognizerContext.setRecognitionContext(recognizerContext, {
     model,
-    response,
+    response: (err, res) => {
+      if (recognizerContext.editor.configuration.triggers.exportContent !== Constants.Trigger.DEMAND) {
+        responseCallback(model, err, res, recognizerContextRef)
+      }
+    },
     contentChange,
     // eslint-disable-next-line handle-callback-err
     patch: async (error, result) => {
@@ -472,12 +470,6 @@ export async function clear (recognizerContext, model) {
   WsRecognizerUtil.sendMessage(recognizerContextRef, buildClear)
     .catch(exception => WsRecognizerUtil.retry(clear, recognizerContext, model))
 
-  if (recognizerContext.editor.configuration.triggers.exportContent !== Constants.Trigger.DEMAND) {
-    const resp = await recognizerContextRef.recognitionContexts[0].response.promise
-    if (resp) {
-      responseCallback(model, resp[0], resp[1], recognizerContextRef)
-    }
-  }
   const contentChanged = await recognizerContextRef.recognitionContexts[0].contentChange.promise
 
   if (contentChanged) {

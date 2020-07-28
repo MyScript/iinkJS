@@ -110,17 +110,17 @@ export function buildWebSocketCallback (recognizerContext) {
             recognitionContext.contentChange.resolve([undefined, message.data])
             break
           case 'exported':
-            recognitionContext.response.resolve([undefined, message.data])
+            recognitionContext.response(undefined, message.data)
             break
           case 'svgPatch':
             recognitionContext.patch(undefined, message.data)
             break
           case 'supportedImportMimeTypes':
             recognizerContextRef.supportedImportMimeTypes = message.data.mimeTypes
-            recognitionContext.response.resolve([undefined, message.data])
+            recognitionContext.response(undefined, message.data)
             break
           case 'fileChunkAck':
-            recognitionContext.response.resolve([undefined, message.data])
+            recognitionContext.response(undefined, message.data)
             break
           case 'idle':
             recognizerContextRef.idle = true
