@@ -1,3 +1,14 @@
+# [v1.4.2](https://github.com/MyScript/iinkJS/tree/v1.4.2)
+
+## Bugs fix
+
+- fix(reco): last export not taken
+
+## Chore
+
+- chore(deps): update minimist to 1.2.5
+- chore(deps): bump lodash from 4.17.15 to 4.17.19
+
 # [v1.4.1](https://github.com/MyScript/iinkJS/tree/v1.4.1)
 
 ## Breaking changes

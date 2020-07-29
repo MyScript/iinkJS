@@ -176,7 +176,7 @@ You can find a complete documentation with the following sections on our Develop
 
 As well as a global [Configuration page](https://developer.myscript.com/docs/interactive-ink/latest/reference/web/configuration/).
 
-We also provide a complete [API Reference](https://myscript.github.io/iinkJS/docs/iink-js/1.4.1).
+We also provide a complete [API Reference](https://myscript.github.io/iinkJS/docs/iink-js/1.4.2).
 
 ## Development
 
