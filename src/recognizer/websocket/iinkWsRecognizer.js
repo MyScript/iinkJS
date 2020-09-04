@@ -283,7 +283,6 @@ export const responseCallback = (model, err, res, recognizerContext) => {
 export async function init (recognizerContext, model) {
   const contentChange = PromiseHelper.destructurePromise()
   const partChange = PromiseHelper.destructurePromise()
-  const response = PromiseHelper.destructurePromise()
   const initPromise = PromiseHelper.destructurePromise()
 
   let recognizerContextRef
@@ -303,7 +302,7 @@ export async function init (recognizerContext, model) {
       model: InkModel.updateModelSentPosition(model, model.lastPositions.lastReceivedPosition),
       contentChange,
       partChange,
-      response,
+      response: (err, res) => responseCallback(model, err, res, recognizerContextRef),
       initPromise,
       patch: (err, res) => responseCallback(model, err, res, recognizerContextRef),
       error: (err, res) => responseCallback(model, err, res, recognizerContextRef)
