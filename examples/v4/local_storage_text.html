@@ -87,7 +87,6 @@
     const configuration = editorElement.editor.configuration;
     //The path to the language depend of the version of API you are using.
     configuration.recognitionParams.iink.lang = e.target.value;
-    editorElement.editor.configuration = configuration;
   });
 
   undoElement.addEventListener('click', () => {

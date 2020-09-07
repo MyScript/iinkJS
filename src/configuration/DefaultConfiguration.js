@@ -119,12 +119,15 @@ const defaultConfiguration = {
   }
 }
 
+const isProxy = Symbol('isProxy')
+
 /**
  * Generate parameters
  * @param {Configuration} configuration Configuration to be used
+ * @param {Object} watcher: { update: function, prop: string} function to call when 'prop' is updated
  * @return {Configuration} Overridden configuration
  */
-export function overrideDefaultConfiguration (configuration) {
+export function overrideDefaultConfiguration (configuration, watcher) {
   const confRef = configuration
   let currentConfiguration
   if (confRef && confRef.recognitionParams.server && confRef.recognitionParams.server.useWindowLocation) {
@@ -135,7 +138,26 @@ export function overrideDefaultConfiguration (configuration) {
     currentConfiguration = merge({}, defaultConfiguration, configuration === undefined ? {} : configuration)
   }
   logger.debug('Override default configuration', currentConfiguration)
-  return currentConfiguration
+
+  const handler = {
+    get: function (target, key) {
+      // Nested objects are Proxy too
+      if (key !== isProxy && typeof target[key] === 'object' && target[key] !== null) {
+        return new Proxy(target[key], handler)
+      } else {
+        return target[key]
+      }
+    },
+    set: function (obj, prop, value) {
+      if (prop === watcher.prop) {
+        watcher.update(value)
+      }
+      obj[prop] = value
+      return true
+    }
+  }
+
+  return new Proxy(currentConfiguration, handler)
 }
 
 export default defaultConfiguration

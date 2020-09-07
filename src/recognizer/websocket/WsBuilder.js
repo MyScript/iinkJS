@@ -7,10 +7,7 @@ import {
   buildRestoreIInkSessionInput,
   buildNewContentPart,
   buildOpenContentPart,
-  buildConfiguration,
-  buildSetTheme,
-  buildSetPenStyle,
-  buildSetPenStyleClasses
+  buildConfiguration
 } from './iinkWsRecognizer'
 
 /**
@@ -82,9 +79,6 @@ export function buildWebSocketCallback (recognizerContext) {
               recognizerContextRef.currentPartId = message.data.partId
             }
             recognizerContextRef.initialized = true
-            NetworkWSInterface.send(recognizerContext, buildSetTheme(recognizerContext.editor.theme))
-            NetworkWSInterface.send(recognizerContext, buildSetPenStyle(recognizerContext.editor.penStyle))
-            NetworkWSInterface.send(recognizerContext, buildSetPenStyleClasses(recognizerContext.editor.penStyleClasses))
             if (recognitionContext.partChange) {
               recognitionContext.partChange.resolve([undefined, message.data])
             } else {

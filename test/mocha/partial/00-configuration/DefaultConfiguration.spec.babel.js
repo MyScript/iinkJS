@@ -5,7 +5,13 @@ import * as DefaultConfiguration from '../../../../src/configuration/DefaultConf
 
 configurations.forEach((configuration) => {
   describe(`Check configuration for API ${configuration.apiVersion} ${configuration.type} ${configuration.protocol}`, () => {
-    const currentConfiguration = DefaultConfiguration.overrideDefaultConfiguration({ recognitionParams: configuration })
+    const watcher = {
+      update: (value) => {
+        assert.equal('ja_JP', value)
+      },
+      prop: 'lang'
+    }
+    const currentConfiguration = DefaultConfiguration.overrideDefaultConfiguration({ recognitionParams: configuration }, watcher)
 
     it('type', () => {
       assert.isDefined(currentConfiguration.recognitionParams.type, 'type should be defined')
@@ -24,6 +30,10 @@ configurations.forEach((configuration) => {
 
     it('server', () => {
       assert.isDefined(currentConfiguration.recognitionParams.server, 'recognitionParams.server should keep its default value')
+    })
+
+    it('should notify language change', () => {
+      currentConfiguration.recognitionParams.iink.lang = 'ja_JP'
     })
   })
 })

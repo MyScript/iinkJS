@@ -375,12 +375,28 @@ export class Editor {
   set configuration (configuration) {
     this.loader.style.display = 'initial'
     this.error.style.display = 'none'
+
+    /**
+     * Update function call when some configuration property is updated
+     * @param {string} value
+     */
+    const update = (value) => {
+      const defaultLang = !Object.keys(Constants.Languages).includes(value)
+      const armenian = value === 'hy_AM'
+      this.theme['.text']['font-family'] = defaultLang || armenian ? Constants.Languages.default : Constants.Languages[value]
+      this.behavior = this.behaviors.getBehaviorFromConfiguration(this.behaviors, this.innerConfiguration)
+    }
+
+    const watcher = {
+      update,
+      prop: 'lang'
+    }
+
     /**
      * @private
      * @type {Configuration}
      */
-    this.innerConfiguration = DefaultConfiguration.overrideDefaultConfiguration(configuration)
-    this.setThemeForFont(this.innerConfiguration.recognitionParams.iink.lang)
+    this.innerConfiguration = DefaultConfiguration.overrideDefaultConfiguration(configuration, watcher)
     this.behavior = this.behaviors.getBehaviorFromConfiguration(this.behaviors, this.innerConfiguration)
   }
 
@@ -922,23 +938,6 @@ export class Editor {
     logger.debug('Resizing editor')
     this.renderer.resize(this.rendererContext, this.model, this.stroker, this.configuration.renderingParams.minHeight, this.configuration.renderingParams.minWidth)
     return launchResize(this, this.model)
-  }
-
-  /**
-   * Set the theme (font family, font size and line height) depending on the language
-   * @param lang
-   */
-  setThemeForFont (lang) {
-    const defaultLang = !Object.keys(Constants.Languages).includes(lang)
-    const armenian = lang === 'hy_AM'
-    const fontFamily = defaultLang || armenian ? Constants.Languages.default : Constants.Languages[lang]
-    const lineHeight = defaultLang || armenian ? '1.2' : '1.8'
-    this.theme = {
-      '.text': {
-        'font-family': fontFamily,
-        'line-height': lineHeight
-      }
-    }
   }
 
   /**
