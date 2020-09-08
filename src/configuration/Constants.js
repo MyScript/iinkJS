@@ -67,7 +67,6 @@ const Constants = {
     zh_TW: 'Noto Sans CJK tc',
     ko_KR: 'Noto Sans CJK kr',
     ja_JP: 'Noto Sans CJK jp',
-    hy_AM: 'Noto Sans Armenian',
     default: 'Open Sans'
   },
   Error: {

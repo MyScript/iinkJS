@@ -382,8 +382,7 @@ export class Editor {
      */
     const update = (value) => {
       const defaultLang = !Object.keys(Constants.Languages).includes(value)
-      const armenian = value === 'hy_AM'
-      this.theme['.text']['font-family'] = defaultLang || armenian ? Constants.Languages.default : Constants.Languages[value]
+      this.theme['.text']['font-family'] = defaultLang ? Constants.Languages.default : Constants.Languages[value]
       this.behavior = this.behaviors.getBehaviorFromConfiguration(this.behaviors, this.innerConfiguration)
     }
 
