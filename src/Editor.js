@@ -252,8 +252,9 @@ async function setPenStyle (editor, model) {
     if (init) {
       return editor.recognizer.setPenStyle(editor.recognizerContext, model, editor.penStyle)
     }
+    return Promise.reject(new Error('Cannot set pentStyle'))
   }
-  return Promise.reject(new Error('Cannot set pentStyle'))
+  return null
 }
 
 /**
@@ -268,8 +269,9 @@ async function setPenStyleClasses (editor, model) {
     if (init) {
       return editor.recognizer.setPenStyleClasses(editor.recognizerContext, model, editor.penStyleClasses)
     }
+    return Promise.reject(new Error('Cannot set penStyleClasses'))
   }
-  return Promise.reject(new Error('Cannot set penStyleClasses'))
+  return null
 }
 
 /**
@@ -284,8 +286,9 @@ async function setTheme (editor, model) {
     if (init) {
       return editor.recognizer.setTheme(editor.recognizerContext, model, editor.theme)
     }
+    return Promise.reject(new Error('Cannot set theme'))
   }
-  return Promise.reject(new Error('Cannot set theme'))
+  return null
 }
 
 /**
@@ -444,8 +447,6 @@ export class Editor {
      */
     this.innerTheme = DefaultTheme.overrideDefaultTheme(theme)
     setTheme(this, this.model)
-      .then(res => console.log(res))
-      .catch(err => console.error(err))
   }
 
   /**
