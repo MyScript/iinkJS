@@ -1,3 +1,20 @@
+# [v1.4.3](https://github.com/MyScript/iinkJS/tree/v1.4.3)
+
+## Bugs fix
+
+@Editor
+- fix `response is not a function` on reconnect
+- fix setTheme error on init
+- fix setTheme sent twice on init
+
+@examples
+- update katex to 0.12.0
+- simplify clean latex methods
+
+## Chore
+
+- chore(deps): update rollup-plugin-terser to v7
+
 # [v1.4.2](https://github.com/MyScript/iinkJS/tree/v1.4.2)
 
 ## Bugs fix
