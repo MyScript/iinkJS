@@ -521,7 +521,7 @@ export class Editor {
     this.undoRedoContext = UndoRedoContext.createUndoRedoContext(this.configuration)
     this.undoRedoManager = UndoRedoManager
 
-    const initialize = (model) => {
+    const initialize = (model, shouldSendTheme) => {
       /**
        * @private
        * @type {Recognizer}
@@ -542,6 +542,11 @@ export class Editor {
         this.innerRecognizer.init(this.recognizerContext, model)
           .then((values) => {
             logger.info('Recognizer initialized !')
+            if (shouldSendTheme) {
+              setTheme(this, this.model)
+              setPenStyle(this, this.model)
+              setPenStyleClasses(this, this.model)
+            }
             this.loader.style.display = 'none'
           })
           .catch(err => handleError(this, err))
@@ -554,7 +559,7 @@ export class Editor {
           .then((model) => {
             logger.info('Recognizer closed')
             handleSuccess(this, model)
-            initialize(InkModel.clearModel(model))
+            initialize(InkModel.clearModel(model), true)
           })
           .catch(err => handleError(this, err))
       } else {
@@ -565,7 +570,7 @@ export class Editor {
         this.model = InkModel.createModel(this.configuration)
 
         // INFO: Recognizer needs model to be initialized
-        initialize(this.model)
+        initialize(this.model, false)
       }
     }
   }

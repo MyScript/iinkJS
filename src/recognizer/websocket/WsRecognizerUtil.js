@@ -3,7 +3,12 @@ import * as NetworkWSInterface from './networkWSInterface'
 import * as PromiseHelper from '../../util/PromiseHelper'
 import * as InkModel from '../../model/InkModel'
 import * as RecognizerContext from '../../model/RecognizerContext'
-import { responseCallback } from './iinkWsRecognizer'
+import {
+  responseCallback,
+  setTheme,
+  setPenStyle,
+  setPenStyleClasses
+} from './iinkWsRecognizer'
 
 function buildUrl (configuration, suffixUrl) {
   const scheme = (configuration.recognitionParams.server.scheme === 'https') ? 'wss' : 'ws'
@@ -49,6 +54,10 @@ export async function retry (func, recognizerContext, model, buildFunc, ...param
         logger.error('Failed retry', err)
         retry(func, recognizerContext, model, buildFunc, ...params)
       })
+    setTheme(recognizerContext, model, recognizerContext.editor.theme)
+    setPenStyle(recognizerContext, model, recognizerContext.editor.penStyle)
+    setPenStyleClasses(recognizerContext, model, recognizerContext.editor.penStyleClasses)
+
     return func(recognizerContext, model, buildFunc, ...params)
   } else {
     responseCallback(model, 'Unable to reconnect')
