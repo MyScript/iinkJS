@@ -4,10 +4,10 @@ set -e
 
 echo "<html>
 <head>
-    <title>MyScript JS examples</title>
+    <title>iinkJS examples</title>
 </head>
 <body>
-    <h2>Examples<a href=\"/index.html\">[view]</a></h2>
+    <h2>Examples<a href=\"/examples.html\">[view]</a></h2>
 </body>
 
 </html>" > /usr/share/nginx/html/index.html
