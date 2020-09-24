@@ -1,3 +1,21 @@
+# [v1.4.4](https://github.com/MyScript/iinkJS/tree/v1.4.4)
+
+## Features
+
+- REST requests use `fetch` instead of `XMLHttpRequest`
+
+## Bugs fix
+
+@Editor
+- fix setTheme not sent on reconnect or language change
+- fix resize on REST mode
+
+@examples
+- remove mixed-content image
+
+@docs
+- generated directly in sub folder /docs and accessible at https://myscript.github.io/iinkJS/docs/
+
 # [v1.4.3](https://github.com/MyScript/iinkJS/tree/v1.4.3)
 
 ## Bugs fix
