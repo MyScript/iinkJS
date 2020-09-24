@@ -163,7 +163,7 @@ function resultCallback (recognizerContext, model, configuration, res, mimeType)
     handleSuccess(recognizerContext.editor, modelReference, Constants.EventType.EXPORTED, Constants.EventType.IDLE)
   }
 }
-  
+
 function callPostMessage (recognizerContext, model, mimeType) {
   const configuration = recognizerContext.editor.configuration
   return postMessage('/api/v4.0/iink/batch', recognizerContext, model, buildData, configuration.restConversionState, mimeType)
@@ -184,6 +184,7 @@ function callPostMessage (recognizerContext, model, mimeType) {
  * @param {Array} requestedMimeTypes
  */
 export function export_ (recognizerContext, model, requestedMimeTypes) {
+  const configuration = recognizerContext.editor.configuration
   if (requestedMimeTypes) {
     return Promise.all(requestedMimeTypes.map(mimeType => callPostMessage(recognizerContext, model, mimeType)))
   } else if (configuration.recognitionParams.type === 'TEXT') {
@@ -215,6 +216,6 @@ export function convert (recognizerContext, model) {
  * @param {RecognizerContext} recognizerContext Current recognition context
  * @param {Model} model Current model
  */
-export function resize (recognizerContext, model){
+export function resize (recognizerContext, model) {
   export_(recognizerContext, model)
 }
