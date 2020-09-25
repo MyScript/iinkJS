@@ -164,6 +164,19 @@ function resultCallback (recognizerContext, model, configuration, res, mimeType)
   }
 }
 
+function callPostMessage (recognizerContext, model, mimeType) {
+  const configuration = recognizerContext.editor.configuration
+  return postMessage('/api/v4.0/iink/batch', recognizerContext, model, buildData, configuration.restConversionState, mimeType)
+    .then((res) => {
+      resultCallback(recognizerContext, model, configuration, res, mimeType)
+      return model
+    })
+    .catch((err) => {
+      handleError(recognizerContext.editor, err)
+      return err
+    })
+}
+
 /**
  * Export content
  * @param {RecognizerContext} recognizerContext Current recognizer context
@@ -172,29 +185,16 @@ function resultCallback (recognizerContext, model, configuration, res, mimeType)
  */
 export function export_ (recognizerContext, model, requestedMimeTypes) {
   const configuration = recognizerContext.editor.configuration
-
-  function callPostMessage (mimeType) {
-    return postMessage('/api/v4.0/iink/batch', recognizerContext, model, buildData, configuration.restConversionState, mimeType)
-      .then((res) => {
-        resultCallback(recognizerContext, model, configuration, res, mimeType)
-        return model
-      })
-      .catch((err) => {
-        handleError(recognizerContext.editor, err)
-        return err
-      })
-  }
-
   if (requestedMimeTypes) {
-    return Promise.all(requestedMimeTypes.map(mimeType => callPostMessage(mimeType)))
+    return Promise.all(requestedMimeTypes.map(mimeType => callPostMessage(recognizerContext, model, mimeType)))
   } else if (configuration.recognitionParams.type === 'TEXT') {
-    return Promise.all(configuration.recognitionParams.iink.text.mimeTypes.map(mimeType => callPostMessage(mimeType)))
+    return Promise.all(configuration.recognitionParams.iink.text.mimeTypes.map(mimeType => callPostMessage(recognizerContext, model, mimeType)))
   } else if (configuration.recognitionParams.type === 'DIAGRAM') {
-    return Promise.all(configuration.recognitionParams.iink.diagram.mimeTypes.map(mimeType => callPostMessage(mimeType)))
+    return Promise.all(configuration.recognitionParams.iink.diagram.mimeTypes.map(mimeType => callPostMessage(recognizerContext, model, mimeType)))
   } else if (configuration.recognitionParams.type === 'MATH') {
-    return Promise.all(configuration.recognitionParams.iink.math.mimeTypes.map(mimeType => callPostMessage(mimeType)))
+    return Promise.all(configuration.recognitionParams.iink.math.mimeTypes.map(mimeType => callPostMessage(recognizerContext, model, mimeType)))
   } else if (configuration.recognitionParams.type === 'Raw Content') {
-    return Promise.all(configuration.recognitionParams.iink['raw-content'].mimeTypes.map(mimeType => callPostMessage(mimeType)))
+    return Promise.all(configuration.recognitionParams.iink['raw-content'].mimeTypes.map(mimeType => callPostMessage(recognizerContext, model, mimeType)))
   }
   return Promise.reject(new Error('Export failed'))
 }
@@ -209,4 +209,13 @@ export function convert (recognizerContext, model) {
   postMessage('/api/v4.0/iink/batch', recognizerContext, model, buildData, 'DIGITAL_EDIT')
     .then(res => resultCallback(model, configuration, res))
     .catch(err => handleError(recognizerContext.editor, err))
+}
+
+/**
+ * Resize
+ * @param {RecognizerContext} recognizerContext Current recognition context
+ * @param {Model} model Current model
+ */
+export function resize (recognizerContext, model) {
+  export_(recognizerContext, model)
 }
