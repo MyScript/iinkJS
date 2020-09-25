@@ -58,20 +58,11 @@
     }
     if (latexExport.includes('\\\\')) {
       const steps = '\\begin{align*}' + latexExport + '\\end{align*}';
-      return steps.replace("\\overrightarrow", "\\vec")
-        .replace("\\begin{aligned}", "")
+      return steps.replace("\\begin{aligned}", "")
         .replace("\\end{aligned}", "")
-        .replace("\\llbracket", "\\lbracket")
-        .replace("\\rrbracket", "\\rbracket")
-        .replace("\\widehat", "\\hat")
         .replace(new RegExp("(align.{1})", "g"), "aligned");
     }
-    return latexExport
-      .replace("\\overrightarrow", "\\vec")
-      .replace("\\llbracket", "\\lbracket")
-      .replace("\\rrbracket", "\\rbracket")
-      .replace("\\widehat", "\\hat")
-      .replace(new RegExp("(align.{1})", "g"), "aligned");
+    return latexExport.replace(new RegExp("(align.{1})", "g"), "aligned");
   }
 
   editorElement.addEventListener('exported', (evt) => {
