@@ -217,5 +217,7 @@ export function convert (recognizerContext, model) {
  * @param {Model} model Current model
  */
 export function resize (recognizerContext, model) {
-  export_(recognizerContext, model)
+  if (model.strokeGroups.length) {
+    export_(recognizerContext, model)
+  }
 }
