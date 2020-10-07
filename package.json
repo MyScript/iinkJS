@@ -66,7 +66,7 @@
   },
   "scripts": {
     "lint": "eslint --ext js src",
-    "docs": "npx jsdoc -R README.md -P package.json -d docs -t node_modules/minami -r src",
+    "docs": "npx jsdoc -R README.md -P '' -d docs -t node_modules/minami -r src",
     "minify-css": "cleancss -o dist/iink.min.css src/*.css",
     "test:mocha": "mocha --require @babel/register,./test/lib/common.js --recursive test/mocha/ --reporter progress",
     "test:mocha-xunit": "mocha --require @babel/register --recursive test/mocha/ --reporter xunit --reporter-options output=./test/mocha/results/xunit.xml",
