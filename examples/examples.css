@@ -212,11 +212,6 @@ select:focus {
     overflow: auto;
 }
 
-#result span {
-    margin: auto;
-    font-size: xx-large;
-}
-
 /*** Index page ***/
 
 .index-background {
