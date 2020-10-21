@@ -49,6 +49,7 @@ function extractPoint (event, domElement, configuration, offsetTop = 0, offsetLe
   }
 }
 
+const prevent = (e) => e.preventDefault()
 /**
  * Listen for the desired events
  * @param {Element} element DOM element to attach events listeners
@@ -191,6 +192,8 @@ export function attach (element, editor, offsetTop = 0, offsetLeft = 0) {
     item.types.forEach(type => element.addEventListener(type, item.listener, context.options))
   })
 
+  element.addEventListener('touchmove', prevent)
+
   // FIXME investigate why this is needed for iOS devices
   document.documentElement.addEventListener('pointerdown', () => {})
   return context
@@ -201,5 +204,6 @@ export function detach (element, context) {
   context.listeners.forEach((item) => {
     item.types.forEach(type => element.removeEventListener(type, item.listener, context.options))
   })
+  element.removeEventListener('touchmove', prevent)
   document.documentElement.removeEventListener('pointerdown', () => {})
 }
