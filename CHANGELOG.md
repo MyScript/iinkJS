@@ -1,3 +1,9 @@
+# [v1.4.5](https://github.com/MyScript/iinkJS/tree/v1.4.5)
+
+## Bug fix
+
+- fix missing ink on iOS with Scribble feature on
+
 # [v1.4.4](https://github.com/MyScript/iinkJS/tree/v1.4.4)
 
 ## Features
