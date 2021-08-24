@@ -30,10 +30,37 @@ pipeline {
         }
       }
 
-      stage ('test'){
+      stage ('init_examples'){
         steps {
-          sh "make ${env.MAKE_ARGS} test-e2e"
+          sh "make ${env.MAKE_ARGS} init_examples"
         }
+      }
+
+      stage('test browser') {
+
+        failFast false
+
+        parallel {
+          
+          stage ('test-chromium'){
+            steps {
+              sh "BROWSER=chromium make ${env.MAKE_ARGS} test-e2e"
+            }
+          }
+
+          stage ('test-webkit'){
+            steps {
+              sh "BROWSER=webkit make ${env.MAKE_ARGS} test-e2e"
+            }
+          }
+
+          stage ('test-firefox'){
+            steps {
+              sh "BROWSER=firefox make ${env.MAKE_ARGS} test-e2e"
+            }
+          }
+        }
+
       }
 
       stage ('audit'){
