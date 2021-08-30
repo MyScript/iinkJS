@@ -4,7 +4,13 @@ import * as StrokeComponent from '../../../../src/model/StrokeComponent'
 
 describe('Check StrokeComponent', () => {
   describe('constructor', () => {
-    let obj
+    const obj = { color: '#000F55', width: 3, x: [10, 20], y: [30, 40], t: [50, 60] }
+    Object.keys(obj).forEach((key) => {
+      it(`Check custom constructor param ${key}`, () => {
+        assert.property(stroke, key)
+        assert.propertyVal(stroke, key, obj[key])
+      })
+    })
     let stroke
 
     beforeEach(() => {
@@ -20,14 +26,6 @@ describe('Check StrokeComponent', () => {
       assert.property(stroke, 'p')
       assert.property(stroke, 'l')
       assert.property(stroke, 'width')
-    })
-
-    obj = { color: '#000F55', width: 3, x: [10, 20], y: [30, 40], t: [50, 60] }
-    Object.keys(obj).forEach((key) => {
-      it(`Check custom constructor param ${key}`, () => {
-        assert.property(stroke, key)
-        assert.propertyVal(stroke, key, obj[key])
-      })
     })
 
     it('Check toJSON function', () => {

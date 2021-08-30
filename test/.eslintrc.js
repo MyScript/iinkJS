@@ -4,6 +4,7 @@ module.exports = {
   },
   globals: {
     browser: true,
+    page: true,
     expect: true
   }
 }

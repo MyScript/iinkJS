@@ -58,37 +58,58 @@ function getStrokesFromJIIX (jiix) {
 /**
  *
  * @param page
- * @param strokesParam
+ * @param strokes
  * @param offsetX
  * @param offsetY
  * @returns {Promise<void>}
  */
-async function playStrokes (page, strokesParam, offsetX, offsetY) {
+async function playStrokes (page, strokes, offsetX, offsetY) {
   const offsetXRef = offsetX || 0
   const offsetYRef = offsetY || 0
-  for (const strokes of strokesParam) {
-    if (strokes[0].length === 1 && strokes[0][0] === strokes[1][0]) {
-      if (strokes[0][0] === -1) {
-        await page.click('#undo')
-      } else if (strokes[0][0] === 1) {
-        await page.click('#redo')
-      } else if (strokes[0][0] === 0) {
-        await page.click('#clear')
-      }
-    } else {
-      await page.mouse.move(offsetXRef + strokes[0][0], offsetYRef + strokes[1][0])
-      await page.mouse.down()
-      for (let p = 0; p < strokes[0].length; p++) {
-        await page.mouse.move(offsetXRef + strokes[0][p], offsetYRef + strokes[1][p])
-      }
-      await page.mouse.up()
-      await page.waitFor(100)
+
+  for (const { x, y, t } of strokes) {
+    const hasTimeStamp = t && t.length > 0
+    await page.mouse.move(offsetXRef + x[0], offsetYRef + y[0])
+    await page.mouse.down()
+    let oldTimestamp
+    if (hasTimeStamp) {
+      oldTimestamp = t[0]
     }
+    for (let p = 0; p < x.length; p++) {
+      let waitTime = 10
+      if (hasTimeStamp) {
+        waitTime = t[p] - oldTimestamp
+        oldTimestamp = t[p]
+      }
+      await page.waitForTimeout(waitTime)
+      await page.mouse.move(offsetXRef + x[p], offsetYRef + y[p])
+    }
+    await page.mouse.up()
+    await page.waitForTimeout(100)
   }
 }
+
+/**
+ * @param page
+ * @returns {Promise<boolean>}
+ */
+async function isEditorInitialized (editorEl) {
+  await editorEl.evaluate(node => node.editor.recognizerContext.initPromise)
+  return await editorEl.evaluate(node => node.editor.initialized)
+}
+
+const exported = `(async () => {
+  return new Promise((resolve, reject) => {
+    document.getElementById('editor').addEventListener('exported', (e) => {
+      resolve('exported');
+    });
+  });
+})()`
 
 module.exports = {
   getStrokesFromJIIX,
   playStrokes,
-  findValuesByKey
+  findValuesByKey,
+  isEditorInitialized,
+  exported
 }

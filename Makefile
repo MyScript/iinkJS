@@ -12,7 +12,7 @@ clean: ## Remove all produced binaries.
 	@rm -rf docs
 
 prepare: ## Install all dependencies.
-	@PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true npm install
+	@PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install
 
 build: clean ## Building the dist files from sources.
 	@npm run build
@@ -26,14 +26,20 @@ docker: build ## Build the docker image containing last version of myscript-js a
 	@cp -R dist docker/examples/delivery/
 	@cp -R examples docker/examples/delivery/
 	@cp -R node_modules docker/examples/delivery/
-	@cd docker/examples/ && docker build --build-arg applicationkey=${DEV_APPLICATIONKEY} --build-arg hmackey=${DEV_HMACKEY} $(DOCKER_PARAMETERS) -t $(EXAMPLES_DOCKERREPOSITORY) .
+	@cd docker/examples/ && \
+		docker build \
+		--build-arg applicationkey=${DEV_APPLICATIONKEY} \
+		--build-arg hmackey=${DEV_HMACKEY} $(DOCKER_PARAMETERS) -t $(EXAMPLES_DOCKERREPOSITORY) .
 
 killdocker:
 	@docker ps -a | grep "iinkjs-$(DOCKERTAG)-$(BUILDENV)-" | awk '{print $$1}' | xargs -r docker rm -f 2>/dev/null 1>/dev/null || true
 
-test-e2e: killdocker _examples
-	docker pull $(PUPPETEER_DOCKERREPOSITORY)
-	if [[ $(DEVLOCAL) == true ]]; then \
+
+local-test-e2e: init_examples
+	@$(MAKE) BROWSER=$(BROWSER) test-e2e
+ 
+test-e2e: 
+	@if [[ $(DEVLOCAL) == true ]]; then \
 		EXAMPLES_IP=localhost; \
 	else \
 		EXAMPLES_IP=$$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $(TEST_DOCKER_EXAMPLES_INSTANCE_NAME)); \
@@ -41,25 +47,34 @@ test-e2e: killdocker _examples
 	docker run -i --rm \
 		-v $(CURRENT_PWD):/tests \
 		-e LAUNCH_URL="http://$${EXAMPLES_IP}:$(EXAMPLES_LISTEN_PORT)" \
-		--user=$(CURRENT_USER_UID) \
-		--userns=host \
-		--net=host \
-		$(PUPPETEER_DOCKERREPOSITORY)
+		-e BROWSER=$(BROWSER) \
+		--ipc=host \
+		-w "/tests" \
+		--name "playwright-$(BROWSER)" mcr.microsoft.com/playwright:bionic \
+		npm run test:e2e
 
 dev-all: dev-examples ## Launch all the requirements for launching tests.
 
-dev-examples: _examples ## Launch a local nginx server to ease development.
+dev-examples: init_examples ## Launch a local nginx server to ease development.
 
-_examples:
+_launch_examples:
 	@echo "Starting examples container!"
-	docker run -d --name $(TEST_DOCKER_EXAMPLES_INSTANCE_NAME) $(DOCKER_EXAMPLES_PARAMETERS) \
+	@docker run -d \
 	  -e "LISTEN_PORT=$(EXAMPLES_LISTEN_PORT)" \
-		-e "APISCHEME=$(APISCHEME)" \
+		-e "APISCHEME=$(APISCHEME)" \
 		-e "APIHOST=$(APIHOST)" \
-        -e "APPLICATIONKEY=$(DEV_APPLICATIONKEY)" \
-        -e "HMACKEY=$(DEV_HMACKEY)" \
-		$(EXAMPLES_DOCKERREPOSITORY)
-	@docker run --rm --link $(TEST_DOCKER_EXAMPLES_INSTANCE_NAME):WAITHOST -e "WAIT_PORT=$(EXAMPLES_LISTEN_PORT)" -e "WAIT_SERVICE=Test examples" $(WAITTCP_DOCKERREPOSITORY)
+		-e "APPLICATIONKEY=$(DEV_APPLICATIONKEY)" \
+		-e "HMACKEY=$(DEV_HMACKEY)" \
+		$(DOCKER_EXAMPLES_PARAMETERS) \
+		--name $(TEST_DOCKER_EXAMPLES_INSTANCE_NAME) $(EXAMPLES_DOCKERREPOSITORY)
+_check_examples: 
+	@docker run --rm \
+		--link $(TEST_DOCKER_EXAMPLES_INSTANCE_NAME):WAITHOST \
+		-e "WAIT_PORT=$(EXAMPLES_LISTEN_PORT)" \
+		-e "WAIT_SERVICE=Test examples" \
+		$(WAITTCP_DOCKERREPOSITORY)
+	@echo "Examples started!"
+init_examples: _launch_examples _check_examples
 
 help: ## This help.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
