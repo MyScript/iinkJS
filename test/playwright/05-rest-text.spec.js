@@ -3,7 +3,7 @@ const { exported, isEditorInitialized, playStrokes } = require('./helper')
 
 const { hellov4rest } = require('../lib/inksDatas')
 
-describe(`${process.env.BROWSER}:v4/rest/rest_text_iink`, () => {
+describe(`${process.env.BROWSER}:v4/rest_text_iink.html`, () => {
   it('should test labels', async () => {
     const editorEl = await page.waitForSelector('#editor')
     const isInit = await isEditorInitialized(editorEl)

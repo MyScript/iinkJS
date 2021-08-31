@@ -8,12 +8,19 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="HandheldFriendly" content="true"/>
 
-  <title>REST Text iink</title>
+  <title>REST Raw Content iink</title>
 
-  <link rel="stylesheet" href="../../examples.css">
+  <link rel="stylesheet" href="../examples.css">
 
   <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
-  <script type="text/javascript" src="../../../dist/iink.min.js"></script>
+  <script type="text/javascript" src="../../dist/iink.min.js"></script>
+
+  <style>
+      #result span {
+        font-size: small;
+        padding: 12px;
+      }
+  </style>
 </head>
 
 <body>
@@ -22,13 +29,13 @@
   <nav>
     <div class="button-div">
       <button id="clear" class="nav-btn btn-fab-mini btn-lightBlue" disabled>
-        <img src="../../assets/img/clear.svg">
+        <img src="../assets/img/clear.svg">
       </button>
       <button id="undo" class="nav-btn btn-fab-mini btn-lightBlue" disabled>
-        <img src="../../assets/img/undo.svg">
+        <img src="../assets/img/undo.svg">
       </button>
       <button id="redo" class="nav-btn btn-fab-mini btn-lightBlue" disabled>
-        <img src="../../assets/img/redo.svg">
+        <img src="../assets/img/redo.svg">
       </button>
     </div>
     <select id="language"></select>
@@ -50,9 +57,10 @@
 
   editorElement.addEventListener('exported', (evt) => {
     const exports = evt.detail.exports;
-    if (exports && exports['text/plain']) {
+    if (exports && exports['application/vnd.myscript.jiix']) {
+      console.log(exports['application/vnd.myscript.jiix'].elements);
       clearElement.disabled = false;
-      resultElement.innerHTML = '<span>' + exports['text/plain'] + '</span>';
+      resultElement.innerHTML = `<span>${JSON.stringify(exports['application/vnd.myscript.jiix'].elements)}</span>`
     } else {
       clearElement.disabled = true;
       resultElement.innerHTML = '';
@@ -68,18 +76,18 @@
     const res = await iink.getAvailableLanguageList(evt.target.editor.configuration);
 
     if (languageElement.options.length === 0) {
-      Object.keys(res.result).forEach(function (key) {
-        const selected = currentLanguage === key;
-        languageElement.options[languageElement.options.length] = new Option(res.result[key], key, selected, selected);
-      });
+      Object.keys(res.result)
+        .forEach(function (key) {
+          const selected = currentLanguage === key;
+          languageElement.options[languageElement.options.length] = new Option(res.result[key], key, selected, selected);
+        });
     }
   });
 
-    languageElement.addEventListener('change', (e) => {
+  languageElement.addEventListener('change', (e) => {
     const configuration = editorElement.editor.configuration;
     //The path to the language depend of the version of API you are using.
     configuration.recognitionParams.iink.lang = e.target.value;
-    resultElement.innerHTML = '';
   });
 
   undoElement.addEventListener('click', () => {
@@ -103,7 +111,7 @@
       exportContent: 'QUIET_PERIOD'
     },
     recognitionParams: {
-      type: 'TEXT',
+      type: 'Raw Content',
       protocol: 'REST',
       server: {
         scheme: 'https',
@@ -112,11 +120,12 @@
         hmacKey: '54b2ca8a-6752-469d-87dd-553bb450e9ad'
       },
       iink: {
-        text: {
-          guides: {
-            enable: false
-          },
-          mimeTypes: ['text/plain', 'application/vnd.myscript.jiix'],
+        'raw-content': {
+          mimeTypes: ['application/vnd.myscript.jiix'],
+          recognition: {
+            text: true,
+            shape: false
+          }
         }
       }
     }
