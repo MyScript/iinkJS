@@ -64,7 +64,6 @@
 
       pointerEventsElement.addEventListener('click', () => {
         const pointerEventsObject = JSON.parse(pointerEventsObjectElement.value);
-        console.log('Pointer events being processed', pointerEventsObject);
         editorElement.editor.pointerEvents(pointerEventsObject);
       });
 

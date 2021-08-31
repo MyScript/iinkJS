@@ -2,7 +2,7 @@ const { expect } = require('chai')
 const { exported, isEditorInitialized, playStrokes } = require('./helper')
 const { one } = require('../lib/inksDatas')
 
-describe(`${process.env.BROWSER}:v4/import_math_jiix`, () => {
+describe(`${process.env.BROWSER}:v4/websocket_math_import_jiix.html`, () => {
   it('should test import', async () => {
     const editorEl = await page.waitForSelector('#editor')
     const isInit = await isEditorInitialized(editorEl)

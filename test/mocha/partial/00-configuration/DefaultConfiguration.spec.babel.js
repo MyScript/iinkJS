@@ -1,6 +1,6 @@
 import { describe, it } from 'mocha'
 import { assert } from 'chai'
-import { configurations } from '../../../lib/configuration'
+import configurations from '../../../lib/configuration'
 import * as DefaultConfiguration from '../../../../src/configuration/DefaultConfiguration'
 
 configurations.forEach((configuration) => {

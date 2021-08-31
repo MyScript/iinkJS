@@ -3,7 +3,7 @@ const { exported, isEditorInitialized, playStrokes } = require('./helper')
 
 const { rawContentFr } = require('../lib/inksDatas')
 
-describe(`${process.env.BROWSER}:v4/rest/rest_raw_content_iink`, () => {
+describe(`${process.env.BROWSER}:v4/rest_raw_content_iink.html`, () => {
   it('should test raw content on rest text', async () => {
     const editorEl = await page.waitForSelector('#editor')
     const isInit = await isEditorInitialized(editorEl)
