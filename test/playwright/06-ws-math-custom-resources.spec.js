@@ -3,7 +3,7 @@ const { exported, isEditorInitialized, playStrokes } = require('./helper')
 
 const equation = require('../lib/inksDatas')['3times2']
 
-describe(`${process.env.BROWSER}:v4/custom_resources_content_math`, () => {
+describe(`${process.env.BROWSER}:v4/websocket_math_custom_resources.html`, () => {
   it('should test recognition asset builder', async () => {
     const editorEl = await page.waitForSelector('#editor')
     const isInit = await isEditorInitialized(editorEl)

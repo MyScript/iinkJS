@@ -3,7 +3,7 @@ const { exported, isEditorInitialized, playStrokes, findValuesByKey } = require(
 
 const { helloHowDecoHighlighted } = require('../lib/inksDatas')
 
-describe(`${process.env.BROWSER}:v4/highlight_words`, () => {
+describe(`${process.env.BROWSER}:v4/websocket_text_highlight_words.html`, () => {
   it('should check text decorations', async () => {
     const editorEl = await page.waitForSelector('#editor')
     const isInit = await isEditorInitialized(editorEl)
