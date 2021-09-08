@@ -9,7 +9,7 @@ describe(`${process.env.BROWSER}:v4/websocket_text_iink.html`, () => {
     const isInit = await isEditorInitialized(editorEl)
     expect(isInit).to.equal(true)
 
-    await playStrokes(page, helloHow.strokes, 100, 0)
+    await playStrokes(page, helloHow.strokes, 0, 0)
     await page.evaluate(exported)
 
     const smartguide = await page.waitForSelector('.smartguide')
@@ -62,10 +62,9 @@ describe(`${process.env.BROWSER}:v4/websocket_text_iink.html`, () => {
           console.log('editor close')
         })
         .catch((e) => console.error(e))
-      node.editor.configuration.recognitionParams.iink.gesture = { enable: true }
     })
 
-    await playStrokes(page, helloStrike.strokes, 500, 150)
+    await playStrokes(page, helloStrike.strokes, 0, 0)
     await page.evaluate(exported)
 
     let result = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])

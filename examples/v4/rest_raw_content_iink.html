@@ -58,7 +58,6 @@
   editorElement.addEventListener('exported', (evt) => {
     const exports = evt.detail.exports;
     if (exports && exports['application/vnd.myscript.jiix']) {
-      console.log(exports['application/vnd.myscript.jiix'].elements);
       clearElement.disabled = false;
       resultElement.innerHTML = `<span>${JSON.stringify(exports['application/vnd.myscript.jiix'].elements)}</span>`
     } else {

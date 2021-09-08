@@ -283,67 +283,10 @@ function callFadeOutObserver (duration = 10000, smartGuide) {
 }
 
 /**
- * Create a new smart guide
- * @param {Editor} editor - A reference to the editor.
- * @returns {SmartGuide} New smart guide
- */
-export function createSmartGuide (editor) {
-  const randomString = '-' + Math.random().toString(10).substring(2, 12)
-  const elements = createHTMLElements(randomString)
-
-  /**
-   * Clipboard from clipboard.js used to get copy across all browsers.
-   * @type {Clipboard}
-   */
-  // eslint-disable-next-line no-unused-vars
-  const clipboard = new Clipboard(elements.copyElement)
-  const perfectScrollbar = new PerfectScrollbar(elements.textContainer, { suppressScrollY: true, scrollXMarginOffset: 1 })
-
-  const smartGuide = {
-    editor,
-    wordToChange: '',
-    lastWord: '',
-    previousLabelExport: ' ',
-    perfectScrollbar,
-    elements,
-    smartGuideTimeOutId: 0,
-    randomString
-  }
-  addListeners(editor, smartGuide)
-
-  if (editor.configuration.recognitionParams.iink.text.smartGuideFadeOut.enable) {
-    callFadeOutObserver(editor.configuration.recognitionParams.iink.text.smartGuideFadeOut.duration, smartGuide)
-  }
-
-  return smartGuide
-}
-
-export function resize (smartGuide) {
-  const smartGuideRef = smartGuide
-  const elementsRef = smartGuide.elements
-
-  const mmToPixels = 3.779527559
-  let left = smartGuideRef.editor.configuration.recognitionParams.iink.text.margin.left * mmToPixels
-
-  const maxWidthTextContainer = smartGuideRef.editor.domElement.clientWidth - left - elementsRef.tagElement.offsetWidth - 35 - left
-
-  // Assign a max width to the smartguide based on the editor width, the left position and a small margin for the ellipsis (48px)
-  elementsRef.textContainer.style.width = `${maxWidthTextContainer}px`
-  elementsRef.textContainer.style.maxWidth = `${maxWidthTextContainer}px`
-
-  left = elementsRef.tagElement.offsetWidth
-  left += maxWidthTextContainer
-  elementsRef.ellipsisElement.style.left = `${left}px`
-
-  elementsRef.smartGuideElement.style.width = `${elementsRef.tagElement.offsetWidth + elementsRef.textContainer.offsetWidth + elementsRef.ellipsisElement.offsetWidth}px`
-  smartGuideRef.perfectScrollbar.update()
-}
-
-/**
  * Insert the smart guide HTML elements in the DOM.
  * @param {SmartGuide} smartGuide - A reference to the smart guide.
  */
-export function insertSmartGuide (smartGuide) {
+function insertSmartGuide (smartGuide) {
   const smartGuideRef = smartGuide
   const elementsRef = smartGuide.elements
 
@@ -406,6 +349,63 @@ export function insertSmartGuide (smartGuide) {
 
   // 48px as set in css
   elementsRef.smartGuideElement.style.height = '48px'
+  elementsRef.smartGuideElement.style.width = `${elementsRef.tagElement.offsetWidth + elementsRef.textContainer.offsetWidth + elementsRef.ellipsisElement.offsetWidth}px`
+  smartGuideRef.perfectScrollbar.update()
+}
+
+/**
+ * Create a new smart guide
+ * @param {Editor} editor - A reference to the editor.
+ * @returns {SmartGuide} New smart guide
+ */
+export function createSmartGuide (editor) {
+  const randomString = '-' + Math.random().toString(10).substring(2, 12)
+  const elements = createHTMLElements(randomString)
+
+  /**
+   * Clipboard from clipboard.js used to get copy across all browsers.
+   * @type {Clipboard}
+   */
+  // eslint-disable-next-line no-unused-vars
+  const clipboard = new Clipboard(elements.copyElement)
+  const perfectScrollbar = new PerfectScrollbar(elements.textContainer, { suppressScrollY: true, scrollXMarginOffset: 1 })
+
+  const smartGuide = {
+    editor,
+    wordToChange: '',
+    lastWord: '',
+    previousLabelExport: ' ',
+    perfectScrollbar,
+    elements,
+    smartGuideTimeOutId: 0,
+    randomString
+  }
+  addListeners(editor, smartGuide)
+
+  if (editor.configuration.recognitionParams.iink.text.smartGuideFadeOut.enable) {
+    callFadeOutObserver(editor.configuration.recognitionParams.iink.text.smartGuideFadeOut.duration, smartGuide)
+  }
+
+  return smartGuide
+}
+
+export function resize (smartGuide) {
+  const smartGuideRef = smartGuide
+  const elementsRef = smartGuide.elements
+
+  const mmToPixels = 3.779527559
+  let left = smartGuideRef.editor.configuration.recognitionParams.iink.text.margin.left * mmToPixels
+
+  const maxWidthTextContainer = smartGuideRef.editor.domElement.clientWidth - left - elementsRef.tagElement.offsetWidth - 35 - left
+
+  // Assign a max width to the smartguide based on the editor width, the left position and a small margin for the ellipsis (48px)
+  elementsRef.textContainer.style.width = `${maxWidthTextContainer}px`
+  elementsRef.textContainer.style.maxWidth = `${maxWidthTextContainer}px`
+
+  left = elementsRef.tagElement.offsetWidth
+  left += maxWidthTextContainer
+  elementsRef.ellipsisElement.style.left = `${left}px`
+
   elementsRef.smartGuideElement.style.width = `${elementsRef.tagElement.offsetWidth + elementsRef.textContainer.offsetWidth + elementsRef.ellipsisElement.offsetWidth}px`
   smartGuideRef.perfectScrollbar.update()
 }
@@ -499,4 +499,11 @@ export function launchSmartGuide (smartGuide, exports) {
   }
 
   return smartGuideRef
+}
+
+export function reset (smartGuide) {
+  const elementsRef = smartGuide.elements
+  elementsRef.candidatesElement.innerHTML = ''
+  elementsRef.smartGuideElement.classList.add('smartguide-out')
+  elementsRef.smartGuideElement.classList.remove('smartguide-in')
 }

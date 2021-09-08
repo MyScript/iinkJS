@@ -155,10 +155,14 @@ export function buildWebSocketCallback (recognizerContext) {
       case 'close':
         logger.debug('Close detected stopping all recognition', message)
         recognizerContextRef.initialized = false
-        if (recognitionContext) {
-          recognitionContext.error(message)
+        if (message.reason === 'CLOSE_RECOGNIZER') {
+          recognitionContext.initPromise.resolve(message)
         } else {
-          recognitionContext.initPromise.reject(message)
+          if (recognitionContext) {
+            recognitionContext.error(message)
+          } else {
+            recognitionContext.initPromise.reject(message)
+          }
         }
         break
       default :
