@@ -3,7 +3,7 @@ const { exported, isEditorInitialized, playStrokes } = require('./helper')
 
 const { rabText } = require('../lib/inksDatas')
 
-describe(`${process.env.BROWSER}:v4/websocket_text_custom_lexicon.html`, () => {
+describe(`${process.env.BROWSER}:v4/custom_lexicon_text`, () => {
   it('should test recognition asset builder lexicon', async () => {
     const editorEl = await page.waitForSelector('#editor')
     const isInit = await isEditorInitialized(editorEl)

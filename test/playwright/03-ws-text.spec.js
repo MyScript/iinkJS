@@ -3,7 +3,7 @@ const { exported, isEditorInitialized, playStrokes } = require('./helper')
 
 const { helloHow, helloStrike } = require('../lib/inksDatas')
 
-describe(`${process.env.BROWSER}:v4/websocket_text_iink.html`, () => {
+describe(`${process.env.BROWSER}:v4/websocket_text_iink`, () => {
   it('should check smartguide', async () => {
     const editorEl = await page.waitForSelector('#editor')
     const isInit = await isEditorInitialized(editorEl)
@@ -48,7 +48,7 @@ describe(`${process.env.BROWSER}:v4/websocket_text_iink.html`, () => {
     await page.evaluate(exported)
 
     textContent = await prompterText.evaluate(node => node.textContent)
-    expect(textContent.indexOf(candidateTextContent)).to.greaterThan(-1)
+    expect(textContent).to.equal(candidateTextContent)
   })
 
   it('should check gesture works', async () => {

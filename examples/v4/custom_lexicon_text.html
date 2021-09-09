@@ -8,7 +8,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="HandheldFriendly" content="true"/>
 
-  <title>Custom pre-loaded resources</title>
+  <title>Custom lexicon text</title>
 
   <link rel="stylesheet" href="../examples.css">
 
@@ -18,10 +18,6 @@
   <style>
     .button-div > p {
       margin-right: 12px;
-    }
-
-    nav {
-      flex-wrap: wrap-reverse;
     }
   </style>
 </head>
@@ -37,7 +33,9 @@
         <img src="../assets/img/redo.svg">
       </button>
     </div>
-    <p>Custom pre-loaded resources: <b>Dinosaurs</b>. Try to write some dinosaurs name!</p>
+    <div class="spacer"></div>
+    <input type="text" class="input-field" id="lexicon" data-type="text/plain" placeholder='Add your own lexicon (space-separated) and press "Send"'>
+    <button class="classic-btn" id="reinit">Send</button>
   </nav>
   <div id="editor" touch-action="none"></div>
 </div>
@@ -46,6 +44,9 @@
 
   const undoElement = document.getElementById('undo');
   const redoElement = document.getElementById('redo');
+
+  const reinitButton = document.getElementById('reinit');
+  const lexicon = document.getElementById('lexicon');
 
   editorElement.addEventListener('changed', (event) => {
     undoElement.disabled = !event.detail.canUndo;
@@ -57,6 +58,19 @@
   });
   redoElement.addEventListener('click', () => {
     editorElement.editor.redo();
+  });
+
+  reinitButton.addEventListener('click', () => {
+    const values = lexicon.value;
+    const configuration = editorElement.editor.configuration;
+
+    configuration.recognitionParams.iink.text = {
+      configuration: {
+        customLexicon: values.split(' '),
+        addLKText: true
+      }
+    };
+    editorElement.editor.configuration = configuration;
   });
 
   /**
@@ -77,8 +91,7 @@
       iink: {
         text: {
           configuration: {
-            addLKText: true,
-            customResources: ['dinosaur']
+            addLKText: true
           }
         }
       }

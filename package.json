@@ -52,7 +52,6 @@
     "eslint-plugin-standard": "^4.0.1",
     "minami": "^1.2.3",
     "mocha": "^9.0.3",
-    "mock-css-modules": "^2.0.0",
     "npm-run-all": "^4.1.5",
     "playwright": "^1.14.0",
     "postcss-import": "^12.0.1",
@@ -67,11 +66,11 @@
     "taffydb": "^2.7.3"
   },
   "scripts": {
-    "lint": "eslint --ext js src test examples",
-    "lint:fix": "eslint --ext js src test examples --fix",
+    "lint": "eslint --ext js src",
+    "lint:test": "eslint --ext js test",
     "docs": "npx jsdoc -R README.md -P '' -d docs -t node_modules/minami -r src",
     "minify-css": "cleancss -o dist/iink.min.css src/*.css",
-    "test:mocha": "mocha --require @babel/register,mock-css-modules --recursive test/mocha/ --reporter progress",
+    "test:mocha": "mocha --require @babel/register,./test/lib/common.js --recursive test/mocha/ --reporter progress",
     "test:mocha-xunit": "mocha --require @babel/register --recursive test/mocha/ --reporter xunit --reporter-options output=./test/mocha/results/xunit.xml",
     "test:e2e": "mocha --config .mocharc.e2e.js",
     "test:chromium": "BROWSER=chromium mocha --config .mocharc.e2e.js",

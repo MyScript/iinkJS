@@ -8,12 +8,18 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="HandheldFriendly" content="true"/>
 
-  <title>REST Text iink</title>
+  <title>REST Math iink</title>
 
-  <link rel="stylesheet" href="../examples.css">
+  <link rel="stylesheet" href="../../examples.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+        integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X"
+        crossorigin="anonymous">
 
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"
+          integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4"
+          crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
-  <script type="text/javascript" src="../../dist/iink.min.js"></script>
+  <script type="text/javascript" src="../../../dist/iink.min.js"></script>
 </head>
 
 <body>
@@ -22,23 +28,21 @@
   <nav>
     <div class="button-div">
       <button id="clear" class="nav-btn btn-fab-mini btn-lightBlue" disabled>
-        <img src="../assets/img/clear.svg">
+        <img src="../../assets/img/clear.svg">
       </button>
       <button id="undo" class="nav-btn btn-fab-mini btn-lightBlue" disabled>
-        <img src="../assets/img/undo.svg">
+        <img src="../../assets/img/undo.svg">
       </button>
       <button id="redo" class="nav-btn btn-fab-mini btn-lightBlue" disabled>
-        <img src="../assets/img/redo.svg">
+        <img src="../../assets/img/redo.svg">
       </button>
     </div>
-    <select id="language"></select>
   </nav>
   <div id="editor" touch-action="none"></div>
 </div>
 <script>
   const editorElement = document.getElementById('editor');
   const resultElement = document.getElementById('result');
-  const languageElement = document.getElementById('language');
   const undoElement = document.getElementById('undo');
   const redoElement = document.getElementById('redo');
   const clearElement = document.getElementById('clear');
@@ -48,38 +52,29 @@
     redoElement.disabled = !event.detail.canRedo;
   });
 
+  function cleanLatex(latexExport) {
+    if(typeof latexExport === 'number') {
+      latexExport = latexExport.toString();
+    }
+    if (latexExport.includes('\\\\')) {
+      const steps = '\\begin{align*}' + latexExport + '\\end{align*}';
+      return steps.replace("\\begin{aligned}", "")
+        .replace("\\end{aligned}", "")
+        .replace(new RegExp("(align.{1})", "g"), "aligned");
+    }
+    return latexExport.replace(new RegExp("(align.{1})", "g"), "aligned");
+  }
+
   editorElement.addEventListener('exported', (evt) => {
     const exports = evt.detail.exports;
-    if (exports && exports['text/plain']) {
+    console.log(evt);
+    if (exports && exports['application/x-latex']) {
       clearElement.disabled = false;
-      resultElement.innerHTML = '<span>' + exports['text/plain'] + '</span>';
+      katex.render(cleanLatex(exports['application/x-latex']),  resultElement);
     } else {
       clearElement.disabled = true;
       resultElement.innerHTML = '';
     }
-  });
-
-  editorElement.addEventListener('loaded', async (evt) => {
-    /**
-     * Retrieve the list of available recognition languages
-     * @param {Object} The editor recognition parameters
-     */
-    const currentLanguage = evt.target.editor.configuration.recognitionParams.iink.lang;
-    const res = await iink.getAvailableLanguageList(evt.target.editor.configuration);
-
-    if (languageElement.options.length === 0) {
-      Object.keys(res.result).forEach(function (key) {
-        const selected = currentLanguage === key;
-        languageElement.options[languageElement.options.length] = new Option(res.result[key], key, selected, selected);
-      });
-    }
-  });
-
-    languageElement.addEventListener('change', (e) => {
-    const configuration = editorElement.editor.configuration;
-    //The path to the language depend of the version of API you are using.
-    configuration.recognitionParams.iink.lang = e.target.value;
-    resultElement.innerHTML = '';
   });
 
   undoElement.addEventListener('click', () => {
@@ -103,7 +98,7 @@
       exportContent: 'QUIET_PERIOD'
     },
     recognitionParams: {
-      type: 'TEXT',
+      type: 'MATH',
       protocol: 'REST',
       server: {
         scheme: 'https',
@@ -112,11 +107,8 @@
         hmacKey: '54b2ca8a-6752-469d-87dd-553bb450e9ad'
       },
       iink: {
-        text: {
-          guides: {
-            enable: false
-          },
-          mimeTypes: ['text/plain', 'application/vnd.myscript.jiix'],
+        math: {
+          mimeTypes: ['application/x-latex'],
         }
       }
     }

@@ -13,8 +13,8 @@ exports.mochaHooks = {
     return Promise.resolve()
   },
   async beforeEach () {
-    const exampleFilePath = this.currentTest.parent.title.split(':')[1]
-    return await global.page.goto(`${process.env.LAUNCH_URL}/examples/${exampleFilePath}`)
+    const url = this.currentTest.parent.title.split(':')[1]
+    return await global.page.goto(`${process.env.LAUNCH_URL}/examples/${url}.html`)
   },
   // async afterEach () {
   //   return await global.page.screenshot({ fullPage: false, path: 'test/e2e/screenshots/' + this.currentTest.fullTitle() + '.png' })

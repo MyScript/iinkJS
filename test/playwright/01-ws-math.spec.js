@@ -3,7 +3,7 @@ const { expect } = require('chai')
 const { exported, isEditorInitialized, playStrokes, getStrokesFromJIIX } = require('./helper')
 const { equation3, fence } = require('../lib/inksDatas')
 
-describe(`${process.env.BROWSER}:v4/websocket_math_iink.html`, function () {
+describe(`${process.env.BROWSER}:v4/websocket_math_iink`, function () {
   it('should test undo/redo with equation3', async () => {
     const editorEl = await page.waitForSelector('#editor')
     // undo redo default mode (stroke one), then session mode, then stroke mode

@@ -3406,11 +3406,6 @@ mocha@^9.0.3:
     yargs-parser "20.2.4"
     yargs-unparser "2.0.0"
 
-mock-css-modules@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/mock-css-modules/-/mock-css-modules-2.0.0.tgz#d3f901b3fbf0dca75095ea38ee43d3dea97392cb"
-  integrity sha512-I9SwjjVzTTKdaeiGD/GJPuYlR6UDc81uK6H0dTyYlFfctNNGkBZIU/u1VwUyhCRv0Rd2SMTk+q3ic5teYgYEUA==
-
 ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"

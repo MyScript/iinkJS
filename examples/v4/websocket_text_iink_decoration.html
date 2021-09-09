@@ -8,7 +8,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="HandheldFriendly" content="true"/>
 
-  <title>Import jiix</title>
+  <title>WEBSOCKET Text iink</title>
 
   <link rel="stylesheet" href="../examples.css">
 
@@ -27,56 +27,51 @@
         <img src="../assets/img/redo.svg">
       </button>
     </div>
-    <div class="spacer"></div>
-    <input type="file" class="input-field" id="importJiixField" accept=".jiix">
-    <button class="classic-btn" id="importJiixBtn">Import</button>
+    <select id="language"></select>
   </nav>
   <div id="editor" touch-action="none"></div>
 </div>
 <script>
   const editorElement = document.getElementById('editor');
+
+  const languageElement = document.getElementById('language');
   const undoElement = document.getElementById('undo');
   const redoElement = document.getElementById('redo');
-  const importJiixBtn = document.getElementById('importJiixBtn');
-  const importJiixField = document.getElementById('importJiixField');
 
   editorElement.addEventListener('changed', (event) => {
     undoElement.disabled = !event.detail.canUndo;
     redoElement.disabled = !event.detail.canRedo;
   });
 
+  editorElement.addEventListener('loaded', async (evt) => {
+    /**
+     * Retrieve the list of available recognition languages
+     * @param {Object} The editor recognition parameters
+     */
+    const currentLanguage = evt.target.editor.configuration.recognitionParams.iink.lang;
+    const res = await iink.getAvailableLanguageList(evt.target.editor.configuration);
+
+    if (languageElement.options.length === 0) {
+      Object.keys(res.result).forEach((key) => {
+        const selected = currentLanguage === key;
+        languageElement.options[languageElement.options.length] = new Option(res.result[key], key, selected, selected);
+      });
+    }
+  });
+
+  languageElement.addEventListener('change', (e) => {
+    const configuration = editorElement.editor.configuration;
+    //The path to the language depend of the version of API you are using.
+    configuration.recognitionParams.iink.lang = e.target.value;
+  });
+
   undoElement.addEventListener('click', () => {
     editorElement.editor.undo();
   });
-
   redoElement.addEventListener('click', () => {
     editorElement.editor.redo();
   });
-  
-  importJiixBtn.addEventListener('click', async () => {
-    const toImport = await readFileAsString(importJiixField.files)
-    //editorElement.editor.import_(toImport, 'text/plain');
-    editorElement.editor.import_(toImport, 'application/vnd.myscript.jiix');
-    function readFileAsString(files) {
-      if (files.length === 0) {
-          console.log('No file is selected');
-          return;
-      }
 
-      const file = files[0];
-      const reader = new FileReader();
-      const promise = new Promise((resolve, reject) => {
-        reader.onload = function(event) {
-          resolve(event.target.result)
-        }
-        reader.onerror = function(event) {
-          reject(event)
-        }
-      })
-      reader.readAsText(file);
-      return promise
-    }
-  });
   /**
    * Attach an editor to the document
    * @param {Element} The DOM element to attach the ink paper
@@ -95,11 +90,9 @@
       iink: {
         export: {
           jiix: {
-            strokes: true
+            strokes: true,
+            style: true
           }
-        },
-        import: {
-          jiix: true
         }
       }
     }
