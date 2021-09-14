@@ -16,9 +16,12 @@ exports.mochaHooks = {
     const exampleFilePath = this.currentTest.parent.title.split(':')[1]
     return await global.page.goto(`${process.env.LAUNCH_URL}/examples/${exampleFilePath}`)
   },
-  // async afterEach () {
-  //   return await global.page.screenshot({ fullPage: false, path: 'test/e2e/screenshots/' + this.currentTest.fullTitle() + '.png' })
-  // },
+  async afterEach () {
+    if (process.env.SCREEN_SHOT) {
+      const [browserType, exampleFilePath] = this.currentTest.parent.title.split(':')
+      return await global.page.screenshot({ fullPage: false, path: 'test/playwright/screenshots/' + browserType + '/' + exampleFilePath + '.png' })
+    }
+  },
   async afterAll () {
     return await global.browser.close()
   }
