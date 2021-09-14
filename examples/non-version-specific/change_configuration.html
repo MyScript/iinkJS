@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="HandheldFriendly" content="true"/>
+
+    <title>Changing configuration dynamically</title>
+
+    <link rel="stylesheet" href="../examples.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+          integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X"
+          crossorigin="anonymous">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"
+            integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4"
+            crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
+    <script type="text/javascript" src="../../dist/iink.min.js"></script>
+
+
+    <style>
+      .flex {
+        display: flex;
+        height: 100%;
+        min-height: 100%;
+      }
+      .result {
+        border-bottom: solid gray 1px;
+      }
+      #editor.editor {
+        width: calc(100vw - 400px);
+        height: calc(100% - 105px);
+      }
+      .config {
+        border-left: solid black 1px;
+        width: 25%;
+        min-width: 400px;
+        height: 100vh;
+      }
+      .config .params {
+        height: calc(100% - 66px);
+        overflow: auto;
+      }
+      .config .card {
+        padding: 10px;
+      }
+      .config .card .title {
+        padding: 5px;
+        border-bottom: solid rgba(150, 150, 200, 1) 1px;
+        cursor: pointer;
+      }
+      .config .card .title:hover {
+        background-color: rgba(150, 150, 200, 0.15);
+      }
+      .config .card .content {
+        padding: 0px 0px 10px 20px;
+        display: none;
+      }
+      .config .card label {
+        display: block;
+        margin-top: 15px;
+      }
+      .config .card .content select,
+      .config .card .content input {
+        width: 100%;
+        font: 400 14px "Source Sans Pro",sans-serif;
+      }
+      .config .card .content input[type=checkbox]  {
+          width: 15px;
+          padding: 0px;
+      }
+      .input-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .buttons-wrapper {
+        padding: 15px;
+        display: flex;
+        justify-content: space-around;
+      }
+    </style>
+  </head>
+
+  <body>
+  <div class="flex">
+    <div class="content">
+      <div id="result" class="result"></div>
+      <div class="editor" id="editor" touch-action="none"></div>
+    </div>
+    <div class="config">
+      <div class="params">
+        <div class="card">
+          <div class="title">
+            Server
+          </div>
+          <div class="content">
+            <label for="server-scheme">Scheme:</label>
+            <select id="server-scheme" name="server-scheme">
+              <option value="http">http</option>
+              <option value="https">https</option>
+            </select>
+            <label for="server-host">Host:</label>
+            <input id="server-host" name="server-host" value="webdemoapi.myscript.com">
+            <label for="server-applicationKey">Application key:</label>
+            <input id="server-applicationKey" name="server-applicationKey" value="515131ab-35fa-411c-bb4d-3917e00faf60">
+            <label for="server-hmacKey">HMAC key:</label>
+            <input id="server-hmacKey" name="server-hmacKey" value="54b2ca8a-6752-469d-87dd-553bb450e9ad">
+          </div>
+        </div>
+        <div class="card">
+          <div class="title">
+            Recognition params
+          </div>
+          <div class="content">
+            <label for="recognition-type">Type:</label>
+            <select id="recognition-type" name="recognition-type">
+              <option value="TEXT">TEXT</option>
+              <option value="MATH">MATH</option>
+              <option value="DIAGRAM">DIAGRAM</option>
+              <option value="Raw Content">Raw Content</option>
+            </select>
+            <label for="recognition-protocol">Protocol:</label>
+            <select id="recognition-protocol" name="recognition-protocol">
+              <option value="WEBSOCKET">WEBSOCKET</option>
+              <option value="REST">REST</option>
+            </select>
+          </div>
+        </div>
+        <div class="card">
+          <div class="title">
+            Iink
+          </div>
+          <div class="content">
+            <label for="iink-language">Language:</label>
+            <select id="iink-language" name="iink-language"></select>
+            <div class="input-row">
+              <label for="iink-smartGuide">Smart guide:</label>
+              <input type="checkbox" id="iink-smartGuide" name="iink-smartGuide">
+            </div>
+            <div class="input-row">
+              <label for="iink-guides">Guides:</label>
+              <input type="checkbox" id="iink-guides" name="iink-guides">
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="title">
+            Triggers
+          </div>
+          <div class="content">
+            <label for="trigger-delay">Delay:</label>
+            <input type="number" id="triggers-delay" name="triggers-delay" />
+            <label for="triggers-exportContent">ExportContent:</label>
+            <select id="triggers-exportContent" name="triggers-exportContent">
+              <option value="POINTER_UP">POINTER_UP</option>
+              <option value="DEMAND">DEMAND</option>
+              <option value="QUIET_PERIOD">QUIET_PERIOD</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="buttons-wrapper">
+        <button class="classic-btn" id="exportContent">Export</button>
+        <button class="classic-btn reset" id="reset-btn">Reset</button>
+        <button class="classic-btn success" id="valid-btn">Valid</button>
+      </div>
+    </div>
+  </div>
+    <script>
+      const editorElement = document.getElementById('editor');
+      const resultElement = document.getElementById('result');
+      const recognitionTypeElement = document.getElementById('recognition-type');
+      const recognitionProtocolElement = document.getElementById('recognition-protocol');
+      const iinkLanguageElement = document.getElementById('iink-language');
+      const iinkSmartGuideElement = document.getElementById('iink-smartGuide');
+      const iinkGuidesElement = document.getElementById('iink-guides');
+      const serverSchemelElement = document.getElementById('server-scheme');
+      const serverHostlElement = document.getElementById('server-host');
+      const serverApplicationKeyElement = document.getElementById('server-applicationKey');
+      const serverHMACKeyElement = document.getElementById('server-hmacKey');
+      const triggersDelayElement = document.getElementById('triggers-delay');
+      const triggersExportContentElement = document.getElementById('triggers-exportContent');
+      const validBtn = document.getElementById('valid-btn');
+      const resetBtn = document.getElementById('reset-btn');
+      const exportBtn = document.getElementById('exportContent');
+
+      const defaultConfiguration = {
+        recognitionParams: {
+          type: 'TEXT',
+          protocol: 'WEBSOCKET',
+          server: {
+            scheme: 'https',
+            host: 'webdemoapi.myscript.com',
+            applicationKey: '515131ab-35fa-411c-bb4d-3917e00faf60',
+            hmacKey: '54b2ca8a-6752-469d-87dd-553bb450e9ad'
+          },
+          iink: {
+            lang: 'en_US',
+            math: {
+              mimeTypes: ['application/x-latex', 'application/vnd.myscript.jiix']
+            },
+            text: {
+              guides: {
+                enable: true
+              },
+              smartGuide: true,
+              smartGuideFadeOut: {
+                enable: false,
+                duration: 10000
+              },
+              mimeTypes: ['text/plain', 'application/vnd.myscript.jiix'],
+              margin: {
+                top: 20,
+                left: 10,
+                right: 10
+              }
+            },
+            diagram: {
+              mimeTypes: ['image/svg+xml', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'],
+            },
+            export: {
+              jiix: {
+                strokes: true
+              }
+            }
+          }
+        },
+        triggerDelay: 2000,
+        triggers: {
+          exportContent: 'POINTER_UP'
+        },
+      };
+      
+      const cardELements = document.getElementsByClassName("card");
+      for (let i = 0; i < cardELements.length; i++) {
+        const btn = cardELements[i].getElementsByClassName('title')[0];
+        btn.addEventListener("click", function() {
+          const content = this.nextElementSibling;
+          if (content.style.display === "block") {
+            content.style.display = "none";
+          } else {
+            content.style.display = "block";
+          }
+        });
+      } 
+      
+      /**
+       * Retrieve the list of available recognition languages using local json file
+       * @param {Object} The editor recognition parameters
+       */
+       iink.getAvailableLanguageList(defaultConfiguration)
+        .then((res) => {
+          if (iinkLanguageElement.options.length === 0) {
+            Object.keys(res.result).forEach((key) => {
+              const selected = defaultConfiguration.recognitionParams?.iink?.lang === key;
+              iinkLanguageElement.options[iinkLanguageElement.options.length] = new Option(res.result[key], key, selected, selected);
+            });
+          }
+        })
+        .catch(error => console.error(error))
+
+      function initInputsValues () {
+        recognitionTypeElement.value = defaultConfiguration.recognitionParams.type
+        recognitionProtocolElement.value = defaultConfiguration.recognitionParams.protocol
+        
+        serverSchemelElement.value = defaultConfiguration.recognitionParams.server.scheme
+        serverHostlElement.value = defaultConfiguration.recognitionParams.server.host
+        serverApplicationKeyElement.value = defaultConfiguration.recognitionParams.server.applicationKey
+        serverHMACKeyElement.value = defaultConfiguration.recognitionParams.server.hmacKey
+
+        iinkLanguageElement.value = defaultConfiguration.recognitionParams.iink.lang
+        iinkSmartGuideElement.checked = defaultConfiguration.recognitionParams.iink.text.smartGuide
+        iinkGuidesElement.checked = defaultConfiguration.recognitionParams.iink.text.guides.enable
+
+        triggersDelayElement.value = defaultConfiguration.triggerDelay
+        triggersExportContentElement.value = defaultConfiguration.triggers.exportContent
+
+        exportBtn.disabled = defaultConfiguration.triggers.exportContent !== 'DEMAND';
+      }
+      initInputsValues()
+
+      editorElement.addEventListener('changed', event => {
+        exportBtn.disabled = !event.detail.canExport || triggersExportContentElement.value !== 'DEMAND';
+      });
+
+      function cleanLatex(latexExport) {
+        if (latexExport.includes('\\\\')) {
+          const steps = '\\begin{align*}' + latexExport + '\\end{align*}';
+          return steps.replace("\\begin{aligned}", "")
+            .replace("\\end{aligned}", "")
+            .replace(new RegExp("(align.{1})", "g"), "aligned");
+        }
+        return latexExport
+          .replace(new RegExp("(align.{1})", "g"), "aligned");
+      }
+      
+      editorElement.addEventListener('exported', (evt) => {
+        const exports = evt.detail.exports;
+        if (exports) {
+          if (exports['application/x-latex']) {
+            katex.render(cleanLatex(exports['application/x-latex']),  resultElement);
+          } else if (exports['application/mathml+xml']) {
+            resultElement.innerText = exports['application/mathml+xml'];
+          } else if (exports['application/mathofficeXML']) {
+            resultElement.innerText = exports['application/mathofficeXML'];
+          } else if (exports['image/svg+xml']) {
+            const divSvgElement = document.createElement('div');
+            divSvgElement.innerHTML = exports['image/svg+xml'].trim();
+            const svgElement = divSvgElement.firstChild;
+            svgElement.id = 'converted-svg';
+            svgElement.setAttribute('width', resultElement.clientWidth);
+            svgElement.setAttribute('height', resultElement.clientHeight);
+            svgElement.setAttribute('viewBox', `0 0 ${resultElement.clientWidth / 3.77953} ${resultElement.clientHeight / 3.77953}`);
+            if (document.getElementById('converted-svg')) {
+              document.getElementById('converted-svg')
+                .remove();
+            }
+            resultElement.appendChild(svgElement);
+          } else if (exports['text/plain']) {
+            resultElement.innerText = exports['text/plain'];
+          } else {
+            resultElement.innerHTML = '';
+          }
+        } else {
+          resultElement.innerHTML = '';
+        }
+      });
+
+      recognitionProtocolElement.addEventListener('change', (e) => {
+        if (e.target.value === 'REST') {
+          if (triggersExportContentElement.value === 'POINTER_UP') {
+            triggersExportContentElement.value = 'QUIET_PERIOD'
+          }
+          triggersExportContentElement.querySelector('option[value="POINTER_UP"]').disabled = true
+          iinkSmartGuideElement.disabled = true
+          iinkSmartGuideElement.checked = false
+          iinkGuidesElement.disabled = true
+          iinkGuidesElement.checked = false
+        }
+      })
+
+      exportBtn.addEventListener('click', () => {
+        exportBtn.disabled = true;
+        editorElement.editor.export_();
+      });
+
+      resetBtn.addEventListener('click', initInputsValues)
+
+      validBtn.addEventListener('click', () => {
+        exportBtn.disabled = triggersExportContentElement.value !== 'DEMAND';
+        resultElement.innerHTML = '';
+        editorElement.editor.configuration = {
+          recognitionParams: {
+            type: recognitionTypeElement.value,
+            protocol: recognitionProtocolElement.value,
+            server: {
+              scheme: serverSchemelElement.value,
+              host: serverHostlElement.value,
+              applicationKey: serverApplicationKeyElement.value,
+              hmacKey: serverHMACKeyElement.value,
+            },
+            iink: {
+              lang: iinkLanguageElement.value,
+              math: {
+                mimeTypes: ['application/x-latex', 'application/vnd.myscript.jiix']
+              },
+              text: {
+                smartGuide: iinkSmartGuideElement.checked,
+                guides: {
+                  enable: iinkGuidesElement.checked
+                }
+              },
+              export: {
+                jiix: {
+                  strokes: true
+                }
+              }
+            }
+          },
+          triggerDelay: triggersDelayElement.value,
+          triggers: {
+            exportContent: triggersExportContentElement.value,
+          }
+        }
+      })
+
+      iink.register(editorElement, defaultConfiguration);
+
+      window.addEventListener('resize', () => {
+        editorElement.editor.resize();
+      });
+    </script>
+  </body>
+
+</html>

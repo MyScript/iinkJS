@@ -68,7 +68,6 @@
       }
 
       editorElement.addEventListener('exported', (evt) => {
-
         const exports = evt.detail.exports;
         if (exports && exports['application/x-latex']) {
           convertElement.disabled = false;

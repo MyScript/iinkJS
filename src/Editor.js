@@ -352,7 +352,6 @@ export class Editor {
      */
     this.innerBehaviors = DefaultBehaviors.overrideDefaultBehaviors(behaviors)
     this.configuration = configuration
-    this.smartGuide = SmartGuide.createSmartGuide(this)
 
     /**
      * Pen color used only for pending stroke
@@ -375,28 +374,17 @@ export class Editor {
   set configuration (configuration) {
     this.loader.style.display = 'initial'
     this.error.style.display = 'none'
-
-    /**
-     * Update function call when some configuration property is updated
-     * @param {string} value
-     */
-    const update = (value) => {
-      const defaultLang = !Object.keys(Constants.Languages).includes(value)
-      this.theme['.text']['font-family'] = defaultLang ? Constants.Languages.default : Constants.Languages[value]
-      this.behavior = this.behaviors.getBehaviorFromConfiguration(this.behaviors, this.innerConfiguration)
-    }
-
-    const watcher = {
-      update,
-      prop: 'lang'
-    }
-
     /**
      * @private
      * @type {Configuration}
      */
-    this.innerConfiguration = DefaultConfiguration.overrideDefaultConfiguration(configuration, watcher)
+    this.innerConfiguration = DefaultConfiguration.overrideDefaultConfiguration(configuration)
     this.behavior = this.behaviors.getBehaviorFromConfiguration(this.behaviors, this.innerConfiguration)
+    if (this.smartGuide) {
+      SmartGuide.reset(this.smartGuide)
+    } else {
+      this.smartGuide = SmartGuide.createSmartGuide(this)
+    }
   }
 
   /**

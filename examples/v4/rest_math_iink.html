@@ -67,7 +67,6 @@
 
   editorElement.addEventListener('exported', (evt) => {
     const exports = evt.detail.exports;
-    console.log(evt);
     if (exports && exports['application/x-latex']) {
       clearElement.disabled = false;
       katex.render(cleanLatex(exports['application/x-latex']),  resultElement);
