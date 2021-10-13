@@ -27,9 +27,8 @@ describe('Check StrokeComponent', () => {
       assert.property(stroke, 'l')
       assert.property(stroke, 'width')
     })
-
     it('Check toJSON function', () => {
-      assert.deepEqual({ x: obj.x, y: obj.y, t: obj.t }, StrokeComponent.toJSON(stroke))
+      assert.deepEqual({ x: obj.x, y: obj.y, t: obj.t, pointerType: undefined }, StrokeComponent.toJSON(stroke))
     })
   })
 

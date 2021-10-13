@@ -5,7 +5,7 @@
  * @param {Stroker} stroker Stroker to use to render a stroke
  */
 export function drawStroke (context, stroke, stroker) {
-  if (stroker) {
+  if (stroker && (!stroke || stroke.pointerType !== 'ERASER')) {
     stroker.drawStroke(context, stroke)
   }
 }

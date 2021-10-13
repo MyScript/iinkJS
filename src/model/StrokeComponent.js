@@ -84,7 +84,7 @@ export function createStrokeComponent (properties) {
  * @return {{x: Array<Number>, y: Array<Number>, t: Array<Number>}} Simplified stroke object
  */
 export function toJSON (stroke) {
-  return { x: stroke.x, y: stroke.y, t: stroke.t }
+  return { x: stroke.x, y: stroke.y, t: stroke.t, pointerType: stroke.pointerType }
 }
 
 /**
