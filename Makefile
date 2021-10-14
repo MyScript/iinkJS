@@ -50,7 +50,7 @@ test-e2e:
 		-e BROWSER=$(BROWSER) \
 		--ipc=host \
 		-w "/tests" \
-		--name "playwright-$(BROWSER)" mcr.microsoft.com/playwright:bionic \
+		--name "playwright-$(BROWSER)" mcr.microsoft.com/playwright:v1.15.2-bionic \
 		npm run test:e2e
 
 dev-all: dev-examples ## Launch all the requirements for launching tests.
