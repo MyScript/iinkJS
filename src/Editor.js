@@ -29,7 +29,7 @@ import * as PromiseHelper from './util/PromiseHelper'
  */
 function manageResetState (editor, model) {
   // If strokes moved in the undo redo stack then a clear is mandatory before sending strokes.
-  if (editor.recognizer.reset && RecognizerContext.isResetRequired(editor.recognizerContext, model)) {
+  if (editor.recognizer.reset && !editor.isErasing && RecognizerContext.isResetRequired(editor.recognizerContext, model)) {
     return editor.recognizer.reset(editor.recognizerContext, model)
   }
   return null
@@ -363,6 +363,9 @@ export class Editor {
     this.penStyle = penStyle
     this.penStyleClasses = ''
 
+    // To override pointerType when ERASER
+    this.isErasing = false
+
     this.domElement.editor = this
   }
 
@@ -645,6 +648,17 @@ export class Editor {
     return this.recognizerContext ? this.recognizerContext.initialized : false
   }
 
+  enableEraser () {
+    this.isErasing = true
+    this.domElement.classList.add('erasing')
+  }
+
+  disableEraser () {
+    document.body.style.cursor = 'initial'
+    this.isErasing = false
+    this.domElement.classList.remove('erasing')
+  }
+
   /**
    * Handle a pointer down
    * @param {{x: Number, y: Number, t: Number}} point Captured point coordinates
@@ -656,7 +670,9 @@ export class Editor {
     window.clearTimeout(this.notifyTimer)
     window.clearTimeout(this.exportTimer)
     this.model = InkModel.initPendingStroke(this.model, point, Object.assign({ pointerType, pointerId }, this.theme.ink, this.localPenStyle))
-    this.renderer.drawCurrentStroke(this.rendererContext, this.model, this.stroker)
+    if (!this.isErasing) {
+      this.renderer.drawCurrentStroke(this.rendererContext, this.model, this.stroker)
+    }
     // Currently no recognition on pointer down
   }
 
@@ -667,7 +683,9 @@ export class Editor {
   pointerMove (point) {
     logger.trace('Pointer move', point)
     this.model = InkModel.appendToPendingStroke(this.model, point)
-    this.renderer.drawCurrentStroke(this.rendererContext, this.model, this.stroker)
+    if (!this.isErasing) {
+      this.renderer.drawCurrentStroke(this.rendererContext, this.model, this.stroker)
+    }
     // Currently no recognition on pointer move
   }
 
@@ -678,7 +696,9 @@ export class Editor {
   pointerUp (point) {
     logger.trace('Pointer up', point)
     this.model = InkModel.endPendingStroke(this.model, point, this.penStyle)
-    this.renderer.drawModel(this.rendererContext, this.model, this.stroker)
+    if (!this.isErasing) {
+      this.renderer.drawModel(this.rendererContext, this.model, this.stroker)
+    }
 
     if (this.recognizer.addStrokes) {
       addStrokes(this, this.model)

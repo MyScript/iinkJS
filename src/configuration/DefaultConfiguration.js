@@ -58,6 +58,9 @@ const defaultConfiguration = {
           left: 15,
           right: 15,
           top: 10
+        },
+        eraser: {
+          'erase-precisely': false
         }
       },
       text: {
@@ -74,6 +77,9 @@ const defaultConfiguration = {
           top: 20,
           left: 10,
           right: 10
+        },
+        eraser: {
+          'erase-precisely': false
         }
       },
       diagram: {

@@ -106,7 +106,11 @@ export function attach (element, editor, offsetTop = 0, offsetLeft = 0) {
         const pointerId = evt.pointerId > 2147483647 ? -1 : evt.pointerId
         unfocus()
         evt.stopPropagation()
-        editor.pointerDown(extractPoint(evt, element, editor.configuration, offsetTop, offsetLeft), evt.pointerType, pointerId)
+        let pointerType = evt.pointerType
+        if (editor.isErasing) {
+          pointerType = 'ERASER'
+        }
+        editor.pointerDown(extractPoint(evt, element, editor.configuration, offsetTop, offsetLeft), pointerType, pointerId)
       }
     } else if (evt.target.classList.contains('ellipsis') || evt.target.classList.contains('tag-icon')) {
       hideMenu(evt)
