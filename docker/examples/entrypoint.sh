@@ -14,7 +14,7 @@ echo "HMACKEY=${DEV_HMACKEY}"
 sed -i -e "s/\(listen\s\+\)\(80;\)/\1${LISTEN_PORT};/g"  /etc/nginx/conf.d/default.conf
 cat /etc/nginx/conf.d/default.conf
 
-for filename in /usr/share/nginx/html/examples/**/*.html; do
+for filename in /usr/share/nginx/html/examples/**; do
     sed -i "s/scheme: 'https'/scheme: '${APISCHEME}'/g" "${filename}"
 
     sed -i "s/webdemoapi.myscript.com/${APIHOST}/g" "${filename}"
