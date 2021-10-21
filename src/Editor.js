@@ -302,7 +302,9 @@ export class Editor {
    * @param {PenStyle} [penStyle] Custom style to apply
    * @param {Behaviors} [behaviors] Custom behaviors to apply
    */
-  constructor (element, configuration, penStyle, theme, behaviors) {
+  constructor (element, configuration, penStyle, theme, behaviors, globalClassCss) {
+    globalClassCss = globalClassCss || 'ms-editor'
+
     const styleElement = document.createElement('style')
     styleElement.appendChild(document.createTextNode(''))
     element.appendChild(styleElement)
@@ -316,7 +318,7 @@ export class Editor {
      * @type {Element}
      */
     this.domElement = element
-    this.domElement.classList.add('ms-editor')
+    this.domElement.classList.add(globalClassCss)
 
     // eslint-disable-next-line no-undef
     this.loader = document.createElement('div')

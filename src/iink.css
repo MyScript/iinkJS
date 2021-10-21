@@ -7,6 +7,10 @@
     font-family: sans-serif;
 }
 
+.ms-editor.erasing {
+    cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEsSURBVDiNrdO7SgNBFMbx/3fmCbQ1tunDIayFBvFSKxbxBfSdBPEBtLIWb3Ebl4R9AQWLkE70CWbHZl1Eg2iSr5vL+c1hhhFTMhwOdyX1gQ2gVU+PgTyldNHtdq+/1+jroCiKtpmdSupNO6ApkgZmdtzpdJ5+QGVZ9qqqugSWfkO+5F3SnrvnDVQURTuE8PgP5DNvkjJ3fzaAEMLJDAjAclVVZwCqL/ZqBqSJme2YpMN5EIAYY9+A9XkhST0DVuaFgJYtAAGoDJgsAJoYkM+rSHqwlNL5Ajq6EMBoNLoBtmbsZuDumwYQYzwCXmdw3oAjAAPIsuxF0kG98GdE0r67PzcQgLvnIYQ14P4PyF39WZuH0rRdZVluxxj7kjaA1Xp6nFLKzezc3W+/13wAItdV6XjME1AAAAAASUVORK5CYII='), auto;
+}
+
 .ms-editor canvas,
 .ms-editor svg {
     z-index: 15;
@@ -47,10 +51,6 @@
     animation: spin 2s linear infinite;
 }
 
-.ms-editor.erasing {
-    cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEsSURBVDiNrdO7SgNBFMbx/3fmCbQ1tunDIayFBvFSKxbxBfSdBPEBtLIWb3Ebl4R9AQWLkE70CWbHZl1Eg2iSr5vL+c1hhhFTMhwOdyX1gQ2gVU+PgTyldNHtdq+/1+jroCiKtpmdSupNO6ApkgZmdtzpdJ5+QGVZ9qqqugSWfkO+5F3SnrvnDVQURTuE8PgP5DNvkjJ3fzaAEMLJDAjAclVVZwCqL/ZqBqSJme2YpMN5EIAYY9+A9XkhST0DVuaFgJYtAAGoDJgsAJoYkM+rSHqwlNL5Ajq6EMBoNLoBtmbsZuDumwYQYzwCXmdw3oAjAAPIsuxF0kG98GdE0r67PzcQgLvnIYQ14P4PyF39WZuH0rRdZVluxxj7kjaA1Xp6nFLKzezc3W+/13wAItdV6XjME1AAAAAASUVORK5CYII='), auto;
-}
-
 .ms-editor .error-msg {
     z-index: 25;
     position: absolute;
@@ -67,25 +67,65 @@
     content: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCA3Ni41IDYxMiA0NTkiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaW5ZTWluIG1lZXQiPgogICAgPHBhdGggZmlsbD0iIzFBOUZGRiIgZD0iTTQ5NC43LDIyOS41Yy0xNy44NTEtODYuNy05NC4zNTEtMTUzLTE4OC43LTE1M2MtMzguMjUsMC03My45NSwxMC4yLTEwMiwzMC42bDM4LjI1LDM4LjI1IGMxNy44NS0xMi43NSw0MC44LTE3Ljg1LDYzLjc1LTE3Ljg1Yzc2LjUsMCwxNDAuMjUsNjMuNzUsMTQwLjI1LDE0MC4yNXYxMi43NWgzOC4yNWM0My4zNSwwLDc2LjUsMzMuMTUsNzYuNSw3Ni41IGMwLDI4LjA1LTE1LjMsNTMuNTUtNDAuOCw2Ni4zbDM4LjI1LDM4LjI1QzU5MS42LDQzOC42LDYxMiw0MDAuMzUsNjEyLDM1N0M2MTIsMjkwLjcsNTU4LjQ1LDIzNC42LDQ5NC43LDIyOS41eiBNNzYuNSwxMDkuNjUgbDcxLjQsNjguODVDNjYuMywxODMuNiwwLDI0OS45LDAsMzMxLjVjMCw4NC4xNSw2OC44NSwxNTMsMTUzLDE1M2gyOTguMzVsNTEsNTFsMzMuMTUtMzMuMTVMMTA5LjY1LDc2LjVMNzYuNSwxMDkuNjV6IE0xOTYuMzUsMjI5LjVsMjA0LDIwNEgxNTNjLTU2LjEsMC0xMDItNDUuOS0xMDItMTAyYzAtNTYuMSw0NS45LTEwMiwxMDItMTAySDE5Ni4zNXoiIC8+Cjwvc3ZnPgo=);
 }
 
-.smartguide {
+.ms-editor .smartguide {
     position: absolute;
     z-index: 40;
     font-size: 16px;
 }
 
-.smartguide-in {
+.ms-editor .smartguide.smartguide-in {
     visibility: visible !important;
     transition: opacity 0.5s;
     opacity: 1;
 }
 
-.smartguide-out {
+.ms-editor .smartguide.smartguide-out {
     transition: opacity 1s, visibility 1s;
     visibility: hidden !important;
     opacity: 0;
 }
 
-.prompter-text-container {
+.ms-editor .smartguide .tag-icon {
+    padding: 0 18px;
+    border: 1px solid #959DA6;
+    font-weight: bold;
+    font-size: large;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    position: absolute;
+    z-index: 31;
+    height: 48px;
+    line-height: 48px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #959DA6;
+}
+
+.ms-editor .smartguide .ellipsis {
+    cursor: pointer;
+    border-bottom: 1px solid #959DA6;
+    position: absolute;
+    z-index: 31;
+    height: 48px;
+    line-height: 38px;
+    padding: 0 8px;
+    font-weight: bold;
+    font-size: x-large;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #959DA6;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.ms-editor .smartguide .ellipsis:active {
+    background-color: #e0e0e0;
+}
+
+.ms-editor .smartguide .prompter-text-container {
     background-color: rgba(255, 255, 255, 0.9);
     height: 48px;
     line-height: 48px;
@@ -104,23 +144,102 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-.prompter-text-container > div > span {
+.ms-editor .smartguide .prompter-text-container > div > span {
     cursor: pointer;
     display: inline-block;
 }
 
-.prompter-text {
+.ms-editor .smartguide .prompter-text-container .prompter-text {
     margin-left: 12px;
 }
 
-.added-word {
+.ms-editor .smartguide .prompter-text-container .prompter-text .added-word {
     animation: 0.1s linear word-added,
     3s ease-in-out color-input;
 }
 
-.modified-word {
+.ms-editor .smartguide .prompter-text-container .prompter-text .modified-word {
     animation: 0.1s linear word-modified,
     3s ease-in-out color-input;
+}
+
+.ms-editor .smartguide .candidates {
+    color: black;
+    flex-direction: column;
+    text-align: center;
+    line-height: 30px;
+    border-radius: 3px;
+    position: absolute;
+    box-shadow: 2px 2px 12px #BDBDBD, -2px 2px 12px #BDBDBD;
+    background-color: #F5F5F5;
+    z-index: 100;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.ms-editor .smartguide .candidates > span {
+    cursor: pointer;
+    padding: 2px 20px;
+}
+
+.ms-editor .smartguide .candidates > span:hover {
+    background-color: #EEEEEE;
+}
+
+.ms-editor .smartguide .candidates > span:active {
+    background-color: #E0E0E0;
+}
+
+.ms-editor .smartguide .candidates .selected-word {
+    font-weight: bold;
+    background-color: #E0E0E0;
+}
+
+.ms-editor .smartguide .more-menu {
+    flex-direction: column;
+    margin-right: 12px;
+    line-height: 30px;
+    border-radius: 3px;
+    position: absolute;
+    z-index: 100;
+    box-shadow: 2px 2px 12px #BDBDBD;
+    background-color: #F5F5F5;
+}
+
+.ms-editor .smartguide .more-menu .options-label-button {
+    color: black;
+    font-size: 16px;
+    cursor: pointer;
+    box-sizing: border-box;
+    background: transparent;
+    border: none;
+    padding: 0 24px;
+    margin: 0;
+    height: 40px;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.ms-editor .smartguide .more-menu .options-label-button:hover {
+    background-color: #EEEEEE;
+}
+
+.ms-editor .smartguide .more-menu .options-label-button:active {
+    background-color: #E0E0E0;
+}
+
+.ms-editor .ps__rail-x {
+    top: 32px !important;
+}
+
+/** Stroke **/
+
+.ms-editor .removed-stroke {
+    opacity: 0;
+    transition: opacity 0.1s ease-in-out;
+}
+
+.ms-editor .added-stroke {
+    animation: 0.2s opacity-appear;
 }
 
 @keyframes color-input {
@@ -150,125 +269,6 @@
     }
 }
 
-.candidates {
-    color: black;
-    flex-direction: column;
-    text-align: center;
-    line-height: 30px;
-    border-radius: 3px;
-    position: absolute;
-    box-shadow: 2px 2px 12px #BDBDBD, -2px 2px 12px #BDBDBD;
-    background-color: #F5F5F5;
-    z-index: 100;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.candidates > span {
-    cursor: pointer;
-    padding: 2px 20px;
-}
-
-.candidates > span:hover {
-    background-color: #EEEEEE;
-}
-
-.candidates > span:active {
-    background-color: #E0E0E0;
-}
-
-.selected-word {
-    font-weight: bold;
-    background-color: #E0E0E0;
-}
-
-.tag-icon {
-    padding: 0 18px;
-    border: 1px solid #959DA6;
-    font-weight: bold;
-    font-size: large;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    position: absolute;
-    z-index: 31;
-    height: 48px;
-    line-height: 48px;
-    background-color: rgba(255, 255, 255, 0.9);
-    color: #959DA6;
-}
-
-.ellipsis {
-    cursor: pointer;
-    border-bottom: 1px solid #959DA6;
-    position: absolute;
-    z-index: 31;
-    height: 48px;
-    line-height: 38px;
-    padding: 0 8px;
-    font-weight: bold;
-    font-size: x-large;
-    background-color: rgba(255, 255, 255, 0.9);
-    color: #959DA6;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.ellipsis:active {
-    background-color: #e0e0e0;
-}
-
-.more-menu {
-    flex-direction: column;
-    margin-right: 12px;
-    line-height: 30px;
-    border-radius: 3px;
-    position: absolute;
-    z-index: 100;
-    box-shadow: 2px 2px 12px #BDBDBD;
-    background-color: #F5F5F5;
-}
-
-.options-label-button {
-    color: black;
-    font-size: 16px;
-    cursor: pointer;
-    box-sizing: border-box;
-    background: transparent;
-    border: none;
-    padding: 0 24px;
-    margin: 0;
-    height: 40px;
-    outline: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.options-label-button:hover {
-    background-color: #EEEEEE;
-}
-
-.options-label-button:active {
-    background-color: #E0E0E0;
-}
-
-.ps__rail-x {
-    top: 32px !important;
-}
-
-/** Stroke **/
-
-.removed-stroke {
-    opacity: 0;
-    transition: opacity 0.1s ease-in-out;
-}
-
-.added-stroke {
-    animation: 0.2s opacity-appear;
-}
-
 @keyframes opacity-appear {
     0% {
         opacity: 0;
@@ -284,42 +284,6 @@
     }
     100% {
         transform: rotate(360deg);
-    }
-}
-
-@keyframes rotate-plan {
-    0% {
-        transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-    }
-    25% {
-        transform: perspective(120px) rotateX(0deg) rotateY(-180deg);
-    }
-    50% {
-        transform: perspective(120px) rotateX(-180deg) rotateY(-180deg);
-    }
-    75% {
-        transform: perspective(120px) rotateX(-180deg) rotateY(0deg);
-    }
-    100% {
-        transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-    }
-}
-
-@-webkit-keyframes rotate-plan {
-    0% {
-        -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg)
-    }
-    25% {
-        -webkit-transform: perspective(120px) rotateX(180deg) rotateY(0deg)
-    }
-    50% {
-        -webkit-transform: perspective(120px) rotateX(180deg) rotateY(180deg)
-    }
-    75% {
-        -webkit-transform: perspective(120px) rotateX(0deg) rotateY(180deg)
-    }
-    100% {
-        -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg)
     }
 }
 

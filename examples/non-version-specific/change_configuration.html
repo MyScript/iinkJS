@@ -343,6 +343,12 @@
           iinkSmartGuideElement.checked = false
           iinkGuidesElement.disabled = true
           iinkGuidesElement.checked = false
+        } else {
+          triggersExportContentElement.querySelector('option[value="POINTER_UP"]').disabled = false
+          iinkSmartGuideElement.disabled = false
+          iinkSmartGuideElement.checked = true
+          iinkGuidesElement.disabled = false
+          iinkGuidesElement.checked = true
         }
       })
 
