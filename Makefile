@@ -45,13 +45,13 @@ test-e2e:
 		EXAMPLES_IP=$$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $(TEST_DOCKER_EXAMPLES_INSTANCE_NAME)); \
 	fi && \
 	docker run -i --rm \
-		-v $(CURRENT_PWD):/tests \
+		-v $(CURRENT_PWD):/home/pwuser/tests \
+		--ipc=host \
 		-e LAUNCH_URL="http://$${EXAMPLES_IP}:$(EXAMPLES_LISTEN_PORT)" \
 		-e BROWSER=$(BROWSER) \
-		--ipc=host \
-		-w "/tests" \
-		--name "playwright-$(BROWSER)" mcr.microsoft.com/playwright:v1.15.2-bionic \
-		npm run test:e2e
+		-w "/home/pwuser/tests" \
+		--name "playwright-$(BROWSER)-$(BUILDID)" mcr.microsoft.com/playwright:v1.16.0 \
+		yarn test:e2e
 
 dev-all: dev-examples ## Launch all the requirements for launching tests.
 

@@ -54,7 +54,7 @@
     "mocha": "^9.0.3",
     "mock-css-modules": "^2.0.0",
     "npm-run-all": "^4.1.5",
-    "playwright": "^1.14.0",
+    "playwright": "^1.16.0",
     "postcss-import": "^12.0.1",
     "rollup": "^2.18.0",
     "rollup-plugin-commonjs": "^10.1.0",

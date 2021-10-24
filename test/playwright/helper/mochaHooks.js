@@ -1,13 +1,13 @@
-const playwright = require('playwright')
+const { chromium, webkit, firefox } = require('playwright')
 
 exports.mochaHooks = {
   async beforeAll () {
-    const browserType = process.env.BROWSER || 'chromium'
+    const browserName = process.env.BROWSER || 'firefox'
     let args = []
-    if (browserType === 'chromium') {
+    if (browserName === 'chromium') {
       args = ['--shm-size=5gb', '--disable-dev-shm-usage', '--no-sandbox', '--disable-setuid-sandbox']
     }
-    global.browser = await playwright[browserType].launch({ headless: JSON.parse(process.env.HEADLESS), args })
+    global.browser = await { chromium, webkit, firefox }[browserName].launch({ headless: JSON.parse(process.env.HEADLESS), args })
     const context = await browser.newContext()
     global.page = await context.newPage()
     return Promise.resolve()
@@ -18,8 +18,8 @@ exports.mochaHooks = {
   },
   async afterEach () {
     if (process.env.SCREEN_SHOT) {
-      const [browserType, exampleFilePath] = this.currentTest.parent.title.split(':')
-      return await global.page.screenshot({ fullPage: false, path: 'test/playwright/screenshots/' + browserType + '/' + exampleFilePath + '.png' })
+      const [browserName, exampleFilePath] = this.currentTest.parent.title.split(':')
+      return await global.page.screenshot({ fullPage: false, path: 'test/playwright/screenshots/' + browserName + '/' + exampleFilePath + '.png' })
     }
   },
   async afterAll () {
