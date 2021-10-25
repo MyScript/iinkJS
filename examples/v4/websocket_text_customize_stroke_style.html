@@ -8,15 +8,10 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="HandheldFriendly" content="true"/>
 
-  <title>Styling iink</title>
+  <title>Styling pen and strokes</title>
 
   <link rel="stylesheet" href="../examples.css">
   <style>
-    #editor {
-      height: calc(100vh - 80px);
-      width: 100%;
-    }
-
     .hidden {
       display: none;
     }
@@ -31,12 +26,12 @@
       margin: 12px 12px 0;
     }
 
-    .color-field, .color-field:focus {
+    .pen-color-field, .pen-color-field:focus {
       padding: 0;
       height: 36px;
     }
 
-    .width-field {
+    .pen-width-field {
       height: 36px;
     }
 
@@ -81,25 +76,6 @@
         margin-left: 12px;
       }
     }
-
-    /* Styling */
-
-    .ms-editor {
-      background: url(https://farm6.staticflickr.com/5526/10976824044_aebaebdb12_z_d.jpg) no-repeat center center / cover;
-      color: #F5F6F7;
-    }
-
-    .ms-editor .loader {
-      border: none;
-      border-radius: 0;
-      -webkit-animation: rotate-plan 2.4s infinite ease-in-out;
-      animation: rotate-plan 2.4s infinite ease-in-out;
-    }
-
-    .ms-editor .error-msg::before {
-      content: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNzYgMjc2IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWluWU1pbiBtZWV0Ij4KICAgIDxjaXJjbGUgY3g9IjEzOCIgY3k9IjEzOCIgcj0iMTI0IiBzdHJva2U9IiNCMzAwMDAiIHN0cm9rZS13aWR0aD0iMjgiIGZpbGw9Im5vbmUiLz4KICAgIDxsaW5lIHgxPSI0NSIgeTE9IjQ1IiB4Mj0iMjMxIiB5Mj0iMjMxIiBzdHJva2U9IiNCMzAwMDAiIHN0cm9rZS13aWR0aD0iMjIiLz4KPC9zdmc+Cg==);
-    }
-
   </style>
 
 <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
@@ -107,54 +83,40 @@
 </head>
 
 <body>
-<nav class="style-flex-container">
-  <div class="style-flex-item">
-    <input id="penStyleClasses" type="checkbox">
-    <label for="penStyleClasses">Apply pen style class (greenThickPen)</label>
+  <nav class="style-flex-container">
+    <div class="style-flex-item">
+      <input id="penStyleClasses" type="checkbox">
+      <label for="penStyleClasses">Apply pen style class (greenThickPen)</label>
+    </div>
+    <div class="style-flex-item">
+      <input id="penenabled" type="checkbox">
+      <label for="penenabled">Enable pen color/thickness</label>
+    </div>
+    <div class="style-flex-item pensettings hidden">
+      <label class="label-color" for="pencolor">Color:</label>
+      <input id="pencolor" class="input-field pen-color-field" type="color" value="#ff7314">
+    </div>
+    <div class="style-flex-item pensettings hidden">
+      <label for="penwidth">Thickness:</label>
+      <input id="penwidth" class="input-field pen-width-field" type="number" min="1" max="5" value="2">
+    </div>
+    <div class="style-flex-item theme">
+      <label for="theme">Theme:</label>
+      <select id="theme" disabled></select>
+    </div>
+    <div class="style-flex-item">
+      <label for="fonts">Font:</label>
+      <select id="fonts"></select>
+    </div>
+  </nav>
+
+  <div id="editor" touch-action="none"></div>
+  <div id="prompter-css">
+    <div id="prompter-css-text">
+      Theme or pen style applied will be written here.
+    </div>
   </div>
-  <div class="style-flex-item">
-    <input id="penenabled" type="checkbox">
-    <label for="penenabled">Enable pen color/thickness</label>
-  </div>
-  <div class="style-flex-item pensettings hidden">
-    <label class="label-color" for="pencolor">Color:</label>
-    <input id="pencolor" class="input-field color-field" type="color" value="#ff7314">
-  </div>
-  <div class="style-flex-item pensettings hidden">
-    <label for="penwidth">Thickness:</label>
-    <input id="penwidth" class="input-field width-field" type="number" min="1" max="5" value="2">
-  </div>
-  </div>
-  <div class="style-flex-item theme">
-    <label for="theme">Theme:</label>
-    <select id="theme" disabled></select>
-  </div>
-  <div class="style-flex-item">
-    <label for="language">Language:</label>
-    <select id="language"></select>
-  </div>
-  <div class="style-flex-item">
-    <label for="fonts">Font:</label>
-    <select id="fonts"></select>
-  </div>
-</nav>
-<div id="editor" touch-action="none"></div>
-<div id="prompter-css">
-  <div id="prompter-css-text">
-    Theme or pen style applied will be written here.
-  </div>
-</div>
 <script>
-  function request(url) {
-    return new Promise(function (resolve, reject) {
-      // TODO replace with fetch
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', url);
-      xhr.onload = resolve;
-      xhr.onerror = reject;
-      xhr.send();
-    });
-  }
 
   const editorElement = document.getElementById('editor');
   const themeSelector = document.getElementById('theme');
@@ -164,16 +126,15 @@
   const penWidth = document.getElementById('penwidth');
   const penStyleClasses = document.getElementById('penStyleClasses');
   const fontsElement = document.getElementById('fonts');
-  const languageElement = document.getElementById('language');
   const prompterText = document.getElementById('prompter-css-text');
 
   const themes = [
     {
-      name: 'Normal white theme',
+      name: 'Normal Gray theme',
       id: 'normal-white',
       theme: {
         ink: {
-          color: '#FFFFFF',
+          color: '#808080',
           '-myscript-pen-width': 2
         },
         '.text': {
@@ -236,37 +197,18 @@
 
   editorElement.addEventListener('loaded', async (evt) => {
     const currentLanguage = evt.target.editor.configuration.recognitionParams.iink.lang;
-    const res = await iink.getAvailableLanguageList(evt.target.editor.configuration);
-
-    if (languageElement.options.length === 0) {
-      Object.keys(res.result).forEach((key) => {
-        const selected = currentLanguage === key;
-        languageElement.options[languageElement.options.length] = new Option(res.result[key], key, selected, selected);
-      });
-    }
-
     fontsElement.options.length = 0;
-    request('https://webdemoapi.myscript.com/api/v4.0/iink/font/google/language/' + currentLanguage)
-      .then((e) => {
-        const result = JSON.parse(e.target.responseText).result.sort();
-        Object.keys(result).forEach((index) => {
-          fontsElement.options[fontsElement.options.length] = new Option(result[index], result[index]);
-        });
-      }, (e) => {
-        console.log('Error on get language', e);
-      });
-  });
-
-  languageElement.addEventListener('change', (e) => {
-    editor.penStyle = undefined;
-    penEnabled.checked = false;
-    penStyleClasses.checked = false;
-    updatePrompter('Theme reset');
-
-    const configuration = editorElement.editor.configuration;
-    //The path to the language depend of the version of API you are using.
-    configuration.recognitionParams.iink.lang = e.target.value;
-  });
+    const response = await fetch('https://webdemoapi.myscript.com/api/v4.0/iink/font/google/language/' + currentLanguage)
+    const json = await response.json()
+    if (response.ok) {
+      const result = json.result.sort()
+      Object.keys(result).forEach((index) => {
+        fontsElement.options[fontsElement.options.length] = new Option(result[index], result[index])
+      })
+    } else {
+      console.error(json)
+    }
+  })
 
   fontsElement.addEventListener('change', (e) => {
     const fontFamily = e.target.value;
@@ -289,7 +231,7 @@
       classesTheme['.greenThickPen'] = {
         color: '#00FF00',
         '-myscript-pen-width': 3
-      };
+      }
 
       editor.theme = classesTheme;
       editor.penStyleClasses = 'greenThickPen';

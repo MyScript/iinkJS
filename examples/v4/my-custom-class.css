@@ -1,0 +1,307 @@
+nav {
+    background: url(https://farm6.staticflickr.com/5526/10976824044_aebaebdb12_z_d.jpg) no-repeat center center / cover;
+}
+
+.my-custom-class {
+    position: relative;
+    height: calc(100vh - 76px);
+    width: 100%;
+    z-index: 20;
+    font-family: sans-serif;
+    background: url(https://farm6.staticflickr.com/5526/10976824044_aebaebdb12_z_d.jpg) no-repeat center center / cover;
+    color: #F5F6F7;
+}
+
+.my-custom-class.erasing {
+    cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEsSURBVDiNrdO7SgNBFMbx/3fmCbQ1tunDIayFBvFSKxbxBfSdBPEBtLIWb3Ebl4R9AQWLkE70CWbHZl1Eg2iSr5vL+c1hhhFTMhwOdyX1gQ2gVU+PgTyldNHtdq+/1+jroCiKtpmdSupNO6ApkgZmdtzpdJ5+QGVZ9qqqugSWfkO+5F3SnrvnDVQURTuE8PgP5DNvkjJ3fzaAEMLJDAjAclVVZwCqL/ZqBqSJme2YpMN5EIAYY9+A9XkhST0DVuaFgJYtAAGoDJgsAJoYkM+rSHqwlNL5Ajq6EMBoNLoBtmbsZuDumwYQYzwCXmdw3oAjAAPIsuxF0kG98GdE0r67PzcQgLvnIYQ14P4PyF39WZuH0rRdZVluxxj7kjaA1Xp6nFLKzezc3W+/13wAItdV6XjME1AAAAAASUVORK5CYII='), auto;
+}
+
+.my-custom-class canvas,
+.my-custom-class svg {
+    z-index: 15;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.my-custom-class canvas.ms-rendering-canvas {
+    z-index: 10;
+    pointer-events: none;
+    background-image: linear-gradient(to right, #F5F6F7 1px, transparent 1px),
+    linear-gradient(to bottom, #F5F6F7 1px, transparent 1px);
+    background-size: 18px 18px;
+}
+
+.my-custom-class svg {
+    z-index: 10;
+    pointer-events: none;
+}
+.my-custom-class svg[data-layer="BACKGROUND"] {
+    z-index: 9;
+}
+
+.my-custom-class .loader {
+    z-index: 30;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    top: calc(50% - 25px);
+    left: calc(50% - 25px);
+    border: none;
+    border-radius: 0;
+    -webkit-animation: rotate-plan 2.4s infinite ease-in-out;
+    animation: rotate-plan 2.4s infinite ease-in-out;
+}
+
+.my-custom-class .error-msg {
+    z-index: 25;
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    top: calc(50% - 200px);
+    left: calc(50% - 200px);
+    font-size: 16px;
+    text-align: center;
+    word-wrap: break-word;
+}
+
+.my-custom-class .error-msg::before {
+    content: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNzYgMjc2IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWluWU1pbiBtZWV0Ij4KICAgIDxjaXJjbGUgY3g9IjEzOCIgY3k9IjEzOCIgcj0iMTI0IiBzdHJva2U9IiNCMzAwMDAiIHN0cm9rZS13aWR0aD0iMjgiIGZpbGw9Im5vbmUiLz4KICAgIDxsaW5lIHgxPSI0NSIgeTE9IjQ1IiB4Mj0iMjMxIiB5Mj0iMjMxIiBzdHJva2U9IiNCMzAwMDAiIHN0cm9rZS13aWR0aD0iMjIiLz4KPC9zdmc+Cg==);
+}
+
+.my-custom-class .smartguide {
+    position: absolute;
+    z-index: 40;
+    font-size: 16px;
+    background-color: rgba(60, 60, 60, 0.5);
+}
+
+.my-custom-class .smartguide.smartguide-in {
+    visibility: visible !important;
+    transition: opacity 0.1s;
+    opacity: 1;
+}
+
+.my-custom-class .smartguide.smartguide-out {
+    visibility: hidden !important;
+    transition: opacity 0.1s, visibility 0.1s;
+    opacity: 0;
+}
+
+.my-custom-class .smartguide .tag-icon {
+    padding: 0 18px;
+    border: 1px solid #959DA6;
+    font-weight: bold;
+    font-size: large;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    position: absolute;
+    z-index: 31;
+    height: 48px;
+    line-height: 48px;
+    color: white;
+}
+
+.my-custom-class .smartguide .ellipsis {
+    cursor: pointer;
+    position: absolute;
+    z-index: 31;
+    height: 48px;
+    line-height: 38px;
+    padding: 0 8px;
+    font-weight: bold;
+    font-size: x-large;
+    color: #959DA6;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    color: white;
+    border: 1px solid #959DA6;
+}
+
+.my-custom-class .smartguide .ellipsis:active {
+    background-color: #e0e0e0;
+}
+
+.my-custom-class .smartguide .prompter-text-container {
+    height: 48px;
+    line-height: 48px;
+    overflow: hidden;
+    white-space: nowrap;
+    display: block;
+    text-align: left;
+    border-bottom: 1px solid #959DA6;
+    position: absolute;
+    z-index: 30;
+    color: #757575;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.my-custom-class .smartguide .prompter-text-container > div > span {
+    cursor: pointer;
+    display: inline-block;
+}
+
+.my-custom-class .smartguide .prompter-text-container .prompter-text {
+    margin-left: 12px;
+}
+
+.my-custom-class .added-word {
+    animation: 1s linear word-added-anim, 1s ease-in-out color-input-anim;
+}
+
+.my-custom-class .modified-word {
+    animation: 1s linear word-modified-anim;
+}
+
+.my-custom-class .smartguide .candidates {
+    color: white;
+    flex-direction: column;
+    text-align: center;
+    line-height: 30px;
+    border-radius: 0px 0px 5px 5px;
+    position: absolute;
+    z-index: 100;
+    background-color: rgba(60, 60, 60, 1);
+    box-shadow: 2px 2px 12px #BDBDBD, -2px 2px 12px #BDBDBD;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.my-custom-class .smartguide .candidates > span {
+    cursor: pointer;
+    padding: 2px 20px;
+}
+
+.my-custom-class .smartguide .candidates > span:hover {
+    background-color: #c7c7c7;
+}
+
+.my-custom-class .smartguide .candidates > span:active {
+    background-color: #E0E0E0;
+}
+
+.my-custom-class .smartguide .candidates .selected-word {
+    font-weight: bold;
+    color: #1A9FFF;
+}
+
+.my-custom-class .smartguide .more-menu {
+    flex-direction: column;
+    position: absolute;
+    z-index: 100;
+    margin-left: 10px;
+    margin-top: 50px;
+    line-height: 30px;
+    border-radius: 3px;
+    box-shadow: 2px 2px 12px #BDBDBD;
+    color: white;
+    background-color: rgba(60, 60, 60, 1);
+}
+
+.my-custom-class .smartguide .more-menu .options-label-button {
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    box-sizing: border-box;
+    background: transparent;
+    border: none;
+    padding: 0 24px;
+    margin: 0;
+    height: 40px;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.my-custom-class .smartguide .more-menu .options-label-button:hover {
+    background-color: rgba(100, 100, 100, 0.5);
+}
+
+.my-custom-class .smartguide .more-menu .options-label-button:active {
+    background-color: rgba(100, 100, 100, 0.5);
+}
+
+@keyframes color-input-anim {
+    0% {
+        color: #fffeff;
+    }
+    25% {
+        color: #0000ff;
+    }
+    50% {
+        color: #00ff00;
+    }
+    75% {
+        color: #ff0000;
+    }
+    100% {
+        color: #757575;
+    }
+}
+
+@keyframes word-added-anim {
+    0% {
+        transform: translate(50px, 0px);
+    }
+    100% {
+        transform: none;
+    }
+}
+
+@keyframes word-modified-anim {
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(180deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rotate-plan {
+    0% {
+        transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+    }
+    25% {
+        transform: perspective(120px) rotateX(0deg) rotateY(-180deg);
+    }
+    50% {
+        transform: perspective(120px) rotateX(-180deg) rotateY(-180deg);
+    }
+    75% {
+        transform: perspective(120px) rotateX(-180deg) rotateY(0deg);
+    }
+    100% {
+        transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+    }
+}
+
+@-webkit-keyframes rotate-plan {
+    0% {
+        -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg)
+    }
+    25% {
+        -webkit-transform: perspective(120px) rotateX(180deg) rotateY(0deg)
+    }
+    50% {
+        -webkit-transform: perspective(120px) rotateX(180deg) rotateY(180deg)
+    }
+    75% {
+        -webkit-transform: perspective(120px) rotateX(0deg) rotateY(180deg)
+    }
+    100% {
+        -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg)
+    }
+}
+

@@ -8,11 +8,12 @@ import { Editor } from './Editor'
  * @param {PenStyle} [penStyle] Pen style to apply
  * @param {Theme} [theme] Theme to apply
  * @param {Behaviors} [behaviors] Custom behaviors to apply
+ * @param {String} [globalClassCSS] Replace global class css 'ms-editor' to customize style
  * @return {Editor} New editor
  */
-export function register (element, configuration, penStyle, theme, behaviors) {
+export function register (element, configuration, penStyle, theme, behaviors, globalClassCSS) {
   logger.debug('Registering a new editor')
-  return new Editor(element, configuration, penStyle, theme, behaviors)
+  return new Editor(element, configuration, penStyle, theme, behaviors, globalClassCSS)
 }
 
 /**
