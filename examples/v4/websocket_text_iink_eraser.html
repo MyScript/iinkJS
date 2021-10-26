@@ -38,44 +38,25 @@
         <img  src="../assets/img/eraser.svg">
       </button>
     </div>
-    <select id="language"></select>
+    <div class="button-div">
+      <label for="erase-precisely">Erase precisely:</label>
+      <input type="checkbox" id="erase-precisely" name="erase-precisely">
+    </div>
   </nav>
   <div id="editor" touch-action="none"></div>
 </div>
 <script>
   const editorElement = document.getElementById('editor');
 
-  const languageElement = document.getElementById('language');
   const undoElement = document.getElementById('undo');
   const redoElement = document.getElementById('redo');
   const eraserElement = document.getElementById('eraser');
   const penElement = document.getElementById('pen');
+  const erasePreciselyElement = document.getElementById('erase-precisely');
 
   editorElement.addEventListener('changed', (event) => {
     undoElement.disabled = !event.detail.canUndo;
     redoElement.disabled = !event.detail.canRedo;
-  });
-
-  editorElement.addEventListener('loaded', async (evt) => {
-    /**
-     * Retrieve the list of available recognition languages
-     * @param {Object} The editor recognition parameters
-     */
-    const currentLanguage = evt.target.editor.configuration.recognitionParams.iink.lang;
-    const res = await iink.getAvailableLanguageList(evt.target.editor.configuration);
-
-    if (languageElement.options.length === 0) {
-      Object.keys(res.result).forEach((key) => {
-        const selected = currentLanguage === key;
-        languageElement.options[languageElement.options.length] = new Option(res.result[key], key, selected, selected);
-      });
-    }
-  });
-
-  languageElement.addEventListener('change', (e) => {
-    const configuration = editorElement.editor.configuration;
-    //The path to the language depend of the version of API you are using.
-    configuration.recognitionParams.iink.lang = e.target.value;
   });
 
   undoElement.addEventListener('click', () => {
@@ -95,6 +76,12 @@
     eraserElement.disabled = false;
     penElement.disabled = true;
   });
+
+  erasePreciselyElement.addEventListener('change', (e) => {
+    const configuration = { ... editorElement.editor.configuration };
+    configuration.recognitionParams.iink.text.eraser['erase-precisely'] = e.target.checked;
+    editorElement.editor.configuration = configuration
+  })
 
   /**
    * Attach an editor to the document
@@ -116,7 +103,12 @@
           jiix: {
             strokes: true
           }
-        }
+        },
+        text: {
+          eraser: {
+            'erase-precisely': false
+          }
+        },
       }
     }
   });
