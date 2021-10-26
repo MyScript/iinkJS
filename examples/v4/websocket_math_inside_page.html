@@ -45,6 +45,8 @@
     .mathContent {
       background-color: lightgrey;
       display: inline-block;
+      padding: 0px 5px;
+      min-height: 33px;
     }
 
     .katex-display {
@@ -191,7 +193,7 @@
     document.querySelector('body').style.setProperty("--animation-duration", animationDelay);
   }
 
-  const editorELement1 = document.getElementById('editor');
+  const editorELement = document.getElementById('editor');
   const mathContentElements = document.querySelectorAll('.mathContent');
   let currentMathElement = undefined;
   const undoElement = document.getElementById('undo');
@@ -200,7 +202,7 @@
   const closeElement = document.getElementById('close');
 
   convertElement.addEventListener('click', () => {
-    editorELement1.editor.convert();
+    editorELement.editor.convert();
   });
 
   function toggleView() {
@@ -216,17 +218,17 @@
   closeElement.addEventListener('click', () => {
     toggleView();
     //Recopy the jjix export in the data-jiix attribute
-    editorELement1.editor.waitForIdle();
-    const currentExports = editorELement1.editor.exports;
+    editorELement.editor.waitForIdle();
+    const currentExports = editorELement.editor.exports;
     if (currentExports && currentExports['application/vnd.myscript.jiix']) {
       currentMathElement.setAttribute('data-jiix', currentExports['application/vnd.myscript.jiix']);
-      editorELement1.editor.clear();
+      editorELement.editor.clear();
       currentMathElement.innerHTML = "";
       katex.render(currentExports['application/x-latex'], currentMathElement, { displayMode: false })
     }
   });
 
-  editorELement1.addEventListener('changed', (event) => {
+  editorELement.addEventListener('changed', (event) => {
     undoElement.disabled = !event.detail.canUndo;
     redoElement.disabled = !event.detail.canRedo;
     convertElement.disabled = event.detail.isEmpty;
@@ -267,7 +269,7 @@
       //Importing the previous jjix
       const currentJiix = currentMathElement.getAttribute('data-jiix');
       if (currentJiix) {
-        editorELement1.editor.import_(currentJiix, 'application/vnd.myscript.jiix');
+        editorELement.editor.import_(currentJiix, 'application/vnd.myscript.jiix');
       }
 
       const srcElementHeight = srcMathContentElement.offsetHeight;
@@ -275,8 +277,7 @@
       const srcElementLeft = srcMathContentElement.offsetLeft;
       const srcElementTop = srcMathContentElement.offsetTop;
 
-      document.querySelector('#editorContainer').classList.toggle(
-        'visible');
+      document.querySelector('#editorContainer').classList.toggle('visible');
       document.querySelector('nav').classList.toggle('visible');
       document.querySelector('#editor').classList.toggle('visible');
 
@@ -292,14 +293,14 @@
   });
 
   undoElement.addEventListener('click', () => {
-    editorELement1.editor.undo();
+    editorELement.editor.undo();
   });
   redoElement.addEventListener('click', () => {
-    editorELement1.editor.redo();
+    editorELement.editor.redo();
   });
 
   window.addEventListener('resize', () => {
-    editorELement1.editor.resize();
+    editorELement.editor.resize();
   });
 
   function getUrlParameter(name) {
