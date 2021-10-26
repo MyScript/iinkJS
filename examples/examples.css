@@ -66,18 +66,6 @@ nav {
     margin: 0 12px;
     width: 500px;
 }
-input:not([type='checkbox']) {
-    width: auto;
-    padding: 0 15px;
-    color: #131F26;
-    -webkit-appearance: none;
-    appearance: none;
-    height: 2.625rem;
-    font: 600 16px "Source Sans Pro",sans-serif;
-    border: 1px solid #CED5D9;
-    border-radius: 3px;
-    -webkit-tap-highlight-color: transparent;
-}
 
 select {
     width: auto;
