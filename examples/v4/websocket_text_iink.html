@@ -60,9 +60,10 @@
   });
 
   languageElement.addEventListener('change', (e) => {
-    const configuration = editorElement.editor.configuration;
-    //The path to the language depend of the version of API you are using.
+    //The path to the language depend of the version of API you are using.    
+    const configuration = { ...editorElement.editor.configuration };
     configuration.recognitionParams.iink.lang = e.target.value;
+    editorElement.editor.configuration = configuration;
   });
 
   undoElement.addEventListener('click', () => {

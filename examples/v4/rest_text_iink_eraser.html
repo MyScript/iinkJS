@@ -39,14 +39,12 @@
         <img  src="../assets/img/eraser.svg">
       </button>
     </div>
-    <select id="language"></select>
   </nav>
   <div id="editor" touch-action="none"></div>
 </div>
 <script>
   const editorElement = document.getElementById('editor');
   const resultElement = document.getElementById('result');
-  const languageElement = document.getElementById('language');
   const undoElement = document.getElementById('undo');
   const redoElement = document.getElementById('redo');
   const clearElement = document.getElementById('clear');
@@ -67,30 +65,6 @@
       clearElement.disabled = true;
       resultElement.innerHTML = '';
     }
-  });
-
-
-  editorElement.addEventListener('loaded', async (evt) => {
-    /**
-     * Retrieve the list of available recognition languages
-     * @param {Object} The editor recognition parameters
-     */
-    const currentLanguage = evt.target.editor.configuration.recognitionParams.iink.lang;
-    const res = await iink.getAvailableLanguageList(evt.target.editor.configuration);
-
-    if (languageElement.options.length === 0) {
-      Object.keys(res.result).forEach(function (key) {
-        const selected = currentLanguage === key;
-        languageElement.options[languageElement.options.length] = new Option(res.result[key], key, selected, selected);
-      });
-    }
-  });
-
-  languageElement.addEventListener('change', (e) => {
-    const configuration = editorElement.editor.configuration;
-    //The path to the language depend of the version of API you are using.
-    configuration.recognitionParams.iink.lang = e.target.value;
-    resultElement.innerHTML = '';
   });
 
   undoElement.addEventListener('click', () => {

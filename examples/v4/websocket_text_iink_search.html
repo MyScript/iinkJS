@@ -20,9 +20,6 @@
 
 <div>
   <nav>
-    <div class="languages">
-      <select id="language"></select>
-    </div>
     <div class="spacer"></div>
     <div class="search">
       <input id="searchInput" type="search" class="input-field">
@@ -35,7 +32,6 @@
 </div>
 <script>
   const editorElement = document.getElementById('editor');
-  const languageElement = document.getElementById('language');
   const convertElement = document.getElementById('convert');
   const searchInput = document.getElementById('searchInput');
   const searchBtn = document.getElementById('searchBtn');
@@ -109,30 +105,8 @@
     }
   });
 
-  editorElement.addEventListener('loaded', async (evt) => {
-    /**
-     * Retrieve the list of available recognition languages
-     * @param {Object} The editor recognition parameters
-     */
-    const currentLanguage = evt.target.editor.configuration.recognitionParams.iink.lang;
-    const res = await iink.getAvailableLanguageList(evt.target.editor.configuration);
-
-    if (languageElement.options.length === 0) {
-      Object.keys(res.result).forEach((key) => {
-        const selected = currentLanguage === key;
-        languageElement.options[languageElement.options.length] = new Option(res.result[key], key, selected, selected);
-      });
-    }
-  });
-
   editorElement.addEventListener('changed',() => {
     document.querySelectorAll('.highlight').forEach(elem => elem.parentNode.removeChild(elem));
-  });
-
-  languageElement.addEventListener('change', (e) => {
-    const configuration = editorElement.editor.configuration;
-    //The path to the language depend of the version of API you are using.
-    configuration.recognitionParams.iink.lang = e.target.value;
   });
 
   convertElement.addEventListener('click', () => {

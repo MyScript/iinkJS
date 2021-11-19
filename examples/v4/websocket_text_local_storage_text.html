@@ -40,7 +40,6 @@
         <img src="../assets/img/redo.svg">
       </button>
     </div>
-    <select id="language"></select>
     <button class="classic-btn" id="clearStorage">Clear local storage</button>
   </nav>
   <div id="editor" touch-action="none"></div>
@@ -48,8 +47,6 @@
 <script>
 
   const editorElement = document.getElementById('editor');
-
-  const languageElement = document.getElementById('language');
   const undoElement = document.getElementById('undo');
   const redoElement = document.getElementById('redo');
   const clearStorage = document.getElementById('clearStorage');
@@ -65,28 +62,6 @@
 
   editorElement.addEventListener('exported', (event) => {
     localStorage.setItem('editorTextContent', event.detail.exports['text/plain']);
-  });
-
-  editorElement.addEventListener('loaded', async (evt) => {
-    /**
-     * Retrieve the list of available recognition languages
-     * @param {Object} The editor recognition parameters
-     */
-    const currentLanguage = evt.target.editor.configuration.recognitionParams.iink.lang;
-    const res = await iink.getAvailableLanguageList(evt.target.editor.configuration);
-
-    if (languageElement.options.length === 0) {
-      Object.keys(res.result).forEach((key) => {
-        const selected = currentLanguage === key;
-        languageElement.options[languageElement.options.length] = new Option(res.result[key], key, selected, selected);
-      });
-    }
-  });
-
-  languageElement.addEventListener('change', (e) => {
-    const configuration = editorElement.editor.configuration;
-    //The path to the language depend of the version of API you are using.
-    configuration.recognitionParams.iink.lang = e.target.value;
   });
 
   undoElement.addEventListener('click', () => {
