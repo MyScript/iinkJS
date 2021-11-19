@@ -72,8 +72,16 @@
       }
     }
   };
-  const globalClassCSS = 'my-custom-class'
-  iink.register(editorElement, configuration, null, null, null, globalClassCSS);
+  const penStyle = {
+    color: '#ffffff'
+  };
+  const theme = {
+    ink: {
+      color: '#ffffff',
+    }
+  };
+  const globalClassCSS = 'my-custom-class';
+  iink.register(editorElement, configuration, penStyle, theme, null, globalClassCSS);
 
   window.addEventListener('resize', () => {
     editorElement.editor.resize();
