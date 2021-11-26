@@ -11,31 +11,13 @@ const editorElement = document.getElementById('editor')
 const editorElement2 = document.getElementById('editor2')
 let editorElementRef = editorElement
 
-const undoElement = document.getElementById('undo')
-const redoElement = document.getElementById('redo')
 const convertElement = document.getElementById('convert')
 const mainElement = document.getElementById('mainContent')
 
 const inputs = []
 const inputValues = new Map()
 
-for (let i = 1; i < 5; i++) {
-  inputs[i] = document.createElement('div')
-  inputs[i].id = `input${i}`
-  inputs[i].setAttribute('touch-action', 'none')
-  inputs[i].classList.add('input')
-  inputValues.set(inputs[i].id, '')
-
-  const label = document.createElement('label')
-  label.setAttribute('for', inputs[i].id)
-  label.innerText = `Input N°${i}`
-
-  mainElement.appendChild(label)
-  mainElement.appendChild(inputs[i])
-}
-
 /** The two following functions roundFloat and extractPoint are used to get a point coordinates */
-
 const floatPrecisionArray = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000]
 
 function roundFloat (oneFloat, requestedFloatPrecision) {
@@ -67,22 +49,10 @@ function extractPoint (event, domElement, configuration, offsetTop = 0, offsetLe
 function addChangedListeners (editors) {
   editors.forEach((editor) => {
     editor.addEventListener('changed', (event) => {
-      undoElement.disabled = !event.detail.canUndo
-      redoElement.disabled = !event.detail.canRedo
       convertElement.disabled = event.detail.isEmpty
     })
   })
 }
-
-undoElement.addEventListener('click', () => {
-  editorElementRef.editor.undo()
-})
-redoElement.addEventListener('click', () => {
-  editorElementRef.editor.redo()
-})
-convertElement.addEventListener('click', () => {
-  editorElementRef.editor.convert()
-})
 
 function addIdleListeners (editors) {
   editors.forEach((editor) => {
@@ -106,8 +76,7 @@ function addIdleListeners (editors) {
   })
 }
 
-function addInputsPointerDownListener (inputId) {
-  const input = document.getElementById(inputId)
+function addPointerEventListener (input) {
   input.addEventListener('pointerdown', (event) => {
     if (editorElementRef.editor.initialized) {
       pointerDownOnInput = true
@@ -254,11 +223,6 @@ const customGrabber = {
   detach
 }
 
-editorElement.addEventListener('loaded', () => {
-  editorElement.style.display = 'none'
-  editorElement2.style.display = 'none'
-})
-
 function initEditors (editors) {
   editors.forEach((editor) => {
     iink.register(editor, {
@@ -291,14 +255,34 @@ function initEditors (editors) {
   })
 }
 
-initEditors([editorElement, editorElement2])
-
-Array.from(inputValues.keys()).forEach((inputId) => {
-  addInputsPointerDownListener(inputId)
+convertElement.addEventListener('click', () => {
+  editorElementRef.editor.convert()
 })
 
+initEditors([editorElement, editorElement2])
+
 addIdleListeners([editorElement, editorElement2])
+
 addChangedListeners([editorElement, editorElement2])
+
+for (let i = 1; i < 5; i++) {
+  const inputEl = document.createElement('div')
+  inputEl.id = `input${i}`
+  inputEl.setAttribute('touch-action', 'none')
+  inputEl.classList.add('input')
+
+  addPointerEventListener(inputEl)
+
+  const labelEL = document.createElement('label')
+  labelEL.setAttribute('for', inputEl.id)
+  labelEL.innerText = `Input N°${i}`
+
+  mainElement.appendChild(labelEL)
+  mainElement.appendChild(inputEl)
+
+  inputs[i] = inputEl
+  inputValues.set(inputEl.id, '')
+}
 
 window.addEventListener('resize', () => {
   editorElement.editor.resize()
