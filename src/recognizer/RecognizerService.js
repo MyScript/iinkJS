@@ -130,6 +130,8 @@ export function handleError (editor, err, ...events) {
     // IInk error managment after refactor
     (err.code && err.code === 'access.not.granted')) {
     editorRef.error.innerText = Constants.Error.WRONG_CREDENTIALS
+  } else if (err.code && err.code === 'no.activity') {
+    editorRef.error.innerText = Constants.Error.NO_ACTIVITY
   } else if (err.message === 'Session is too old. Max Session Duration Reached.' ||
     (err.code && err.code === 'session.too.old')) {
     editorRef.error.innerText = Constants.Error.TOO_OLD
