@@ -49,15 +49,14 @@
       const newElement = document.createElement("div");
       newElement.style.position = "absolute";
       newElement.style.left = mmToPixel(boundingBox.x) + "px";
-      newElement.style.top = (88 + mmToPixel(boundingBox.y)) + "px";
+      newElement.style.top = mmToPixel(boundingBox.y) + "px";
       newElement.style.height = mmToPixel(boundingBox.height) + "px";
       newElement.style.width = mmToPixel(boundingBox.width) + "px";
 
       newElement.classList.add('highlight');
       newElement.style.backgroundColor = "yellow";
-      newElement.style.zIndex = 11;
 
-      document.body.appendChild(newElement);
+      editorElement.appendChild(newElement);
     })
   }
 
