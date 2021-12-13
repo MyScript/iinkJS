@@ -1,3 +1,21 @@
+# [v1.5.1](https://github.com/MyScript/iinkJS/tree/v1.5.1)
+
+## Bug fix
+@Editor
+- fix change configuration restart websocket connection
+- fix lost connection due to inactivity is now displayed
+- fix style is wrapped by global class and can be customized
+
+@examples
+- fix bad position of the searching highlight in searching text example
+- new examples with eraser
+
+## Features
+- erase mode is now an option in websocket text
+
+## Chore
+- refactor of examples
+
 # [v1.4.5](https://github.com/MyScript/iinkJS/tree/v1.4.5)
 
 ## Bug fix
