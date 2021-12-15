@@ -551,8 +551,8 @@ export class Editor {
         this.innerRecognizer.close(this.recognizerContext, this.model)
           .then((model) => {
             logger.info('Recognizer closed')
-            handleSuccess(this, model)
             initialize(InkModel.clearModel(model), true)
+            handleSuccess(this, model)
           })
           .catch(err => handleError(this, err))
       } else {
