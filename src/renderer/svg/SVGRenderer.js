@@ -32,7 +32,7 @@ export function attach (element) {
  */
 export function detach (element, context) {
   logger.debug('detach renderer', element)
-  context.select('svg').remove()
+  context.selectAll('svg').remove()
 }
 
 /**
