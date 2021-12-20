@@ -1,3 +1,9 @@
+# [v1.5.2](https://github.com/MyScript/iinkJS/tree/v1.5.2)
+
+## Bug fix
+@Editor
+- fix change configuration ink disappears in example configured in REST
+
 # [v1.5.1](https://github.com/MyScript/iinkJS/tree/v1.5.1)
 
 ## Bug fix
