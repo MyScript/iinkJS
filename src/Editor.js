@@ -362,6 +362,7 @@ export class Editor {
     this.localTheme = ''
 
     this.theme = theme
+    this._setThemeFontFamily()
     this.penStyle = penStyle
     this.penStyleClasses = ''
 
@@ -551,6 +552,7 @@ export class Editor {
         this.innerRecognizer.close(this.recognizerContext, this.model)
           .then((model) => {
             logger.info('Recognizer closed')
+            this._setThemeFontFamily()
             initialize(InkModel.clearModel(model), true)
             handleSuccess(this, model)
           })
@@ -975,6 +977,15 @@ export class Editor {
       return launchClose(this, this.model)
     }
     return null
+  }
+
+  /**
+   * Apply the font-family on theem corresponding to chosen language
+   * @private
+   */
+  _setThemeFontFamily () {
+    const defaultLang = !Object.keys(Constants.Languages).includes(this.configuration.recognitionParams.iink.lang)
+    this.theme['.text']['font-family'] = defaultLang ? Constants.Languages.default : Constants.Languages[this.configuration.recognitionParams.iink.lang]
   }
 
   /**
