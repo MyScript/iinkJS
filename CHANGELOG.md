@@ -1,3 +1,9 @@
+# [v1.5.3](https://github.com/MyScript/iinkJS/tree/v1.5.3)
+
+## Bug fix
+@Editor
+- fix change configuration IInks doesn't set the right font
+
 # [v1.5.2](https://github.com/MyScript/iinkJS/tree/v1.5.2)
 
 ## Bug fix
