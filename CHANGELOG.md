@@ -1,3 +1,7 @@
+# [v1.5.4](https://github.com/MyScript/iinkJS/tree/v1.5.4)
+
+## Features
+- minor modification for specific integration
 # [v1.5.3](https://github.com/MyScript/iinkJS/tree/v1.5.3)
 
 ## Bug fix

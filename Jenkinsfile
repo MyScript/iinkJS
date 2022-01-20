@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent {label 'master'}
     options { disableConcurrentBuilds() }
     environment {
         PROJECTNAME = "iink-js ${env.BRANCH_NAME}"
