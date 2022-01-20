@@ -128,10 +128,13 @@ const defaultConfiguration = {
 /**
  * Generate parameters
  * @param {Configuration} configuration Configuration to be used
- * @param {Object} watcher: { update: function, prop: string} function to call when 'prop' is updated
  * @return {Configuration} Overridden configuration
  */
 export function overrideDefaultConfiguration (configuration) {
+  const replace = configuration && configuration.replace
+  if (configuration) {
+    delete configuration.replace
+  }
   const confRef = configuration
   let currentConfiguration
   if (confRef && confRef.recognitionParams.server && confRef.recognitionParams.server.useWindowLocation) {
@@ -141,9 +144,29 @@ export function overrideDefaultConfiguration (configuration) {
   } else {
     currentConfiguration = merge({}, defaultConfiguration, configuration === undefined ? {} : configuration)
   }
+  if (replace) {
+    currentConfiguration = replaceDeep(currentConfiguration, configuration)
+  }
   logger.debug('Override default configuration', currentConfiguration)
-
   return currentConfiguration
 }
 
 export default defaultConfiguration
+
+function replaceDeep (...objects) {
+  const isObject = obj => obj && typeof obj === 'object'
+  return objects.reduce((prev, obj) => {
+    Object.keys(obj).forEach(key => {
+      const pVal = prev[key]
+      const oVal = obj[key]
+      if (Array.isArray(pVal) && Array.isArray(oVal)) {
+        prev[key] = oVal
+      } else if (isObject(pVal) && isObject(oVal)) {
+        prev[key] = replaceDeep(pVal, oVal)
+      } else {
+        prev[key] = oVal
+      }
+    })
+    return prev
+  }, {})
+}
