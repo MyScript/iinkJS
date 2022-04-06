@@ -119,7 +119,9 @@ export function setRecognitionContext (recognizerContext, recognitionContext) {
  * @return {Boolean} True if possible, false otherwise
  */
 export function canReconnect (recognizerContext) {
-  return recognizerContext.websocket.autoReconnect === true && recognizerContext.currentReconnectionCount <= recognizerContext.websocket.maxRetryCount
+  return recognizerContext.websocket && recognizerContext.websocket.autoReconnect === true &&
+    recognizerContext.currentReconnectionCount <= recognizerContext.websocket.maxRetryCount &&
+    (!recognizerContext.error || !['api.invalid.format', 'access.not.granted'].includes(recognizerContext.error.code))
 }
 
 /**
@@ -128,8 +130,8 @@ export function canReconnect (recognizerContext) {
  * @return {Boolean} True if should attempt reconnect, false otherwise
  */
 export function shouldAttemptImmediateReconnect (recognizerContext) {
-  const recognizerContextRef = recognizerContext
-  return recognizerContextRef.websocket.autoReconnect === true && recognizerContextRef.currentReconnectionCount++ <= recognizerContextRef.websocket.maxRetryCount
+  recognizerContext.currentReconnectionCount++
+  return canReconnect(recognizerContext)
 }
 
 /**

@@ -6,18 +6,13 @@ const { hellov4rest } = require('../lib/inksDatas')
 describe(`${process.env.BROWSER}:v4/rest_text_iink.html`, () => {
   it('should test labels', async () => {
     const editorEl = await page.waitForSelector('#editor')
-    const isInit = await isEditorInitialized(editorEl)
-    expect(isInit).to.equal(true)
 
-    let plainText = ''
-    for (const strokes of hellov4rest.strokes) {
-      await playStrokes(page, [strokes], 100, 100)
-      await page.evaluate(exported)
-      plainText = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
-      // expect(plainText).to.equal(hellov4rest.exports.TEXT[index])
-    }
+    expect(await isEditorInitialized(editorEl)).to.equal(true)
 
-    plainText = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
+    await playStrokes(page, hellov4rest.strokes, 100, 100)
+    await page.evaluate(exported)
+
+    const plainText = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
     expect(plainText).to.equal(hellov4rest.exports.TEXT[hellov4rest.exports.TEXT.length - 1])
   })
 

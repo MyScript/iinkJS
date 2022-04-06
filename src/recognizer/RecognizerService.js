@@ -117,29 +117,43 @@ export function manageRecognizedModel (editor, model, ...types) {
 export function handleError (editor, err, ...events) {
   const editorRef = editor
   if (err.type !== 'close') {
-    logger.error('Error while firing the recognition', err.stack || err) // Handle any error from all above steps
+    // Handle any error from all above steps
+    logger.error('Error while firing the recognition', err)
   }
+  let errorCode = err.code
+  if (err.type === 'message' && err.data.code) {
+    errorCode = err.data.code
+  }
+  editor.recognizerContext.error = err
+  switch (errorCode) {
+    case 'no.activity':
+      editorRef.error.innerText = Constants.Error.NO_ACTIVITY
+      break
+    case 'api.invalid.format':
+      editorRef.error.innerText = err.message
+      break
+    case 'access.not.granted':
+      editorRef.error.innerText = Constants.Error.WRONG_CREDENTIALS
+      break
+    case 'session.too.old':
+      editorRef.error.innerText = Constants.Error.TOO_OLD
+      break
+    case 1000:
+    case 1006:
+      if (editorRef.error.style.display === 'none') {
+        editorRef.error.innerText = Constants.Error.NOT_REACHABLE
+      }
+      break
+    default:
+      editorRef.error.innerText = err.message || Constants.Error.CANT_ESTABLISH
+      break
+  }
+
   if (
-    // IInk error managment before refactor
-    (err.message === 'Invalid application key.') || (err.message === 'Invalid HMAC') ||
-    // CDK error managment
-    (err.error &&
-      err.error.result &&
-      err.error.result.error &&
-      (err.error.result.error === 'InvalidApplicationKeyException' || err.error.result.error === 'InvalidHMACSignatureException')) ||
-    // IInk error managment after refactor
-    (err.code && err.code === 'access.not.granted')) {
-    editorRef.error.innerText = Constants.Error.WRONG_CREDENTIALS
-  } else if (err.code && err.code === 'no.activity') {
-    editorRef.error.innerText = Constants.Error.NO_ACTIVITY
-  } else if (err.message === 'Session is too old. Max Session Duration Reached.' ||
-    (err.code && err.code === 'session.too.old')) {
-    editorRef.error.innerText = Constants.Error.TOO_OLD
-  } else if ((err.code === 1006 || err.code === 1000) && editorRef.error.style.display === 'none') {
-    editorRef.error.innerText = Constants.Error.NOT_REACHABLE
-  }
-  if ((editorRef.error.innerText === Constants.Error.TOO_OLD || err.reason === 'CLOSE_RECOGNIZER') && RecognizerContext.canReconnect(editor.recognizerContext)) {
-    logger.info('Reconnection is available', err.stack || err)
+    (editorRef.error.innerText === Constants.Error.TOO_OLD || err.reason === 'CLOSE_RECOGNIZER') &&
+    RecognizerContext.canReconnect(editor.recognizerContext)
+  ) {
+    logger.info('Reconnection is available', err)
     editorRef.error.style.display = 'none'
   } else {
     editorRef.loader.style.display = 'none'

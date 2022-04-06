@@ -125,11 +125,6 @@ module.exports = {
           '                    </msqrt>\n' +
           '                </mtd>\n' +
           '            </mtr>\n' +
-          '            <mtr>\n' +
-          '                <mtd>\n' +
-          '                    <mi> x </mi>\n' +
-          '                </mtd>\n' +
-          '            </mtr>\n' +
           '        </mtable>\n' +
           '    </mrow>\n' +
           '</math>'
@@ -150,11 +145,6 @@ module.exports = {
           '                    <msqrt>\n' +
           '                        <mn> 6 </mn>\n' +
           '                    </msqrt>\n' +
-          '                </mtd>\n' +
-          '            </mtr>\n' +
-          '            <mtr>\n' +
-          '                <mtd>\n' +
-          '                    <mi> x </mi>\n' +
           '                </mtd>\n' +
           '            </mtr>\n' +
           '        </mtable>\n' +

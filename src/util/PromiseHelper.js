@@ -14,9 +14,20 @@ export function destructurePromise () {
   let rejectParam
   const initPromise = new Promise(
     (resolve, reject) => {
-      resolveParam = resolve
-      rejectParam = reject
+      resolveParam = async (v) => {
+        initPromise.isFullfilled = true
+        initPromise.isPending = false
+        return resolve(v)
+      }
+      rejectParam = async (e) => {
+        initPromise.isRejected = true
+        initPromise.isPending = false
+        reject(e)
+      }
     })
+
+  initPromise.isPending = true
+
   return { promise: initPromise, resolve: resolveParam, reject: rejectParam }
 }
 

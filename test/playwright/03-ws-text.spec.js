@@ -6,8 +6,7 @@ const { helloHow, helloStrike } = require('../lib/inksDatas')
 describe(`${process.env.BROWSER}:v4/websocket_text_iink.html`, () => {
   it('should check smartguide', async () => {
     const editorEl = await page.waitForSelector('#editor')
-    const isInit = await isEditorInitialized(editorEl)
-    expect(isInit).to.equal(true)
+    expect(await isEditorInitialized(editorEl)).to.equal(true)
 
     await playStrokes(page, helloHow.strokes, 0, 0)
     await page.evaluate(exported)
@@ -44,44 +43,36 @@ describe(`${process.env.BROWSER}:v4/websocket_text_iink.html`, () => {
     const candidateEl = await page.waitForSelector(`#cdt-${candIdx}${randomString}`)
     const candidateTextContent = await candidateEl.evaluate(node => node.textContent)
 
+    const exportedPromise = page.evaluate(exported)
     await page.click(`#cdt-${candIdx}${randomString}`)
-    await page.evaluate(exported)
+    await exportedPromise
 
     textContent = await prompterText.evaluate(node => node.textContent)
     expect(textContent.indexOf(candidateTextContent)).to.greaterThan(-1)
   })
 
-  it('should check gesture works', async () => {
+  // TODO check recognitionParams.iink.gesture = { enable: false }
+  it.skip('should check gesture works', async () => {
     const editorEl = await page.waitForSelector('#editor')
-    const isInit = await isEditorInitialized(editorEl)
-    expect(isInit).to.equal(true)
+    expect(await isEditorInitialized(editorEl)).to.equal(true)
 
-    await editorEl.evaluate(node => {
-      node.editor.close()
-        .then(() => {
-          console.log('editor close')
-        })
-        .catch((e) => console.error(e))
-    })
-
+    let exportPromise = page.evaluate(exported)
     await playStrokes(page, helloStrike.strokes, 0, 0)
-    await page.evaluate(exported)
+    await exportPromise
 
     let result = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
     expect(result).to.equal('')
 
     await editorEl.evaluate(node => {
-      node.editor.close()
-        .then(() => {
-          console.log('editor close')
-        })
-        .catch((e) => console.error(e))
-      node.editor.configuration.recognitionParams.iink.gesture = { enable: false }
+      const conf = JSON.parse(JSON.stringify(node.editor.configuration))
+      conf.recognitionParams.iink.gesture = { enable: false }
+      node.editor.configuration = conf
     })
+    expect(await isEditorInitialized(editorEl)).to.equal(true)
 
-    const exportedEvent = page.evaluate(exported)
+    exportPromise = page.evaluate(exported)
     await playStrokes(page, helloStrike.strokes, 0, 0)
-    await exportedEvent
+    await exportPromise
 
     result = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
     expect(result).not.equal('')

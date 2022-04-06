@@ -68,15 +68,13 @@ async function playStrokes (page, strokes, offsetX, offsetY) {
   const offsetYRef = offsetY || 0
 
   for (const { x, y, t } of strokes) {
-    const hasTimeStamp = t && t.length > 0
+    const hasTimeStamp = t && t.length === x.length
     await page.mouse.move(offsetXRef + x[0], offsetYRef + y[0])
     await page.mouse.down()
-    let oldTimestamp
-    if (hasTimeStamp) {
-      oldTimestamp = t[0]
-    }
+
+    let oldTimestamp = hasTimeStamp ? t[0] : null
     for (let p = 0; p < x.length; p++) {
-      let waitTime = 10
+      let waitTime = 0
       if (hasTimeStamp) {
         waitTime = t[p] - oldTimestamp
         oldTimestamp = t[p]

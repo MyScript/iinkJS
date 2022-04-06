@@ -43,40 +43,43 @@ export function openWebSocket (recognizerContext) {
   try {
     // eslint-disable-next-line no-undef
     socket = new WebSocket(recognizerContext.url)
-  } catch (error) {
-    logger.error('Unable to open websocket, Check the host and your connectivity')
-  }
-  addWebsocketAttributes(socket, recognizerContext)
-  if (socket.pingEnabled) {
-    infinitePing(socket)
-  }
 
-  socket.onopen = (e) => {
-    logger.trace('onOpen')
-    recognizerContext.websocketCallback(e)
-  }
+    addWebsocketAttributes(socket, recognizerContext)
 
-  socket.onclose = (e) => {
-    logger.trace('onClose', new Date() - socket.start)
-    recognizerContext.websocketCallback(e)
-  }
-
-  socket.onerror = (e) => {
-    logger.trace('onError')
-    recognizerContext.websocketCallback(e)
-  }
-
-  socket.onmessage = (e) => {
-    logger.trace('onMessage')
-    socket.pingLostCount = 0
-    const parsedMessage = JSON.parse(e.data)
-    if (parsedMessage.type !== 'pong') {
-      const callBackParam = {
-        type: e.type,
-        data: JSON.parse(e.data)
-      }
-      recognizerContext.websocketCallback(callBackParam)
+    if (socket.pingEnabled) {
+      infinitePing(socket)
     }
+
+    socket.onopen = (e) => {
+      logger.trace('onOpen')
+      recognizerContext.websocketCallback(e)
+    }
+
+    socket.onclose = (e) => {
+      logger.trace('onClose', new Date() - socket.start)
+      recognizerContext.websocketCallback(e)
+    }
+
+    socket.onerror = (e) => {
+      logger.trace('onError')
+      recognizerContext.websocketCallback(e)
+    }
+
+    socket.onmessage = (e) => {
+      logger.trace('onMessage')
+      socket.pingLostCount = 0
+      const parsedMessage = JSON.parse(e.data)
+      if (parsedMessage.type !== 'pong') {
+        const callBackParam = {
+          type: e.type,
+          data: JSON.parse(e.data)
+        }
+        recognizerContext.websocketCallback(callBackParam)
+      }
+    }
+  } catch (error) {
+    recognizerContext.recognitionContexts[0].initPromise.reject(error)
+    logger.error('Unable to open websocket, Check the host and your connectivity')
   }
 
   return socket

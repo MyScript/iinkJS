@@ -46,7 +46,7 @@ test-e2e:
 	fi && \
 	docker run -i --rm \
 		-v $(CURRENT_PWD):/home/pwuser/tests \
-		--ipc=host \
+		$(DOCKER_EXAMPLES_PARAMETERS) \
 		-e LAUNCH_URL="http://$${EXAMPLES_IP}:$(EXAMPLES_LISTEN_PORT)" \
 		-e BROWSER=$(BROWSER) \
 		-w "/home/pwuser/tests" \

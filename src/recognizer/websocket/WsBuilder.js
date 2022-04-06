@@ -37,7 +37,6 @@ function buildHmacMessage (configuration, message) {
  */
 export function buildWebSocketCallback (recognizerContext) {
   return (message) => {
-    const recognizerContextRef = recognizerContext
     // Handle websocket messages
     logger.trace(`${message.type} websocket callback`, message)
     const recognitionContext = recognizerContext.recognitionContexts[recognizerContext.recognitionContexts.length - 1]
@@ -59,16 +58,16 @@ export function buildWebSocketCallback (recognizerContext) {
               NetworkWSInterface.send(recognizerContext, buildHmacMessage(recognizerContext.editor.configuration, message))
             }
             if (message.data.iinkSessionId) {
-              recognizerContextRef.sessionId = message.data.iinkSessionId
+              recognizerContext.sessionId = message.data.iinkSessionId
             }
             break
           case 'newPart':
             break
           case 'contentPackageDescription':
-            recognizerContextRef.currentReconnectionCount = 0
-            recognizerContextRef.contentPartCount = message.data.contentPartCount
+            recognizerContext.currentReconnectionCount = 0
+            recognizerContext.contentPartCount = message.data.contentPartCount
             NetworkWSInterface.send(recognizerContext, buildConfiguration(recognizerContext.editor.configuration))
-            if (recognizerContextRef.currentPartId) { // FIXME: Ugly hack to resolve init promise after opening part
+            if (recognizerContext.currentPartId) { // FIXME: Ugly hack to resolve init promise after opening part
               NetworkWSInterface.send(recognizerContext, buildOpenContentPart(recognizerContext.editor.configuration, recognizerContext.currentPartId))
             } else {
               NetworkWSInterface.send(recognizerContext, buildNewContentPart(recognizerContext.editor.configuration))
@@ -76,9 +75,9 @@ export function buildWebSocketCallback (recognizerContext) {
             break
           case 'partChanged':
             if (message.data.partId) {
-              recognizerContextRef.currentPartId = message.data.partId
+              recognizerContext.currentPartId = message.data.partId
             }
-            recognizerContextRef.initialized = true
+            recognizerContext.initialized = true
             if (recognitionContext.partChange) {
               recognitionContext.partChange.resolve([undefined, message.data])
             } else {
@@ -87,19 +86,19 @@ export function buildWebSocketCallback (recognizerContext) {
             break
           case 'contentChanged':
             if (message.data.canUndo !== undefined) {
-              recognizerContextRef.canUndo = message.data.canUndo
+              recognizerContext.canUndo = message.data.canUndo
             }
             if (message.data.canRedo !== undefined) {
-              recognizerContextRef.canRedo = message.data.canRedo
+              recognizerContext.canRedo = message.data.canRedo
             }
             if (message.data.empty !== undefined) {
-              recognizerContextRef.isEmpty = message.data.empty
+              recognizerContext.isEmpty = message.data.empty
             }
             if (message.data.possibleUndoCount !== undefined) {
-              recognizerContextRef.possibleUndoCount = message.data.possibleUndoCount
+              recognizerContext.possibleUndoCount = message.data.possibleUndoCount
             }
             if (message.data.undoStackIndex !== undefined) {
-              recognizerContextRef.undoStackIndex = message.data.undoStackIndex
+              recognizerContext.undoStackIndex = message.data.undoStackIndex
             }
             recognitionContext.contentChange.resolve([undefined, message.data])
             break
@@ -110,14 +109,14 @@ export function buildWebSocketCallback (recognizerContext) {
             recognitionContext.patch(undefined, message.data)
             break
           case 'supportedImportMimeTypes':
-            recognizerContextRef.supportedImportMimeTypes = message.data.mimeTypes
+            recognizerContext.supportedImportMimeTypes = message.data.mimeTypes
             recognitionContext.response(undefined, message.data)
             break
           case 'fileChunkAck':
             recognitionContext.response(undefined, message.data)
             break
           case 'idle':
-            recognizerContextRef.idle = true
+            recognizerContext.idle = true
             recognitionContext.patch(undefined, message.data)
             break
           case 'error':
@@ -130,8 +129,9 @@ export function buildWebSocketCallback (recognizerContext) {
                 func = recognitionContext.response
               }
               func(message.data)
-            } else {
-              recognitionContext.initPromise.reject(Object.assign({}, message.data, { recoverable: false }))
+              if (recognitionContext.initPromise && recognitionContext.initPromise.promise.isPending) {
+                recognitionContext.initPromise.reject(message)
+              }
             }
             break
           default :
@@ -148,20 +148,22 @@ export function buildWebSocketCallback (recognizerContext) {
             func = recognitionContext.response
           }
           func(Object.assign({}, message, { recoverable: false }))
-        } else {
-          recognitionContext.initPromise.reject(Object.assign({}, message, { recoverable: false }))
+          if (recognitionContext.initPromise && recognitionContext.initPromise.promise.isPending) {
+            recognitionContext.initPromise.reject(message)
+          }
         }
         break
       case 'close':
         logger.debug('Close detected stopping all recognition', message)
-        recognizerContextRef.initialized = false
-        if (message.reason === 'CLOSE_RECOGNIZER') {
-          recognitionContext.initPromise.resolve(message)
-        } else {
-          if (recognitionContext) {
-            recognitionContext.error(message)
-          } else {
-            recognitionContext.initPromise.reject(message)
+        if (recognizerContext) {
+          recognizerContext.initialized = false
+          if (recognitionContext.initPromise && recognitionContext.initPromise.promise.isPending) {
+            if (message.reason === 'CLOSE_RECOGNIZER') {
+              recognitionContext.initPromise.resolve(message)
+            } else {
+              recognitionContext.error(message)
+              recognitionContext.initPromise.reject(message)
+            }
           }
         }
         break

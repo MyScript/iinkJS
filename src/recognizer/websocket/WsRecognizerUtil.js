@@ -116,7 +116,7 @@ export function clear (recognizerContext, model, callback) {
  * @param {RecognizerContext} recognizerContext
  * @param {Model} model
  */
-export function close (recognizerContext, model) {
+export async function close (recognizerContext, model) {
   const initPromise = PromiseHelper.destructurePromise()
   const recognizerContextRef = recognizerContext
   const recognitionContext = {
@@ -125,13 +125,13 @@ export function close (recognizerContext, model) {
     error: (err, res) => responseCallback(model, err, res, recognizerContextRef)
   }
 
-  return recognizerContext.initPromise
-    .then(() => {
-      recognizerContextRef.recognitionContexts[0] = recognitionContext
-      return recognizerContextRef
-    })
-    .then((context) => {
-      NetworkWSInterface.close(context, 1000, RecognizerContext.CLOSE_RECOGNIZER_MESSAGE)
-      return recognitionContext.model
-    })
+  try {
+    await recognizerContext.initPromise
+  } catch (error) { }
+
+  recognizerContextRef.recognitionContexts[0] = recognitionContext
+
+  NetworkWSInterface.close(recognitionContext, 1000, RecognizerContext.CLOSE_RECOGNIZER_MESSAGE)
+
+  return recognitionContext.model
 }

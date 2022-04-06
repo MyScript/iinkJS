@@ -11,11 +11,14 @@ describe(`${process.env.BROWSER}:v4/websocket_text_highlight_words.html`, () => 
 
     let plainText = ''
     for (const [index, strokes] of helloHowDecoHighlighted.strokes.entries()) {
+      const exportPromise = page.evaluate(exported)
       await playStrokes(page, [strokes], 100, 100)
-      await page.evaluate(exported)
+      await exportPromise
       plainText = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
       expect(plainText).to.equal(helloHowDecoHighlighted.exports.TEXT[index])
     }
+    plainText = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
+    expect(plainText).to.equal(helloHowDecoHighlighted.exports.TEXT[helloHowDecoHighlighted.exports.TEXT.length - 1])
 
     const smartguide = await page.waitForSelector('.smartguide')
     const randomString = await smartguide.evaluate(node => node.id.replace('smartguide', ''))

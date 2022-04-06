@@ -54,11 +54,12 @@ describe(`${process.env.BROWSER}:v4/websocket_math_iink.html`, function () {
           console.log('editor close')
         })
         .catch((e) => console.error(e))
-      node.editor.configuration.recognitionParams.iink.math['undo-redo'] = { mode: 'session' }
+      const conf = JSON.parse(JSON.stringify(node.editor.configuration))
+      conf.recognitionParams.iink.math['undo-redo'] = { mode: 'session' }
+      node.editor.configuration = conf
     })
-    // TODO
-    // isInit = await isEditorInitialized(editorEl)
-    // expect(isInit).to.equal(true)
+
+    expect(await isEditorInitialized(editorEl)).to.equal(true)
 
     await playStrokes(page, equation3.strokes, 100, 100)
     await page.evaluate(exported)
@@ -102,12 +103,13 @@ describe(`${process.env.BROWSER}:v4/websocket_math_iink.html`, function () {
           console.log('editor close')
         })
         .catch((e) => console.error(e))
-      node.editor.configuration.recognitionParams.iink.math['undo-redo'] = { mode: 'stroke' }
+
+      const conf = JSON.parse(JSON.stringify(node.editor.configuration))
+      conf.recognitionParams.iink.math['undo-redo'] = { mode: 'stroke' }
+      node.editor.configuration = conf
     })
 
-    // TODO
-    // isInit = await isEditorInitialized(editorEl)
-    // expect(isInit).to.equal(true)
+    expect(await isEditorInitialized(editorEl)).to.equal(true)
 
     await playStrokes(page, equation3.strokes, 100, 100)
     await page.evaluate(exported)
@@ -165,8 +167,8 @@ describe(`${process.env.BROWSER}:v4/websocket_math_iink.html`, function () {
 
   it('should test math flavor with fences', async () => {
     const editorEl = await page.waitForSelector('#editor')
-    const isInit = await isEditorInitialized(editorEl)
-    expect(isInit).to.equal(true)
+
+    expect(await isEditorInitialized(editorEl)).to.equal(true)
 
     await editorEl.evaluate(node => {
       node.editor.close()
@@ -175,14 +177,19 @@ describe(`${process.env.BROWSER}:v4/websocket_math_iink.html`, function () {
         })
         .catch((e) => console.error(e))
       node.editor.configuration.recognitionParams.iink.math.mimeTypes.push('application/mathml+xml')
-      node.editor.configuration.recognitionParams.iink.export.mathml = { flavor: 'standard' }
+
+      const conf = JSON.parse(JSON.stringify(node.editor.configuration))
+      conf.recognitionParams.iink.export.mathml = { flavor: 'standard' }
+      node.editor.configuration = conf
     })
+    expect(await isEditorInitialized(editorEl)).to.equal(true)
 
     await playStrokes(page, fence.strokes, 100, 175)
 
     await page.evaluate(exported)
     let jiix = await editorEl.evaluate(node => node.editor.model.exports['application/vnd.myscript.jiix'])
     expect(getStrokesFromJIIX(jiix).length).to.equal(fence.strokes.length)
+
     let mathml = await editorEl.evaluate(node => node.editor.model.exports['application/mathml+xml'])
     expect(mathml.trim().replace(/ /g, '')).to.equal(fence.exports.MATHML.STANDARD[fence.exports.MATHML.STANDARD.length - 1].trim().replace(/ /g, ''))
 
@@ -194,12 +201,12 @@ describe(`${process.env.BROWSER}:v4/websocket_math_iink.html`, function () {
           console.log('editor close')
         })
         .catch((e) => console.error(e))
-      node.editor.configuration.recognitionParams.iink.export.mathml = { flavor: 'ms-office' }
+      const conf = JSON.parse(JSON.stringify(node.editor.configuration))
+      conf.recognitionParams.iink.export.mathml = { flavor: 'ms-office' }
+      node.editor.configuration = conf
     })
 
-    // TODO
-    // isInit = await isEditorInitialized(editorEl)
-    // expect(isInit).to.equal(true)
+    expect(await isEditorInitialized(editorEl)).to.equal(true)
 
     await playStrokes(page, fence.strokes, 100, 175)
     await page.evaluate(exported)
