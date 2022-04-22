@@ -13,9 +13,6 @@ describe(`${process.env.BROWSER}:non-version-specific/change_configuration.html`
     const isInit = await isEditorInitialized(editorEl)
     expect(isInit).to.equal(true)
 
-    await playStrokes(page, hello.strokes, 0, 0)
-    await page.evaluate(exported)
-
     // expect(await page.inputValue('#server-scheme')).to.equal('https')
     // expect(await page.inputValue('#server-host')).to.equal('webdemoapi.myscript.com')
     expect(await page.inputValue('#recognition-type')).to.equal('TEXT')
@@ -26,6 +23,11 @@ describe(`${process.env.BROWSER}:non-version-specific/change_configuration.html`
     expect(await page.isChecked('#iink-guides')).to.equal(true)
     expect(await page.inputValue('#triggers-delay')).to.equal('2000')
     expect(await page.inputValue('#triggers-exportContent')).to.equal('POINTER_UP')
+
+    await playStrokes(page, hello.strokes, 0, 0)
+    await page.evaluate(exported)
+    // ugly but useful for webkit & firefox
+    await page.waitForTimeout(500)
 
     const plainText = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
     expect(plainText).to.equal(hello.exports.TEXT[hello.exports.TEXT.length - 1])
