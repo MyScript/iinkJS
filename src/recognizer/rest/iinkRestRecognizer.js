@@ -45,7 +45,7 @@ export function getInfo () {
  */
 export function postMessage (suffixUrl, recognizerContext, model, buildMessage, conversionState = '', mimeType) {
   const configuration = recognizerContext.editor.configuration
-  return NetworkInterface.post(recognizerContext, `${configuration.recognitionParams.server.scheme}://${configuration.recognitionParams.server.host}${suffixUrl}`, buildMessage(recognizerContext, model, conversionState), 'V4', mimeType)
+  return NetworkInterface.post(recognizerContext, `${configuration.recognitionParams.server.scheme}://${configuration.recognitionParams.server.host}${suffixUrl}`, buildMessage(recognizerContext, model, conversionState), mimeType)
     .then((response) => {
       logger.debug('iinkRestRecognizer success', response)
       const positions = recognizerContext.lastPositions

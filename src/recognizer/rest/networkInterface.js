@@ -10,7 +10,7 @@ import * as CryptoHelper from '../CryptoHelper'
  * @param {String} mimeType MimeType to be used
  * @return {Promise}
  */
-export async function post (recognizerContext, url, data, apiVersion, mimeType) {
+export async function post (recognizerContext, url, data, mimeType) {
   const configuration = recognizerContext.editor.configuration
   const recognizerContextRef = recognizerContext
   if (recognizerContextRef) {
@@ -25,7 +25,6 @@ export async function post (recognizerContext, url, data, apiVersion, mimeType) 
     const reqInit = {
       method: 'POST',
       headers,
-      credentials: 'include',
       body: JSON.stringify(data)
     }
     const request = new Request(url, reqInit)
