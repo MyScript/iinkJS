@@ -70,16 +70,10 @@
       editorElement.addEventListener('exported', (evt) => {
         const exports = evt.detail.exports;
         if (exports && exports['application/x-latex']) {
-          convertElement.disabled = false;
           katex.render(cleanLatex(exports['application/x-latex']),  resultElement);
-          // resultElement.innerHTML = '<span>' + exports['application/x-latex'] + '</span>';
-        } else if (exports && exports['application/mathml+xml']) {
           convertElement.disabled = false;
-          resultElement.innerText = exports['application/mathml+xml'];
-        } else if (exports && exports['application/mathofficeXML']) {
-          convertElement.disabled = false;
-          resultElement.innerText = exports['application/mathofficeXML'];
-        } else {
+        }
+        else {
           convertElement.disabled = true;
           resultElement.innerHTML = '';
         }
