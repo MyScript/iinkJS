@@ -27,7 +27,7 @@ It integrates all you need:
 * [Usage](https://github.com/MyScript/iinkJS#usage)
 * [Documentation](https://github.com/MyScript/iinkJS#documentation)
 * [Development](https://github.com/MyScript/iinkJS#development)
-* [Support](https://github.com/MyScript/iinkJS#support)
+* [Support](https://github.com/MyScript/iinkJS#getting-support )
 * [Feedback](https://github.com/MyScript/iinkJS#sharing-your-feedback)
 * [Contributing](https://github.com/MyScript/iinkJS#contributing)
 
