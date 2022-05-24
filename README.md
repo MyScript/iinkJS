@@ -185,7 +185,7 @@ Instructions to help you build the project and develop are available in the [SET
 
 ## Getting support
 
-You can get support and ask your questions on the [dedicated section](https://developer-support.myscript.com/support/discussions/forums/16000096021) of MyScript Developer website.
+You can get support and ask your questions on the [dedicated section](https://developer-support.myscript.com/support/discussions/forums/16000096760) of MyScript Developer website.
 
 ## Sharing your feedback ?
 
