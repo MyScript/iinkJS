@@ -27,6 +27,9 @@ const defaultConfiguration = {
     iink: {
       alwaysConnected: true,
       lang: 'en_US',
+      gesture: {
+        enable: true
+      },
       export: {
         'image-resolution': 300,
         jiix: {

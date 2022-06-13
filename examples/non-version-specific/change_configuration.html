@@ -161,6 +161,10 @@
               <label for="iink-guides">Guides:</label>
               <input type="checkbox" id="iink-guides" name="iink-guides">
             </div>
+            <div class="input-row">
+              <label for="iink-gesture">Gesture:</label>
+              <input type="checkbox" id="iink-gesture" name="iink-gesture">
+            </div>
           </div>
         </div>
         <div class="card">
@@ -194,6 +198,7 @@
       const iinkLanguageElement = document.getElementById('iink-language');
       const iinkSmartGuideElement = document.getElementById('iink-smartGuide');
       const iinkGuidesElement = document.getElementById('iink-guides');
+      const iinkGestureElement = document.getElementById('iink-gesture');
       const serverSchemelElement = document.getElementById('server-scheme');
       const serverHostlElement = document.getElementById('server-host');
       const serverApplicationKeyElement = document.getElementById('server-applicationKey');
@@ -216,6 +221,9 @@
           },
           iink: {
             lang: 'en_US',
+            gesture: {
+              enable: true
+            },
             math: {
               mimeTypes: ['application/x-latex', 'application/vnd.myscript.jiix']
             },
@@ -291,6 +299,7 @@
         iinkLanguageElement.value = defaultConfiguration.recognitionParams.iink.lang
         iinkSmartGuideElement.checked = defaultConfiguration.recognitionParams.iink.text.smartGuide
         iinkGuidesElement.checked = defaultConfiguration.recognitionParams.iink.text.guides.enable
+        iinkGestureElement.checked = defaultConfiguration.recognitionParams.iink.gesture.enable
 
         triggersDelayElement.value = defaultConfiguration.triggerDelay
         triggersExportContentElement.value = defaultConfiguration.triggers.exportContent
@@ -387,6 +396,9 @@
             },
             iink: {
               lang: iinkLanguageElement.value,
+              gesture: {
+                enable: iinkGestureElement.checked
+              },
               math: {
                 mimeTypes: ['application/x-latex', 'application/vnd.myscript.jiix']
               },

@@ -51,8 +51,7 @@ describe(`${process.env.BROWSER}:v4/websocket_text_iink.html`, () => {
     expect(textContent.indexOf(candidateTextContent)).to.greaterThan(-1)
   })
 
-  // TODO check recognitionParams.iink.gesture = { enable: false }
-  it.skip('should check gesture works', async () => {
+  it('should check gesture works', async () => {
     const editorEl = await page.waitForSelector('#editor')
     expect(await isEditorInitialized(editorEl)).to.equal(true)
 
