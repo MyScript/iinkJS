@@ -208,6 +208,17 @@
     } else {
       console.error(json)
     }
+    if (penEnabled.checked) {
+        penSettings[0].classList.remove('hidden');
+        penSettings[1].classList.remove('hidden');
+        editor.penStyle = getStyle();
+        updatePrompter('editor.penStyle', getStyle());
+    } else {
+        penSettings[0].classList.add('hidden');
+        penSettings[1].classList.add('hidden');
+        editor.penStyle = undefined;
+        updatePrompter('editor.penStyle', "");
+    }
   })
 
   fontsElement.addEventListener('change', (e) => {
