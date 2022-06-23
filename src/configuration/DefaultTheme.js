@@ -46,7 +46,7 @@ const defaultTheme = {
     color: '#A8A8A8FF'
   },
   '.text': {
-    'font-family': 'Open Sans',
+    'font-family': 'MyScriptInter',
     'font-size': 10
   }
 }

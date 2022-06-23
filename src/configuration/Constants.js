@@ -67,7 +67,7 @@ const Constants = {
     zh_TW: 'Noto Sans CJK tc',
     ko_KR: 'Noto Sans CJK kr',
     ja_JP: 'Noto Sans CJK jp',
-    default: 'Open Sans'
+    default: 'MyScriptInter'
   },
   Error: {
     NOT_REACHABLE: 'MyScript recognition server is not reachable. Please reload once you are connected.',
