@@ -8,3 +8,4 @@
 /test/nightwatch/results/
 /test/webdriverio/results/
 /test/e2e/*
+.vscode

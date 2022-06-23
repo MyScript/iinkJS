@@ -15,7 +15,12 @@
   <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
   <script type="text/javascript" src="../../dist/iink.min.js"></script>
   <style>
-
+    .btn {
+      background-color: #666666;
+    }
+    .btn:disabled {
+      background-color: #d1d1d1;
+    }
   </style>
 </head>
 
@@ -31,11 +36,11 @@
       </button>
     </div>
     <div class="button-div">
-      <button id="pen" class="nav-btn btn-fab-mini btn-lightBlue" disabled>
+      <button id="pen" class="nav-btn btn-fab-mini btn" disabled>
         <img src="../assets/img/pen.svg">
       </button>
-      <button id="eraser" class="nav-btn btn-fab-mini btn-lightBlue">
-        <img  src="../assets/img/eraser.svg">
+      <button id="eraser" class="nav-btn btn-fab-mini btn">
+        <img src="../assets/img/eraser.svg">
       </button>
     </div>
     <div class="button-div">
