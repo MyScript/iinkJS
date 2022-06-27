@@ -6,6 +6,10 @@
  */
 export function drawStroke (context, stroke, stroker) {
   if (stroker) {
-    stroker.drawStroke(context, stroke)
+    if (stroke.pointerType === 'ERASER') {
+      stroker.drawErasingStroke(context, stroke)
+    } else {
+      stroker.drawStroke(context, stroke)
+    }
   }
 }

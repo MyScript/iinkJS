@@ -529,7 +529,16 @@ select:focus {
     box-shadow: none;
 }
 
+.nav-btn.btn-primary {
+    background-color: #1A9FFF;
+}
+.nav-btn.btn-primary.active {
+    box-shadow: inset 0px 0px 10px 0px rgba(0, 0, 0, .4);
+}
+
 .button-div {
     display: flex;
+    justify-content: center;
+    align-items: center;
     margin: 5px;
 }

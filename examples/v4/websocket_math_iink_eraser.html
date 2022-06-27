@@ -36,16 +36,18 @@
           <button id="redo" class="nav-btn btn-fab-mini btn-lightBlue" disabled>
             <img src="../assets/img/redo.svg">
           </button>
-          <div class="button-div">
-            <button id="pen" class="nav-btn btn-fab-mini btn-lightBlue" disabled>
-              <img src="../assets/img/pen.svg">
-            </button>
-            <button id="eraser" class="nav-btn btn-fab-mini btn-lightBlue">
-              <img  src="../assets/img/eraser.svg">
-            </button>
-          </div>
         </div>
-        <div class="spacer"></div>
+        <div class="button-div">
+          <button id="pen" class="nav-btn btn-fab-mini btn-primary active" disabled>
+            <img src="../assets/img/pen.svg">
+          </button>
+          <button id="eraser" class="nav-btn btn-fab-mini btn-primary">
+            <img src="../assets/img/eraser.svg">
+          </button>
+          <label for="erase-precisely">Erase precisely:
+            <input type="checkbox" id="erase-precisely" name="erase-precisely">
+          </label>
+        </div>
         <button class="classic-btn" id="convert" disabled>Convert</button>
       </nav>
       <div id="editor" touch-action="none"></div>
@@ -59,6 +61,7 @@
       const convertElement = document.getElementById('convert');
       const eraserElement = document.getElementById('eraser');
       const penElement = document.getElementById('pen');
+      const erasePreciselyElement = document.getElementById('erase-precisely');
 
       editorElement.addEventListener('changed', (event) => {
         undoElement.disabled = !event.detail.canUndo;
@@ -106,18 +109,25 @@
       convertElement.addEventListener('click', () => {
         editorElement.editor.convert();
       });
-
       eraserElement.addEventListener('click', () => {
         editorElement.editor.enableEraser();
         eraserElement.disabled = true;
+        eraserElement.classList.add('active')
         penElement.disabled = false;
+        penElement.classList.remove('active')
       });
       penElement.addEventListener('click', () => {
         editorElement.editor.disableEraser();
         eraserElement.disabled = false;
+        eraserElement.classList.remove('active')
         penElement.disabled = true;
+        penElement.classList.add('active')
       });
-
+      erasePreciselyElement.addEventListener('change', (e) => {
+        const configuration = { ... editorElement.editor.configuration };
+        configuration.recognitionParams.iink.math.eraser['erase-precisely'] = e.target.checked;
+        editorElement.editor.configuration = configuration
+      })
       /**
        * Attach an editor to the document
        * @param {Element} The DOM element to attach the ink paper
@@ -135,7 +145,10 @@
           },
           iink: {
             math: {
-              mimeTypes: ['application/x-latex', 'application/vnd.myscript.jiix']
+              mimeTypes: ['application/x-latex', 'application/vnd.myscript.jiix'],
+              eraser: {
+                'erase-precisely': false
+              }
             },
             export: {
               jiix: {
