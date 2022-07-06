@@ -63,12 +63,7 @@ function renderQuadratic (context, begin, end, ctrl, width) {
   return svgPath
 }
 
-/**
- * Draw a stroke on a svg tag, using quadratics
- * @param {Object} context Current rendering context
- * @param {Stroke} stroke Current stroke to be drawn
- */
-export function drawStroke (context, stroke) {
+const buildSVGPath = (context, stroke) => {
   const length = stroke.x.length
   const width = stroke.width
   const firstPoint = StrokeComponent.getPointByIndex(stroke, 0)
@@ -87,12 +82,34 @@ export function drawStroke (context, stroke) {
     parts.push(renderLine(context, computeMiddlePoint(StrokeComponent.getPointByIndex(stroke, length - 2), StrokeComponent.getPointByIndex(stroke, length - 1)), StrokeComponent.getPointByIndex(stroke, length - 1), width))
     parts.push(renderFinal(context, StrokeComponent.getPointByIndex(stroke, length - 2), StrokeComponent.getPointByIndex(stroke, length - 1), width))
   }
-  const svgPath = parts.join(' ')
+  return parts.join(' ')
+}
+
+/**
+ * Draw a stroke on a svg tag, using quadratics
+ * @param {Object} context Current rendering context
+ * @param {Stroke} stroke Current stroke to be drawn
+ */
+export function drawStroke (context, stroke) {
+  const svgPath = buildSVGPath(context, stroke)
 
   context
     .attr('color', stroke.color)
     .style('fill', stroke.color)
     .style('stroke', 'transparent')
     .classed('pending-stroke', true)
+    .attr('d', `${svgPath}Z`)
+}
+
+export function drawErasingStroke (context, stroke) {
+  stroke.width = 20
+  const svgPath = buildSVGPath(context, stroke)
+
+  context
+    .style('fill', 'grey')
+    .style('stroke', 'transparent')
+    .style('opacity', '0.2')
+    .style('shadowBlur', '5')
+    .classed('erasing-stroke', true)
     .attr('d', `${svgPath}Z`)
 }

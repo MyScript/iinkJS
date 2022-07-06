@@ -198,6 +198,10 @@ export function drawModel (context, model, stroker) {
     })
   }
 
+  const removeErasingStrokes = () => {
+    context.select('.erasing-stroke').remove()
+  }
+
   const pendingRecognizedSymbols = InkModel.extractPendingRecognizedSymbols(model)
   if (pendingRecognizedSymbols) {
     pendingRecognizedSymbols.forEach(patch => updateView(patch))
@@ -208,5 +212,8 @@ export function drawModel (context, model, stroker) {
   if (pendingStrokes) {
     pendingStrokes.forEach(stroke => drawSymbol(stroke, context.select('#pendingStrokes')))
   }
+
+  removeErasingStrokes()
+
   return model
 }

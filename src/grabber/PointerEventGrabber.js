@@ -110,7 +110,8 @@ export function attach (element, editor, offsetTop = 0, offsetLeft = 0) {
         if (editor.isErasing) {
           pointerType = 'ERASER'
         }
-        editor.pointerDown(extractPoint(evt, element, editor.configuration, offsetTop, offsetLeft), pointerType, pointerId)
+        const point = extractPoint(evt, element, editor.configuration, offsetTop, offsetLeft)
+        editor.pointerDown(point, pointerType, pointerId)
       }
     } else if (evt.target.classList.contains('ellipsis') || evt.target.classList.contains('tag-icon')) {
       hideMenu(evt)
@@ -140,7 +141,11 @@ export function attach (element, editor, offsetTop = 0, offsetLeft = 0) {
         // Hack for iOS 9 Safari : pointerId has to be int so -1 if > max value
         const pointerId = evt.pointerId > 2147483647 ? -1 : evt.pointerId
         unfocus()
-        editor.pointerDown(this.downSmartGuidePoint, evt.pointerType, pointerId)
+        let pointerType = evt.pointerType
+        if (editor.isErasing) {
+          pointerType = 'ERASER'
+        }
+        editor.pointerDown(this.downSmartGuidePoint, pointerType, pointerId)
       }
     } else {
       logger.trace(`${evt.type} event from another pointerid (${evt.pointerId})`, this.activePointerId)

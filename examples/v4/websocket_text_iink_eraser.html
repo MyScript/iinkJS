@@ -14,9 +14,6 @@
 
   <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
   <script type="text/javascript" src="../../dist/iink.min.js"></script>
-  <style>
-
-  </style>
 </head>
 
 <body>
@@ -31,17 +28,16 @@
       </button>
     </div>
     <div class="button-div">
-      <button id="pen" class="nav-btn btn-fab-mini btn-lightBlue" disabled>
+      <button id="pen" class="nav-btn btn-fab-mini btn-primary active" disabled>
         <img src="../assets/img/pen.svg">
       </button>
-      <button id="eraser" class="nav-btn btn-fab-mini btn-lightBlue">
-        <img  src="../assets/img/eraser.svg">
+      <button id="eraser" class="nav-btn btn-fab-mini btn-primary">
+        <img src="../assets/img/eraser.svg">
       </button>
     </div>
-    <div class="button-div">
-      <label for="erase-precisely">Erase precisely:</label>
+    <label for="erase-precisely">Erase precisely:
       <input type="checkbox" id="erase-precisely" name="erase-precisely">
-    </div>
+    </label>
   </nav>
   <div id="editor" touch-action="none"></div>
 </div>
@@ -69,12 +65,16 @@
   eraserElement.addEventListener('click', () => {
     editorElement.editor.enableEraser();
     eraserElement.disabled = true;
+    eraserElement.classList.add('active')
     penElement.disabled = false;
+    penElement.classList.remove('active')
   });
   penElement.addEventListener('click', () => {
     editorElement.editor.disableEraser();
     eraserElement.disabled = false;
+    eraserElement.classList.remove('active')
     penElement.disabled = true;
+    penElement.classList.add('active')
   });
 
   erasePreciselyElement.addEventListener('change', (e) => {
