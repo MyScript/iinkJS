@@ -231,6 +231,9 @@ async function launchWaitForIdle (editor, model) {
  * @return {Promise<*>}
  */
 async function launchClose (editor, model) {
+  if (editor.smartGuide) {
+    SmartGuide.reset(editor.smartGuide)
+  }
   if (editor.recognizer && editor.recognizer.close) {
     const init = await editor.recognizerContext.initPromise
     if (init) {
