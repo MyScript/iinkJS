@@ -237,6 +237,9 @@ async function launchClose (editor, model) {
   if (editor.recognizer && editor.recognizer.close) {
     const init = await editor.recognizerContext.initPromise
     if (init) {
+      editor.loader.style.display = 'none'
+      editor.error.innerText = Constants.Error.CLOSE
+      editor.error.style.display = 'initial'
       return editor.recognizer.close(editor.recognizerContext, model)
     }
   }
@@ -535,7 +538,6 @@ export class Editor {
           this.undoRedoContext = this.recognizerContext
           this.undoRedoManager = this.innerRecognizer
         }
-
         this.innerRecognizer.init(this.recognizerContext, model)
           .then((values) => {
             logger.info('Recognizer initialized !')
@@ -546,7 +548,9 @@ export class Editor {
             }
             this.loader.style.display = 'none'
           })
-          .catch(err => handleError(this, err))
+          .catch(err => {
+            handleError(this, err)
+          })
       }
     }
 

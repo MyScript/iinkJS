@@ -74,7 +74,8 @@ const Constants = {
     WRONG_CREDENTIALS: 'Application credentials are invalid. Please check or regenerate your application key and hmackey.',
     TOO_OLD: 'Session is too old. Max Session Duration Reached.',
     NO_ACTIVITY: 'Session closed due to no activity.',
-    CANT_ESTABLISH: 'Unable to establish a connection to the server. Check the host and your connectivity'
+    CANT_ESTABLISH: 'Unable to establish a connection to the server. Check the host and your connectivity',
+    CLOSE: 'Connection closed'
   },
   Exports: {
     JIIX: 'application/vnd.myscript.jiix'

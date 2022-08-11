@@ -121,33 +121,42 @@ export function handleError (editor, err, ...events) {
     logger.error('Error while firing the recognition', err)
   }
   let errorCode = err.code
-  if (err.type === 'message' && err.data.code) {
-    errorCode = err.data.code
+  let message = err.message
+  if (err.type === 'message') {
+    if (err.data.code) {
+      errorCode = err.data.code
+    }
+    if (err.data.message) {
+      message = err.data.message
+    }
   }
   editor.recognizerContext.error = err
   switch (errorCode) {
     case 'no.activity':
-      editorRef.error.innerText = Constants.Error.NO_ACTIVITY
+      message = Constants.Error.NO_ACTIVITY
       break
     case 'api.invalid.format':
-      editorRef.error.innerText = err.message
+      message = err.message
       break
     case 'access.not.granted':
-      editorRef.error.innerText = Constants.Error.WRONG_CREDENTIALS
+      message = Constants.Error.WRONG_CREDENTIALS
       break
     case 'session.too.old':
-      editorRef.error.innerText = Constants.Error.TOO_OLD
+      message = Constants.Error.TOO_OLD
       break
     case 1000:
     case 1006:
       if (editorRef.error.style.display === 'none') {
-        editorRef.error.innerText = Constants.Error.NOT_REACHABLE
+        message = Constants.Error.NOT_REACHABLE
       }
       break
     default:
-      editorRef.error.innerText = err.message || Constants.Error.CANT_ESTABLISH
+      if (!message) {
+        message = Constants.Error.CANT_ESTABLISH
+      }
       break
   }
+  editorRef.error.innerText = message
 
   if (
     (editorRef.error.innerText === Constants.Error.TOO_OLD || err.reason === 'CLOSE_RECOGNIZER') &&
