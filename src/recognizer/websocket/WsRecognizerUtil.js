@@ -131,7 +131,7 @@ export async function close (recognizerContext, model) {
 
   recognizerContextRef.recognitionContexts[0] = recognitionContext
 
-  NetworkWSInterface.close(recognitionContext, 1000, RecognizerContext.CLOSE_RECOGNIZER_MESSAGE)
+  NetworkWSInterface.close(recognizerContext, 1000, RecognizerContext.CLOSE_RECOGNIZER_MESSAGE)
 
   return recognitionContext.model
 }

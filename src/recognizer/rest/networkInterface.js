@@ -25,7 +25,8 @@ export async function post (recognizerContext, url, data, mimeType) {
     const reqInit = {
       method: 'POST',
       headers,
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
+      credentials: 'omit'
     }
     const request = new Request(url, reqInit)
     const response = await fetch(request)
