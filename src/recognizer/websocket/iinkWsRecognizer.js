@@ -38,7 +38,7 @@ function getDPI (element) {
  * @type {RecognizerInfo}
  */
 export const IinkWsConfiguration = {
-  types: [Constants.RecognitionType.MATH, Constants.RecognitionType.TEXT, Constants.RecognitionType.DIAGRAM, Constants.RecognitionType.NEBO],
+  types: [Constants.RecognitionType.MATH, Constants.RecognitionType.TEXT, Constants.RecognitionType.DIAGRAM],
   protocol: Constants.Protocol.WEBSOCKET,
   availableTriggers: {
     exportContent: [Constants.Trigger.POINTER_UP, Constants.Trigger.DEMAND],

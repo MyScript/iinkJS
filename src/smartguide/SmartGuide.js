@@ -485,7 +485,10 @@ export function launchSmartGuide (smartGuide, exports) {
     elementsRef.smartGuideElement.classList.remove('smartguide-out')
     elementsRef.candidatesElement.style.display = 'none'
     elementsRef.menuElement.style.display = 'none'
-    if (smartGuideRef.previousLabelExport && smartGuideRef.previousLabelExport !== JSON.parse(exports[Constants.Exports.JIIX]).label) {
+    if (
+      smartGuideRef.previousLabelExport &&
+      smartGuideRef.previousLabelExport !== JSON.parse(exports[Constants.Exports.JIIX]).label
+    ) {
       const words = JSON.parse(exports[Constants.Exports.JIIX]).words
       populatePrompter(words)
       addAnimationToModifiedWord(words)
