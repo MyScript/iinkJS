@@ -1,3 +1,8 @@
+# [v1.5.5]
+
+## Bug fix
+- bad link on the Get source code for Change configuration
+
 # [v1.5.4](https://github.com/MyScript/iinkJS/tree/v1.5.4)
 
 ## Features
