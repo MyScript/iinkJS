@@ -1,6 +1,6 @@
 {
   "name": "iink-js",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "main": "dist/iink.min.js",
   "module": "dist/iink.esm.js",
   "description": "iinkJS is the fastest way to integrate handwriting panel and recognition in your webapp",
