@@ -1,3 +1,13 @@
+# [v2.0.0]
+
+## Bug fix
+- bad link on the Get source code for Change configuration
+- enhance iink eraser websocket sample
+- math example: empty mathML is displayed in result instead of nothing
+- customize example, colour picker disappears after undo-redo
+- gesture.enable = false broken
+- can change configuration if first host is wrong
+
 # [v1.5.4](https://github.com/MyScript/iinkJS/tree/v1.5.4)
 
 ## Features
