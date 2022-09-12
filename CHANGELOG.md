@@ -1,4 +1,4 @@
-# [v2.0.1]
+# [v2.0.1](https://github.com/MyScript/iinkJS/tree/v2.0.1)
 
 ## Bug fix
 - bad link on the Get source code for Change configuration
