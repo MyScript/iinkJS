@@ -448,6 +448,9 @@ select:focus {
 .classic-btn.reset {
     background: #ffaf1a;
 }
+.classic-btn.gray {
+    background: #6e6e6e;
+}
 
 /** Undo redo Buttons **/
 

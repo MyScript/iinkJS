@@ -187,6 +187,7 @@
         <button class="classic-btn" id="exportContent">Export</button>
         <button class="classic-btn reset" id="reset-btn">Reset</button>
         <button class="classic-btn success" id="valid-btn">Valid</button>
+        <button class="classic-btn gray" id="close-btn">Close</button>
       </div>
     </div>
   </div>
@@ -205,9 +206,10 @@
       const serverHMACKeyElement = document.getElementById('server-hmacKey');
       const triggersDelayElement = document.getElementById('triggers-delay');
       const triggersExportContentElement = document.getElementById('triggers-exportContent');
+      const exportBtn = document.getElementById('exportContent');
       const validBtn = document.getElementById('valid-btn');
       const resetBtn = document.getElementById('reset-btn');
-      const exportBtn = document.getElementById('exportContent');
+      const closeBtn = document.getElementById('close-btn');
 
       const defaultConfiguration = {
         recognitionParams: {
@@ -377,6 +379,11 @@
       exportBtn.addEventListener('click', () => {
         exportBtn.disabled = true;
         editorElement.editor.export_();
+      });
+
+      closeBtn.addEventListener('click', () => {
+        exportBtn.disabled = true;
+        editorElement.editor.close();
       });
 
       resetBtn.addEventListener('click', initInputsValues)

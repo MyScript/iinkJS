@@ -60,7 +60,7 @@ export async function retry (func, recognizerContext, model, buildFunc, ...param
 
     return func(recognizerContext, model, buildFunc, ...params)
   } else {
-    responseCallback(model, 'Unable to reconnect')
+    responseCallback(model, 'Unable to reconnect', null, recognizerContext)
   }
 }
 
