@@ -11,8 +11,10 @@ import {
 } from './iinkWsRecognizer'
 
 function buildUrl (configuration, suffixUrl) {
+  const host = configuration.recognitionParams.server.host
+  const applicationKey = configuration.recognitionParams.server.applicationKey
   const scheme = (configuration.recognitionParams.server.scheme === 'https') ? 'wss' : 'ws'
-  return `${scheme}://${configuration.recognitionParams.server.host}${suffixUrl}`
+  return `${scheme}://${host}${suffixUrl}?applicationKey=${applicationKey}`
 }
 
 /**
