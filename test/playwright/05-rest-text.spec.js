@@ -11,7 +11,7 @@ describe(`${process.env.BROWSER}:v4/rest_text_iink.html`, () => {
 
     await playStrokes(page, hellov4rest.strokes, 100, 100)
     await page.evaluate(exported)
-
+    await page.waitForTimeout(1000)
     const plainText = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
     expect(plainText).to.equal(hellov4rest.exports.TEXT[hellov4rest.exports.TEXT.length - 1])
   })
@@ -23,7 +23,7 @@ describe(`${process.env.BROWSER}:v4/rest_text_iink.html`, () => {
 
     await playStrokes(page, hellov4rest.strokes, 100, 100)
     await page.evaluate(exported)
-
+    await page.waitForTimeout(1000)
     let raw = await editorEl.evaluate(node => node.editor.model.rawStrokes)
     expect(raw.length).to.equal(hellov4rest.strokes.length)
     const plain = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])

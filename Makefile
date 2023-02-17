@@ -12,7 +12,7 @@ clean: ## Remove all produced binaries.
 	@rm -rf docs
 
 prepare: ## Install all dependencies.
-	@PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install
+	@PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --force
 
 build: clean ## Building the dist files from sources.
 	@npm run build

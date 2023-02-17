@@ -18,6 +18,7 @@ const rcEs233 = require('./inks/rc_es_233.json')
 const rcFr = require('./inks/rc_fr_simple.json')
 const rcIt = require('./inks/rc_it_216.json')
 const rcKo = require('./inks/rc_ko_262.json')
+const bigText = require('./inks/welcome_en_US.json')
 
 module.exports = {
   one: {
@@ -96,7 +97,7 @@ module.exports = {
     strokes: threetimes2,
     apiVersion: 'V4',
     exports: {
-      LATEX: ['3', '31', '311', '3112']
+      LATEX: ['3', '31', '311', '311', '3112']
     }
   },
   fence: {
@@ -215,6 +216,15 @@ module.exports = {
     apiVersion: 'V4',
     exports: {
       TEXT: ['covfefe']
+    }
+  },
+  bigText: {
+    name: 'bigText',
+    type: 'TEXT',
+    strokes: bigText,
+    apiVersion: 'V4',
+    exports: {
+      TEXT: ['Welcome and thanks for using MyScript Studio products family! You are ready to discover an invaluable companion for the effective use of your digital writing. Make the most of your handwritten notes and farms converting handwriting into highly valuable digital information. For more information, visit www.visionobjects.com']
     }
   },
   shape: {

@@ -234,6 +234,7 @@ describe(`${process.env.BROWSER}:v4/websocket_math_iink.html`, function () {
     expect(isInit).to.equal(true)
 
     await playStrokes(page, equation3.strokes, 100, 100)
+    await page.waitForTimeout(100)
     await page.evaluate(exported)
 
     let jiix = await editorEl.evaluate(node => node.editor.model.exports['application/vnd.myscript.jiix'])

@@ -21,8 +21,11 @@ describe(`${process.env.BROWSER}:v4/websocket_text_iink.html`, () => {
 
     expect(labelsWithNbsp).to.equal(textContent)
 
-    await page.click(`#ellipsis${randomString}`)
-    await page.click(`#convert${randomString}`)
+    const ellipsis = await page.locator('.ellipsis')
+    await ellipsis.click()
+    const moreMenu = await page.locator('.more-menu')
+    const convert = await moreMenu.locator('button:text("Convert")')
+    await convert.click()
 
     await page.evaluate(exported)
 
@@ -54,11 +57,17 @@ describe(`${process.env.BROWSER}:v4/websocket_text_iink.html`, () => {
   it('should check gesture works', async () => {
     const editorEl = await page.waitForSelector('#editor')
     expect(await isEditorInitialized(editorEl)).to.equal(true)
+    await editorEl.evaluate(node => {
+      const conf = JSON.parse(JSON.stringify(node.editor.configuration))
+      conf.recognitionParams.iink.gesture = { enable: true }
+      node.editor.configuration = conf
+    })
+    expect(await isEditorInitialized(editorEl)).to.equal(true)
 
     let exportPromise = page.evaluate(exported)
     await playStrokes(page, helloStrike.strokes, 0, 0)
     await exportPromise
-
+    await page.waitForTimeout(1000)
     let result = await editorEl.evaluate(node => node.editor.model.exports['text/plain'])
     expect(result).to.equal('')
 
