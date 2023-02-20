@@ -20,7 +20,10 @@ build: clean ## Building the dist files from sources.
 docs: ## Building the doc files from sources.
 	@npm run docs
 
-docker: build ## Build the docker image containing last version of myscript-js and examples.
+docker-wait-tcp:
+	@cd docker/wait-tcp/ && docker build -t $(WAITTCP_DOCKERREPOSITORY) .
+
+docker-examples: build ## Build the docker image containing last version of myscript-js and examples.
 	@rm -rf docker/examples/delivery/
 	@mkdir -p docker/examples/delivery
 	@cp -R dist docker/examples/delivery/
@@ -29,13 +32,14 @@ docker: build ## Build the docker image containing last version of myscript-js a
 	@cd docker/examples/ && \
 		docker build \
 		--build-arg applicationkey=${DEV_APPLICATIONKEY} \
-		--build-arg hmackey=${DEV_HMACKEY} $(DOCKER_PARAMETERS) -t $(EXAMPLES_DOCKERREPOSITORY) .
+		--build-arg hmackey=${DEV_HMACKEY} \
+		-t $(EXAMPLES_DOCKERREPOSITORY) .
 
 killdocker:
 	@docker ps -a | grep "iinkjs-$(DOCKERTAG)-$(BUILDENV)-" | awk '{print $$1}' | xargs -r docker rm -f 2>/dev/null 1>/dev/null || true
 
 
-local-test-e2e: init_examples
+local-test-e2e: docker-examples init_examples
 	@$(MAKE) BROWSER=$(BROWSER) test-e2e
  
 test-e2e: 
@@ -53,9 +57,7 @@ test-e2e:
 		--name "playwright-$(BROWSER)-$(BUILDID)" mcr.microsoft.com/playwright:v1.16.0 \
 		yarn test:e2e
 
-dev-all: dev-examples ## Launch all the requirements for launching tests.
-
-dev-examples: init_examples ## Launch a local nginx server to ease development.
+dev-test: docker-examples init_examples ## Launch all the requirements for launching tests
 
 _launch_examples:
 	@echo "Starting examples container!"
@@ -67,6 +69,7 @@ _launch_examples:
 		-e "HMACKEY=$(DEV_HMACKEY)" \
 		$(DOCKER_EXAMPLES_PARAMETERS) \
 		--name $(TEST_DOCKER_EXAMPLES_INSTANCE_NAME) $(EXAMPLES_DOCKERREPOSITORY)
+
 _check_examples: 
 	@docker run --rm \
 		--link $(TEST_DOCKER_EXAMPLES_INSTANCE_NAME):WAITHOST \
@@ -74,6 +77,7 @@ _check_examples:
 		-e "WAIT_SERVICE=Test examples" \
 		$(WAITTCP_DOCKERREPOSITORY)
 	@echo "Examples started!"
+
 init_examples: _launch_examples _check_examples
 
 help: ## This help.

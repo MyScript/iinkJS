@@ -1,62 +1,93 @@
+
+def debianBuildDockerImage
+String dockerArgs = '-v  /var/run/docker.sock:/var/run/docker.sock --userns host --privileged -v $HOME:$HOME -e "HOME=${HOME}'
+
 pipeline {
-    agent {label 'master'}
+    agent { label "docker" }
     options { disableConcurrentBuilds() }
     environment {
         PROJECTNAME = "iink-js ${env.BRANCH_NAME}"
         PROJECTHOME = '/tmp/iink-js'
-        PROJECT_DIR= "${WORKSPACE.replace('/var/jenkins_home/workspace','/dockervolumes/cloud/master/jenkins/workspace')}"
+        PROJECT_DIR = "${WORKSPACE.replace('/var/jenkins_home/workspace','/dockervolumes/cloud/master/jenkins/workspace')}"
         APPLICATION_KEY = credentials('APPLICATION_KEY')
         HMAC_KEY =  credentials('HMAC_KEY')
-        MAKE_ARGS=" PROJECT_DIR=${env.PROJECT_DIR} HOME=${env.PROJECTHOME} BUILDID=${env.BUILD_NUMBER} DEV_APPLICATIONKEY=${env.APPLICATION_KEY} DEV_HMACKEY=${env.HMAC_KEY} "
+        MAKE_ARGS =" PROJECT_DIR=${env.PROJECT_DIR} HOME=${env.PROJECTHOME} BUILDID=${env.BUILD_NUMBER} DEV_APPLICATIONKEY=${env.APPLICATION_KEY} DEV_HMACKEY=${env.HMAC_KEY} "
     }
 
     stages {
 
+      stage('Build docker builder') {
+        steps {
+          script {
+            debianBuildDockerImage = docker.build("iink-js.debian-builder:${env.BUILD_ID}",  '-f ./docker/builder/Dockerfile ./')
+          }
+        }
+      }
+
       stage ('purge'){
         steps {
-          sh "make ${env.MAKE_ARGS} purge"
+          script {
+            debianBuildDockerImage.inside(dockerArgs) {
+              sh "make ${env.MAKE_ARGS} purge"
+            }
+          }
         }
       }
 
       stage ('prepare'){
         steps {
-          sh "make ${env.MAKE_ARGS} prepare"
-        }
-      }
-
-      stage ('docker'){
-        steps {
-          sh "make ${env.MAKE_ARGS} docker"
+          script {
+            debianBuildDockerImage.inside(dockerArgs) {
+              sh "make ${env.MAKE_ARGS} prepare"
+              sh "make ${env.MAKE_ARGS} docker-wait-tcp"
+            }
+          }
         }
       }
 
       stage ('init_examples'){
         steps {
-          sh "make ${env.MAKE_ARGS} init_examples"
+          script {
+            debianBuildDockerImage.inside(dockerArgs) {
+              sh "make ${env.MAKE_ARGS} docker-examples init_examples"
+            }
+          }
         }
       }
 
-      stage('test browser') {
+      stage('test browser with legacy server') {
 
         failFast false
 
         parallel {
-          
+
           stage ('test-chromium'){
             steps {
-              sh "BROWSER=chromium make ${env.MAKE_ARGS} test-e2e"
+              script {
+                debianBuildDockerImage.inside(dockerArgs) {
+                  sh "BROWSER=chromium make ${env.MAKE_ARGS} test-e2e"
+                }
+              }
             }
           }
 
           stage ('test-webkit'){
             steps {
-              sh "BROWSER=webkit make ${env.MAKE_ARGS} test-e2e"
+              script {
+                debianBuildDockerImage.inside(dockerArgs) {
+                  sh "BROWSER=webkit make ${env.MAKE_ARGS} test-e2e"
+                }
+              }
             }
           }
 
           stage ('test-firefox'){
             steps {
-              sh "BROWSER=firefox make ${env.MAKE_ARGS} test-e2e"
+              script {
+                debianBuildDockerImage.inside(dockerArgs) {
+                  sh "BROWSER=firefox make ${env.MAKE_ARGS} test-e2e"
+                }
+              }
             }
           }
         }
@@ -65,7 +96,11 @@ pipeline {
 
       stage ('audit'){
           steps {
-            sh "npm audit --production"
+            script {
+              debianBuildDockerImage.inside(dockerArgs) {
+                sh "npm audit --production"
+              }
+            }
           }
       }
     }
