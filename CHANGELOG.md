@@ -1,3 +1,8 @@
+# [v2.0.2](https://github.com/MyScript/iinkJS/tree/v2.0.2)
+
+## Bug fix
+- responseCallback() always raises an error [link](https://github.com/MyScript/iinkJS/issues/18)
+- add query param to applicationKey
 # [v2.0.1](https://github.com/MyScript/iinkJS/tree/v2.0.1)
 
 ## Bug fix
