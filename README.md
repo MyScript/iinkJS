@@ -1,4 +1,4 @@
-# iinkJS
+# iinkJS is no longer maintained, you must now use [iink-ts](https://github.com/MyScript/iinkTS)
 
 [![npm version](https://badge.fury.io/js/iink-js.svg)](https://badge.fury.io/js/iink-js)
 [![Examples](https://img.shields.io/badge/Link%20to-examples-blue.svg)](https://myscript.github.io/iinkJS/examples/)
